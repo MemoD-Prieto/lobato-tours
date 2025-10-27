@@ -115,6 +115,55 @@ const Sidebar = () => {
                                 </AnimateHeight>
                             </li>
 
+                            <li className="menu nav-item">
+                                <Link href="/cotizaciones" className="nav-link group">
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                opacity="0.5"
+                                                d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z"
+                                                fill="currentColor"
+                                            />
+                                            <path
+                                                d="M8 7C8 6.44772 8.44772 6 9 6H15C15.5523 6 16 6.44772 16 7C16 7.55228 15.5523 8 15 8H9C8.44772 8 8 7.55228 8 7Z"
+                                                fill="currentColor"
+                                            />
+                                            <path
+                                                d="M8 11C8 10.4477 8.44772 10 9 10H15C15.5523 10 16 10.4477 16 11C16 11.5523 15.5523 12 15 12H9C8.44772 12 8 11.5523 8 11Z"
+                                                fill="currentColor"
+                                            />
+                                            <path
+                                                d="M8 15C8 14.4477 8.44772 14 9 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H9C8.44772 16 8 15.5523 8 15Z"
+                                                fill="currentColor"
+                                            />
+                                        </svg>
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Cotizaciones</span>
+                                    </div>
+                                </Link>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <Link href="/clientes/cotizador" className="nav-link group">
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                opacity="0.5"
+                                                d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                                                fill="currentColor"
+                                            />
+                                            <path
+                                                d="M12 8V12L15 15"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Nueva Cotización</span>
+                                    </div>
+                                </Link>
+                            </li>
+
 
 
 

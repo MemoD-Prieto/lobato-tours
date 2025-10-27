@@ -11,6 +11,10 @@ import { ni18nConfig } from 'ni18n.config.ts';
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
+// Toastify
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import '../styles/tailwind.css';
 import { NextPage } from 'next';
 
@@ -37,6 +41,19 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
             </Head>
 
             {getLayout(<Component {...pageProps} />)}
+            
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </Provider>
     );
 };
