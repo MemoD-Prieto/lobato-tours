@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { FaSearch, FaFilter, FaSort, FaEye, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaSort, FaEye, FaEdit, FaTrash, FaChevronLeft, FaChevronRight, FaFileCsv } from 'react-icons/fa';
 
 interface Cotizacion {
   id: number;
@@ -122,11 +122,69 @@ export default function CotizacionesList() {
     return clientes.reduce((total, cliente) => total + (cliente.personas?.length || 0), 0);
   };
 
+  const handleExportCSV = async () => {
+    try {
+      // Build query params with current filters
+      const queryParams = new URLSearchParams({
+        ...(filters.search && { search: filters.search }),
+        ...(filters.status !== 'all' && { status: filters.status })
+      });
+
+      const response = await fetch(`/api/cotizaciones/export?${queryParams}`);
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error al exportar cotizaciones');
+      }
+
+      // Get the CSV content
+      const csvContent = await response.text();
+      
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      // Get filename from Content-Disposition header or use default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'cotizaciones.csv';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success('Cotizaciones exportadas exitosamente');
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      toast.error(error instanceof Error ? error.message : 'Error al exportar cotizaciones');
+    }
+  };
+
   return (
     <div className="p-6">
-      <div className="mb-6">
+      <div className="mb-6 flex justify-between items-center">
+        <div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Cotizaciones</h1>
         <p className="text-gray-600">Gestiona y filtra todas las cotizaciones del sistema</p>
+        </div>
+        <button
+          onClick={handleExportCSV}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+          title="Exportar cotizaciones a CSV"
+        >
+          <FaFileCsv className="w-4 h-4" />
+          <span>Exportar CSV</span>
+        </button>
       </div>
 
       {/* Filters */}

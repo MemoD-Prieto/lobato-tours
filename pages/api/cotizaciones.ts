@@ -1,10 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import db from '@/models/index-simple';
+import { Op } from 'sequelize';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      await db.sequelize.authenticate();
+      // Test and establish connection
+      try {
+        await db.sequelize.authenticate();
+      } catch (authError) {
+        // If authentication fails, try to reconnect
+        console.error('Initial auth failed, retrying...', authError);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        await db.sequelize.authenticate();
+      }
 
       const {
         page = '1',
@@ -24,10 +33,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       // Search filter
       if (search) {
-        whereConditions[db.Sequelize.Op.or] = [
-          { customer_name: { [db.Sequelize.Op.iLike]: `%${search}%` } },
-          { customer_contact: { [db.Sequelize.Op.iLike]: `%${search}%` } },
-          { customer_contact2: { [db.Sequelize.Op.iLike]: `%${search}%` } }
+        whereConditions[Op.or] = [
+          { customer_name: { [Op.iLike]: `%${search}%` } },
+          { customer_contact: { [Op.iLike]: `%${search}%` } },
+          { customer_contact2: { [Op.iLike]: `%${search}%` } }
         ];
       }
 
@@ -103,9 +112,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     } catch (error) {
       console.error('Error fetching cotizaciones:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error constructor:', error?.constructor?.name);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : typeof error === 'string' 
+        ? error 
+        : error?.toString() || JSON.stringify(error);
       return res.status(500).json({
         ok: false,
-        error: error instanceof Error ? error.message : 'Error interno del servidor'
+        error: errorMessage || 'Error interno del servidor',
+        details: process.env.NODE_ENV === 'development' ? String(error) : undefined
       });
     }
   }

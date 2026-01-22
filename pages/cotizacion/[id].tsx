@@ -1,16 +1,20 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { 
-  AiOutlineArrowLeft, 
-  AiOutlineEdit, 
-  AiOutlineUser, 
-  AiOutlineCalendar,
-  AiOutlineDollar,
-  AiOutlinePlane
-} from 'react-icons/ai';
+  FaChevronLeft,
+  FaEdit,
+  FaUser,
+  FaCalendarAlt,
+  FaDollarSign,
+  FaPlane,
+  FaHotel,
+  FaShip,
+  FaTicketAlt,
+  FaShieldAlt
+} from 'react-icons/fa';
 
 interface Cotizacion {
   id: number;
@@ -38,8 +42,11 @@ interface Cotizacion {
   viaje?: {
     id: number;
     travel_destiny: string;
-    travel_begin: string;
-    travel_end: string;
+    travel_begin: string | null;
+    travel_end: string | null;
+    package_name?: string;
+    package_price?: number;
+    package_description?: string;
   };
   vuelo?: {
     id: number;
@@ -56,6 +63,11 @@ interface Cotizacion {
     dollar: boolean;
     exchange_rate: number;
   };
+  hotel?: any;
+  crucero?: any;
+  ferry?: any;
+  entradas?: any;
+  seguro?: any;
 }
 
 const ageRangeLabels = {
@@ -101,16 +113,46 @@ export default function CotizacionProfile() {
     }
   }, [id, fetchCotizacion]);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | string | null | undefined) => {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : (amount || 0);
+    if (isNaN(numAmount)) return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN'
+    }).format(0);
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
       currency: 'MXN'
-    }).format(amount);
+    }).format(numAmount);
   };
 
-  const formatDate = (dateString: string) => {
-    return dayjs(dateString).locale('es').format('DD/MM/YYYY');
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return 'N/A';
+    const date = dayjs(dateString);
+    if (!date.isValid()) return 'Fecha inválida';
+    return date.locale('es').format('DD/MM/YYYY');
   };
+
+  // Determine initial active tab based on available data
+  const getInitialTab = useCallback(() => {
+    if (cotizacion?.viaje) return 'viaje';
+    if (cotizacion?.vuelo) return 'vuelo';
+    if (cotizacion?.hotel) return 'hotel';
+    if (cotizacion?.crucero) return 'crucero';
+    if (cotizacion?.ferry) return 'ferry';
+    if (cotizacion?.entradas) return 'entradas';
+    if (cotizacion?.seguro) return 'seguro';
+    if (cotizacion?.moneda) return 'moneda';
+    return 'viaje';
+  }, [cotizacion]);
+
+  const [activeTab, setActiveTab] = useState<string>('viaje');
+
+  // Update active tab when cotizacion loads
+  useEffect(() => {
+    if (cotizacion) {
+      setActiveTab(getInitialTab());
+    }
+  }, [cotizacion, getInitialTab]);
 
   if (loading) {
     return (
@@ -141,7 +183,7 @@ export default function CotizacionProfile() {
                 href="/cotizaciones"
                 className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
-                <AiOutlineArrowLeft className="mr-2" />
+                <FaChevronLeft className="mr-2" />
                 Volver a Cotizaciones
               </Link>
             </div>
@@ -163,7 +205,7 @@ export default function CotizacionProfile() {
                   href="/cotizaciones"
                   className="mr-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  <AiOutlineArrowLeft className="w-6 h-6" />
+                  <FaChevronLeft className="w-6 h-6" />
                 </Link>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
@@ -186,7 +228,7 @@ export default function CotizacionProfile() {
                   href={`/clientes/cotizador?load=${cotizacion.id}`}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                 >
-                  <AiOutlineEdit className="mr-2" />
+                  <FaEdit className="mr-2" />
                   Editar
                 </Link>
               </div>
@@ -201,7 +243,7 @@ export default function CotizacionProfile() {
             <div className="bg-white rounded-lg shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                  <AiOutlineUser className="mr-2" />
+                  <FaUser className="mr-2" />
                   Información del Cliente
                 </h2>
               </div>
@@ -246,20 +288,132 @@ export default function CotizacionProfile() {
               </div>
             </div>
 
-            {/* Travel Information */}
-            {cotizacion.viaje && (
-              <div className="bg-white rounded-lg shadow-sm">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <AiOutlineCalendar className="mr-2" />
-                    Información del Viaje
-                  </h2>
-                </div>
-                <div className="p-6">
+            {/* Travel Information with Tabs */}
+            <div className="bg-white rounded-lg shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <FaCalendarAlt className="mr-2" />
+                  Información del Viaje
+                </h2>
+              </div>
+              
+              {/* Tabs Navigation */}
+              <div className="border-b border-gray-200">
+                <nav className="flex -mb-px overflow-x-auto">
+                  {cotizacion.viaje && (
+                    <button
+                      onClick={() => setActiveTab('viaje')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'viaje'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaCalendarAlt className="inline mr-2" />
+                      Viaje
+                    </button>
+                  )}
+                  {cotizacion.vuelo && (
+                    <button
+                      onClick={() => setActiveTab('vuelo')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'vuelo'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaPlane className="inline mr-2" />
+                      Vuelo
+                    </button>
+                  )}
+                  {cotizacion.hotel && (
+                    <button
+                      onClick={() => setActiveTab('hotel')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'hotel'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaHotel className="inline mr-2" />
+                      Hotel
+                    </button>
+                  )}
+                  {cotizacion.crucero && (
+                    <button
+                      onClick={() => setActiveTab('crucero')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'crucero'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaShip className="inline mr-2" />
+                      Crucero
+                    </button>
+                  )}
+                  {cotizacion.ferry && (
+                    <button
+                      onClick={() => setActiveTab('ferry')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'ferry'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaShip className="inline mr-2" />
+                      Ferry
+                    </button>
+                  )}
+                  {cotizacion.entradas && (
+                    <button
+                      onClick={() => setActiveTab('entradas')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'entradas'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaTicketAlt className="inline mr-2" />
+                      Entradas
+                    </button>
+                  )}
+                  {cotizacion.seguro && (
+                    <button
+                      onClick={() => setActiveTab('seguro')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'seguro'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaShieldAlt className="inline mr-2" />
+                      Seguro
+                    </button>
+                  )}
+                  {cotizacion.moneda && (
+                    <button
+                      onClick={() => setActiveTab('moneda')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'moneda'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <FaDollarSign className="inline mr-2" />
+                      Moneda
+                    </button>
+                  )}
+                </nav>
+              </div>
+
+              {/* Tab Content */}
+              <div className="p-6">
+                {activeTab === 'viaje' && cotizacion.viaje && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Destino</label>
-                      <p className="mt-1 text-sm text-gray-900">{cotizacion.viaje.travel_destiny}</p>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.viaje.travel_destiny || 'N/A'}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
@@ -269,26 +423,33 @@ export default function CotizacionProfile() {
                       <label className="block text-sm font-medium text-gray-700">Fecha de Fin</label>
                       <p className="mt-1 text-sm text-gray-900">{formatDate(cotizacion.viaje.travel_end)}</p>
                     </div>
+                    {cotizacion.viaje.package_name && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Nombre del Paquete</label>
+                        <p className="mt-1 text-sm text-gray-900">{cotizacion.viaje.package_name}</p>
+                      </div>
+                    )}
+                    {cotizacion.viaje.package_price && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Precio del Paquete</label>
+                        <p className="mt-1 text-sm text-gray-900">{formatCurrency(cotizacion.viaje.package_price)}</p>
+                      </div>
+                    )}
+                    {cotizacion.viaje.package_description && (
+                      <div className="md:col-span-3">
+                        <label className="block text-sm font-medium text-gray-700">Descripción del Paquete</label>
+                        <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">{cotizacion.viaje.package_description}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {/* Flight Information */}
-            {cotizacion.vuelo && (
-              <div className="bg-white rounded-lg shadow-sm">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <AiOutlinePlane className="mr-2" />
-                    Información del Vuelo
-                  </h2>
-                </div>
-                <div className="p-6">
+                {activeTab === 'vuelo' && cotizacion.vuelo && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Aerolínea</label>
                       <p className="mt-1 text-sm text-gray-900">
-                        {cotizacion.vuelo.other_airline || cotizacion.vuelo.airline}
+                        {cotizacion.vuelo.other_airline || cotizacion.vuelo.airline || 'N/A'}
                       </p>
                     </div>
                     <div>
@@ -312,20 +473,143 @@ export default function CotizacionProfile() {
                       <p className="mt-1 text-sm text-gray-900">{formatCurrency(cotizacion.vuelo.suitcases_tax)}</p>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {/* Currency Information */}
-            {cotizacion.moneda && (
-              <div className="bg-white rounded-lg shadow-sm">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <AiOutlineDollar className="mr-2" />
-                    Información de Moneda
-                  </h2>
-                </div>
-                <div className="p-6">
+                {activeTab === 'hotel' && cotizacion.hotel && (
+                  <div className="space-y-4">
+                    {Array.isArray(cotizacion.hotel) ? (
+                      cotizacion.hotel.map((hotel: any, index: number) => (
+                        <div key={index} className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+                          <h3 className="text-md font-semibold text-gray-900 mb-3">Hotel {index + 1}</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                              <p className="mt-1 text-sm text-gray-900">{hotel.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Noches</label>
+                              <p className="mt-1 text-sm text-gray-900">{hotel.nights || 0}</p>
+                            </div>
+                            {hotel.distribuciones && Array.isArray(hotel.distribuciones) && hotel.distribuciones.length > 0 && (
+                              <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Habitaciones</label>
+                                <div className="overflow-x-auto">
+                                  <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                      <tr>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Personas</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">IVA</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                      {hotel.distribuciones.map((dist: any, distIdx: number) =>
+                                        dist.habitaciones?.map((hab: any, habIdx: number) => (
+                                          <tr key={`${distIdx}-${habIdx}`}>
+                                            <td className="px-4 py-2 text-sm text-gray-900">{hab.type || 'N/A'}</td>
+                                            <td className="px-4 py-2 text-sm text-gray-900">{hab.number_of_people || 0}</td>
+                                            <td className="px-4 py-2 text-sm text-gray-900">{formatCurrency(hab.price)}</td>
+                                            <td className="px-4 py-2 text-sm text-gray-900">{formatCurrency(hab.iva)}</td>
+                                          </tr>
+                                        ))
+                                      )}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                          <p className="mt-1 text-sm text-gray-900">{cotizacion.hotel.name || 'N/A'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Noches</label>
+                          <p className="mt-1 text-sm text-gray-900">{cotizacion.hotel.nights || 0}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'crucero' && cotizacion.crucero && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Línea de Crucero</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.crucero.cruise_line || cotizacion.crucero.other_cruise_line || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Nombre del Crucero</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.crucero.nombre || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Precio por Persona</label>
+                      <p className="mt-1 text-sm text-gray-900">{formatCurrency(cotizacion.crucero.precio)}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Duración (días)</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.crucero.duracion || 0}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'ferry' && cotizacion.ferry && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Ruta</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.ferry.ruta || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Precio por Persona</label>
+                      <p className="mt-1 text-sm text-gray-900">{formatCurrency(cotizacion.ferry.precio)}</p>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700">Horario</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.ferry.horario || 'N/A'}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'entradas' && cotizacion.entradas && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Atracción</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.entradas.atraccion || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Precio por Persona</label>
+                      <p className="mt-1 text-sm text-gray-900">{formatCurrency(cotizacion.entradas.precio)}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Cantidad de Personas</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.entradas.cantidad || 0}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'seguro' && cotizacion.seguro && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Compañía de Seguros</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.seguro.insurance_company || cotizacion.seguro.other_insurance_company || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Tipo de Seguro</label>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.seguro.tipo || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Costo del Seguro</label>
+                      <p className="mt-1 text-sm text-gray-900">{formatCurrency(cotizacion.insurance)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'moneda' && cotizacion.moneda && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Tipo de Moneda</label>
@@ -335,12 +619,18 @@ export default function CotizacionProfile() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Tipo de Cambio</label>
-                      <p className="mt-1 text-sm text-gray-900">{cotizacion.moneda.exchange_rate}</p>
+                      <p className="mt-1 text-sm text-gray-900">{cotizacion.moneda.exchange_rate || 'N/A'}</p>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {!cotizacion[activeTab as keyof Cotizacion] && (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No hay información disponible para esta sección.</p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -376,11 +666,11 @@ export default function CotizacionProfile() {
                     <span className="text-base font-semibold text-gray-900">Total</span>
                     <span className="text-base font-semibold text-gray-900">
                       {formatCurrency(
-                        cotizacion.transfers + 
-                        cotizacion.insurance + 
-                        cotizacion.data_plan + 
-                        cotizacion.visa + 
-                        cotizacion.commission
+                        (Number(cotizacion.transfers) || 0) + 
+                        (Number(cotizacion.insurance) || 0) + 
+                        (Number(cotizacion.data_plan) || 0) + 
+                        (Number(cotizacion.visa) || 0) + 
+                        (Number(cotizacion.commission) || 0)
                       )}
                     </span>
                   </div>
@@ -422,3 +712,4 @@ export default function CotizacionProfile() {
     </div>
   );
 }
+

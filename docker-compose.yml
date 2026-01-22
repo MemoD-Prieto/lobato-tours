@@ -1,9 +1,7 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:latest
-    container_name: lobato_tours
+    container_name: lobato_tours_db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -13,6 +11,24 @@ services:
       - "5430:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  # app:
+  #   image: guillermod/lobato-tours:latest
+  #   container_name: lobato_tours_app
+  #   restart: always
+  #   ports:
+  #     - "3001:3000"
+  #   environment:
+  #     DB_HOST: db
+  #     DB_PORT: 5432
+  #     DB_USER: postgres
+  #     DB_PASSWORD: postgres
+  #     DB_NAME: mydatabase
+  #     NODE_ENV: production
+  #   volumes:
+  #     - ./config:/app/config:ro
+  #   depends_on:
+  #     - db
 
 volumes:
   pgdata:

@@ -34,11 +34,11 @@ export function StepCrucero() {
             />
           ) : isOtherSelected ? (
             <div className="w-8 h-8 flex items-center justify-center text-blue-600">
-              {FaShip({ size: 32 })}
+              <FaShip className="w-8 h-8" />
             </div>
           ) : (
             <div className="w-8 h-8 flex items-center justify-center text-gray-400">
-              {FaShip({ size: 32 })}
+              <FaShip className="w-8 h-8" />
             </div>
           )}
         </div>

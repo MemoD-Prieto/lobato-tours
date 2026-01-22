@@ -148,23 +148,115 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
         if (loadedData.moneda) {
           formData.moneda = loadedData.moneda;
         }
+        if (loadedData.crucero) {
+          formData.crucero = loadedData.crucero;
+        }
+        if (loadedData.hoteles && Array.isArray(loadedData.hoteles) && loadedData.hoteles.length > 0) {
+          formData.hoteles = loadedData.hoteles;
+        }
+        // Traslado is stored in cotizacion.transfers
+        if (loadedData.transfers && loadedData.transfers > 0) {
+          formData.traslado = { amount: loadedData.transfers };
+        }
+
+        // Parse services stored in messages field as JSON
+        if (loadedData.messages) {
+          try {
+            // Parse all service JSON data from messages
+            // Each service is stored as "ServiceName: {json}"
+            const serviceNames = ['Entradas', 'Ferry', 'Seguro', 'Datos', 'Visa'];
+            
+            for (const serviceName of serviceNames) {
+              const serviceKey = serviceName.toLowerCase();
+              // Match "ServiceName: {json}" where json can contain nested objects
+              const pattern = new RegExp(`${serviceName}:\\s*({[\\s\\S]*?})(?=\\n\\n|$)`, 'm');
+              const match = loadedData.messages.match(pattern);
+              if (match) {
+                try {
+                  // Try to parse the JSON
+                  let jsonStr = match[1].trim();
+                  // Find the matching closing brace
+                  let braceCount = 0;
+                  let endIndex = -1;
+                  for (let i = 0; i < jsonStr.length; i++) {
+                    if (jsonStr[i] === '{') braceCount++;
+                    if (jsonStr[i] === '}') {
+                      braceCount--;
+                      if (braceCount === 0) {
+                        endIndex = i + 1;
+                        break;
+                      }
+                    }
+                  }
+                  if (endIndex > 0) {
+                    jsonStr = jsonStr.substring(0, endIndex);
+                    const serviceJson = JSON.parse(jsonStr);
+                    if (serviceJson[serviceKey]) {
+                      formData[serviceKey] = serviceJson[serviceKey];
+                    }
+                  }
+                } catch (parseError) {
+                  console.warn(`Could not parse ${serviceName} from messages:`, parseError);
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Could not parse services from messages:', e);
+          }
+        }
+
+        // Map visa costo from cotizacion.visa if visa data exists but wasn't loaded from messages
+        if (loadedData.visa && loadedData.visa > 0) {
+          if (!formData.visa) {
+            formData.visa = { costo: loadedData.visa };
+          } else if (!formData.visa.costo) {
+            formData.visa.costo = loadedData.visa;
+          }
+        }
+        // Map seguro - insurance is already in cotizacion.insurance, but we need to check for extra fields
+        if (loadedData.insurance && loadedData.insurance > 0) {
+          if (!formData.seguro) {
+            formData.seguro = {};
+          }
+          // Note: seguro.costo is stored in cotizacion.insurance, not in seguro object
+        }
+        // Map datos costo from cotizacion.data_plan if datos data exists but wasn't loaded from messages
+        if (loadedData.data_plan && loadedData.data_plan > 0) {
+          if (!formData.datos) {
+            formData.datos = { costo: loadedData.data_plan };
+          } else if (!formData.datos.costo) {
+            formData.datos.costo = loadedData.data_plan;
+          }
+        }
 
         // Determine which services should be selected based on loaded data
         const servicesToSelect = new Set<ServiceKey>();
         
         // Check for each service type in the loaded data
-        // Note: Only check for services that have corresponding database models
         if (loadedData.viaje) servicesToSelect.add('paquete');
         if (loadedData.vuelo) servicesToSelect.add('vuelo');
-        // TODO: Add other services when their database models are created
-        // if (loadedData.hotel) servicesToSelect.add('hotel');
-        // if (loadedData.traslado) servicesToSelect.add('traslado');
-        // if (loadedData.crucero) servicesToSelect.add('crucero');
-        // if (loadedData.entradas) servicesToSelect.add('entradas');
-        // if (loadedData.ferry) servicesToSelect.add('ferry');
-        // if (loadedData.seguro) servicesToSelect.add('seguro');
-        // if (loadedData.datos) servicesToSelect.add('datos');
-        // if (loadedData.visa) servicesToSelect.add('visa');
+        if (loadedData.crucero) servicesToSelect.add('crucero');
+        if (loadedData.hoteles && Array.isArray(loadedData.hoteles) && loadedData.hoteles.length > 0) {
+          servicesToSelect.add('hotel');
+        }
+        if (loadedData.transfers && loadedData.transfers > 0) {
+          servicesToSelect.add('traslado');
+        }
+        if (formData.entradas) {
+          servicesToSelect.add('entradas');
+        }
+        if (formData.ferry) {
+          servicesToSelect.add('ferry');
+        }
+        if (formData.seguro || (loadedData.insurance && loadedData.insurance > 0)) {
+          servicesToSelect.add('seguro');
+        }
+        if (formData.datos || (loadedData.data_plan && loadedData.data_plan > 0)) {
+          servicesToSelect.add('datos');
+        }
+        if (formData.visa || (loadedData.visa && loadedData.visa > 0)) {
+          servicesToSelect.add('visa');
+        }
 
         setData(formData);
         setCotizacionId(loadedData.id);
@@ -263,11 +355,49 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     );
     
     try {
+      // Map traslado to transfers in cotizacion
+      const cotizacionData = { ...data.cotizacion };
+      if (data.traslado && data.traslado.amount !== undefined) {
+        cotizacionData.transfers = data.traslado.amount;
+      }
+      
+      // Store services in messages field if they exist (ferry, seguro, datos, visa, entradas)
+      const servicesToStore = ['entradas', 'ferry', 'seguro', 'datos', 'visa'];
+      let currentMessages = cotizacionData.messages || '';
+      
+      // Remove old service data from messages
+      servicesToStore.forEach(service => {
+        currentMessages = currentMessages.replace(new RegExp(`${service.charAt(0).toUpperCase() + service.slice(1)}:\\s*{[^}]+}\\s*`, 'g'), '').trim();
+      });
+      
+      // Add new service data to messages
+      servicesToStore.forEach(service => {
+        if (data[service]) {
+          const serviceJson = JSON.stringify({ [service]: data[service] });
+          const serviceName = service.charAt(0).toUpperCase() + service.slice(1);
+          currentMessages = currentMessages 
+            ? `${currentMessages}\n\n${serviceName}: ${serviceJson}`
+            : `${serviceName}: ${serviceJson}`;
+        }
+      });
+      
+      // Map visa costo to cotizacion.visa
+      if (data.visa && data.visa.costo !== undefined) {
+        cotizacionData.visa = data.visa.costo;
+      }
+      // Note: seguro costo is already in cotizacion.insurance (from StepSeguro using name="cotizacion.insurance")
+      // Map datos costo to cotizacion.data_plan
+      if (data.datos && data.datos.costo !== undefined) {
+        cotizacionData.data_plan = data.datos.costo;
+      }
+      
+      cotizacionData.messages = currentMessages;
+      
       const submitData = {
         ...data,
         cotizacion_id: cotizacionId,
         cotizacion: {
-          ...data.cotizacion,
+          ...cotizacionData,
           employee_id: '1' // Placeholder employee ID
         }
       };

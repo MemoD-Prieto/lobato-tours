@@ -35,8 +35,10 @@ export function StepResumen() {
     
     try {
       // Ensure the cotizacion object has the employee_id (placeholder for now)
+      // IMPORTANT: Include cotizacion_id if it exists to update instead of creating new
       const submitData = {
         ...data,
+        ...(cotizacionId && { cotizacion_id: cotizacionId }),
         cotizacion: {
           ...data.cotizacion,
           employee_id: '1' // Placeholder employee ID

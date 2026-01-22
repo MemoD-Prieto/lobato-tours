@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       // Import database models
-      const db = require('../../models/index-simple.js');
+      const db = require('@/models/index.ts');
       
       // Ensure Sequelize is ready
       await db.sequelize.authenticate();
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
   } else if (req.method === 'GET') {
     try {
       // Import database models
-      const db = require('../../models/index-simple.js');
+      const db = require('@/models/index.ts');
       
       // Check database status
       await db.sequelize.authenticate();
