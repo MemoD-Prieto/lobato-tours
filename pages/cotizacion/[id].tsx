@@ -27,6 +27,7 @@ interface Cotizacion {
   visa: number;
   commission: number;
   messages: string;
+  messagesDisplay?: string;
   finished: boolean;
   creation_date: string;
   clientes: Array<{
@@ -64,10 +65,13 @@ interface Cotizacion {
     exchange_rate: number;
   };
   hotel?: any;
+  hoteles?: any[];
   crucero?: any;
   ferry?: any;
   entradas?: any;
   seguro?: any;
+  datos?: any;
+  visaDetails?: any;
 }
 
 const ageRangeLabels = {
@@ -132,6 +136,66 @@ export default function CotizacionProfile() {
     return date.locale('es').format('DD/MM/YYYY');
   };
 
+  // Number of travelers (people) from clientes/personas
+  const totalPeople = React.useMemo(() => {
+    if (!cotizacion?.clientes?.length) return 0;
+    return cotizacion.clientes.reduce(
+      (sum, c) => sum + (Array.isArray(c.personas) ? c.personas.length : 0),
+      0
+    );
+  }, [cotizacion]);
+
+  // Compute extra amounts from viaje, vuelo, crucero, hotel, ferry, entradas for total
+  const extraAmounts = React.useMemo(() => {
+    if (!cotizacion) return { viaje: 0, vuelo: 0, crucero: 0, hotel: 0, ferry: 0, entradas: 0, total: 0 };
+    const people = totalPeople || 1;
+    let viaje = Number(cotizacion.viaje?.package_price) || 0;
+    let vuelo = 0;
+    if (cotizacion.vuelo) {
+      vuelo =
+        (Number(cotizacion.vuelo.base_fee) || 0) +
+        (Number(cotizacion.vuelo.iva) || 0) +
+        (Number(cotizacion.vuelo.luggage_check) || 0) +
+        (Number(cotizacion.vuelo.airport_right_of_use) || 0) +
+        (Number(cotizacion.vuelo.suitcases_tax) || 0);
+    }
+    const precioPorPersonaCrucero = Number(cotizacion.crucero?.precio) || 0;
+    const crucero = precioPorPersonaCrucero * people;
+    let hotel = 0;
+    const hoteles = cotizacion.hoteles ?? (cotizacion.hotel ? (Array.isArray(cotizacion.hotel) ? cotizacion.hotel : [cotizacion.hotel]) : []);
+    hoteles.forEach((h: any) => {
+      (h.distribuciones || []).forEach((d: any) => {
+        (d.habitaciones || []).forEach((hab: any) => {
+          hotel += (Number(hab.price) || 0) + (Number(hab.iva) || 0);
+        });
+      });
+    });
+    const precioPorPersonaFerry = Number(cotizacion.ferry?.precio) || 0;
+    const ferry = precioPorPersonaFerry * people;
+    const entradasPrecio = Number(cotizacion.entradas?.precio) || 0;
+    const entradasCantidad = Number(cotizacion.entradas?.cantidad) || 1;
+    const entradas = entradasPrecio * entradasCantidad;
+    return {
+      viaje,
+      vuelo,
+      crucero,
+      hotel,
+      ferry,
+      entradas,
+      total: viaje + vuelo + crucero + hotel + ferry + entradas
+    };
+  }, [cotizacion, totalPeople]);
+
+  const subtotal =
+    (Number(cotizacion?.transfers) || 0) +
+    (Number(cotizacion?.insurance) || 0) +
+    (Number(cotizacion?.data_plan) || 0) +
+    (Number(cotizacion?.visa) || 0) +
+    extraAmounts.total;
+  const commissionPercent = Number(cotizacion?.commission) || 0;
+  const commissionAmount = subtotal * (commissionPercent / 100);
+  const fullTotal = subtotal + commissionAmount;
+
   // Determine initial active tab based on available data
   const getInitialTab = useCallback(() => {
     if (cotizacion?.viaje) return 'viaje';
@@ -141,6 +205,8 @@ export default function CotizacionProfile() {
     if (cotizacion?.ferry) return 'ferry';
     if (cotizacion?.entradas) return 'entradas';
     if (cotizacion?.seguro) return 'seguro';
+    if (cotizacion?.datos) return 'datos';
+    if (cotizacion?.visaDetails || Number(cotizacion?.visa) > 0) return 'visa';
     if (cotizacion?.moneda) return 'moneda';
     return 'viaje';
   }, [cotizacion]);
@@ -391,6 +457,30 @@ export default function CotizacionProfile() {
                       Seguro
                     </button>
                   )}
+                  {(cotizacion.datos || Number(cotizacion.data_plan) > 0) && (
+                    <button
+                      onClick={() => setActiveTab('datos')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'datos'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      Plan de Datos
+                    </button>
+                  )}
+                  {(cotizacion.visaDetails || Number(cotizacion.visa) > 0) && (
+                    <button
+                      onClick={() => setActiveTab('visa')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        activeTab === 'visa'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      Visa
+                    </button>
+                  )}
                   {cotizacion.moneda && (
                     <button
                       onClick={() => setActiveTab('moneda')}
@@ -609,6 +699,44 @@ export default function CotizacionProfile() {
                   </div>
                 )}
 
+                {activeTab === 'datos' && (cotizacion.datos || Number(cotizacion.data_plan) > 0) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Costo del Plan de Datos</label>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {formatCurrency(cotizacion.datos?.costo ?? cotizacion.data_plan)}
+                      </p>
+                    </div>
+                    {cotizacion.datos && cotizacion.datos.proveedor && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Proveedor</label>
+                        <p className="mt-1 text-sm text-gray-900">{cotizacion.datos.proveedor}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'visa' && (cotizacion.visaDetails || Number(cotizacion.visa) > 0) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Costo de Visa</label>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {formatCurrency(
+                          (cotizacion.visaDetails && (cotizacion.visaDetails as any).costo != null)
+                            ? (cotizacion.visaDetails as any).costo
+                            : cotizacion.visa
+                        )}
+                      </p>
+                    </div>
+                    {cotizacion.visaDetails && (cotizacion.visaDetails as any).tipo && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Tipo</label>
+                        <p className="mt-1 text-sm text-gray-900">{(cotizacion.visaDetails as any).tipo}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {activeTab === 'moneda' && cotizacion.moneda && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -624,7 +752,7 @@ export default function CotizacionProfile() {
                   </div>
                 )}
 
-                {!cotizacion[activeTab as keyof Cotizacion] && (
+                {activeTab !== 'datos' && activeTab !== 'visa' && !cotizacion[activeTab as keyof Cotizacion] && (
                   <div className="text-center py-8 text-gray-500">
                     <p>No hay información disponible para esta sección.</p>
                   </div>
@@ -645,6 +773,42 @@ export default function CotizacionProfile() {
                   <span className="text-sm text-gray-600">Traslados</span>
                   <span className="text-sm font-medium">{formatCurrency(cotizacion.transfers)}</span>
                 </div>
+                {extraAmounts.viaje > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Paquete</span>
+                    <span className="text-sm font-medium">{formatCurrency(extraAmounts.viaje)}</span>
+                  </div>
+                )}
+                {extraAmounts.vuelo > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Vuelo</span>
+                    <span className="text-sm font-medium">{formatCurrency(extraAmounts.vuelo)}</span>
+                  </div>
+                )}
+                {extraAmounts.crucero > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Crucero</span>
+                    <span className="text-sm font-medium">{formatCurrency(extraAmounts.crucero)}</span>
+                  </div>
+                )}
+                {extraAmounts.hotel > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Hotel</span>
+                    <span className="text-sm font-medium">{formatCurrency(extraAmounts.hotel)}</span>
+                  </div>
+                )}
+                {extraAmounts.ferry > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Ferry</span>
+                    <span className="text-sm font-medium">{formatCurrency(extraAmounts.ferry)}</span>
+                  </div>
+                )}
+                {extraAmounts.entradas > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Entradas</span>
+                    <span className="text-sm font-medium">{formatCurrency(extraAmounts.entradas)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Seguro</span>
                   <span className="text-sm font-medium">{formatCurrency(cotizacion.insurance)}</span>
@@ -658,20 +822,16 @@ export default function CotizacionProfile() {
                   <span className="text-sm font-medium">{formatCurrency(cotizacion.visa)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Comisión</span>
-                  <span className="text-sm font-medium">{formatCurrency(cotizacion.commission)}</span>
+                  <span className="text-sm text-gray-600">Comisión{commissionPercent > 0 ? ` (${commissionPercent}%)` : ''}</span>
+                  <span className="text-sm font-medium">{formatCurrency(commissionAmount)}</span>
                 </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between">
-                    <span className="text-base font-semibold text-gray-900">Total</span>
                     <span className="text-base font-semibold text-gray-900">
-                      {formatCurrency(
-                        (Number(cotizacion.transfers) || 0) + 
-                        (Number(cotizacion.insurance) || 0) + 
-                        (Number(cotizacion.data_plan) || 0) + 
-                        (Number(cotizacion.visa) || 0) + 
-                        (Number(cotizacion.commission) || 0)
-                      )}
+                      Total{cotizacion.moneda ? ` (${cotizacion.moneda.dollar ? 'USD' : 'MXN'})` : ''}
+                    </span>
+                    <span className="text-base font-semibold text-gray-900">
+                      {formatCurrency(fullTotal)}
                     </span>
                   </div>
                 </div>
@@ -679,7 +839,7 @@ export default function CotizacionProfile() {
             </div>
 
             {/* Messages */}
-            {(cotizacion.greeting_message || cotizacion.goodbye_message || cotizacion.messages) && (
+            {(cotizacion.greeting_message || cotizacion.goodbye_message || (cotizacion.messagesDisplay && cotizacion.messagesDisplay.trim())) && (
               <div className="bg-white rounded-lg shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h2 className="text-lg font-semibold text-gray-900">Mensajes</h2>
@@ -697,10 +857,10 @@ export default function CotizacionProfile() {
                       <p className="mt-1 text-sm text-gray-900">{cotizacion.goodbye_message}</p>
                     </div>
                   )}
-                  {cotizacion.messages && (
+                  {cotizacion.messagesDisplay && cotizacion.messagesDisplay.trim() && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Mensajes Adicionales</label>
-                      <p className="mt-1 text-sm text-gray-900">{cotizacion.messages}</p>
+                      <p className="mt-1 text-sm text-gray-900 whitespace-pre-line">{cotizacion.messagesDisplay}</p>
                     </div>
                   )}
                 </div>

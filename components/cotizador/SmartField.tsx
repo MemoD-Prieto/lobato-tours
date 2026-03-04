@@ -23,6 +23,8 @@ type SmartFieldProps = {
   validate?: (val: any) => string;
   autoComplete?: string;
   disabled?: boolean;
+  /** When false, select has no empty "Seleccione una opción" option (use when you have a default) */
+  placeholderOption?: boolean;
 };
 
 export function SmartField({
@@ -41,6 +43,7 @@ export function SmartField({
   validate,
   autoComplete,
   disabled,
+  placeholderOption = true,
 }: SmartFieldProps) {
   const { data, setValue } = useFormData();
   const val = getIn(data, name, type === "number" || type === "currency" ? "" : "");
@@ -69,7 +72,7 @@ export function SmartField({
       value: val ?? "",
       onChange,
       placeholder,
-      className: `mt-1 w-full border rounded p-2 ${inputClassName ?? ""} ${err ? "border-red-500" : ""}`.trim(),
+      className: `mt-1 w-full border rounded p-2 ${type === "currency" || type === "number" ? "text-right" : ""} ${inputClassName ?? ""} ${err ? "border-red-500" : ""}`.trim(),
       autoComplete,
       disabled,
     } as const;
@@ -78,7 +81,7 @@ export function SmartField({
     if (type === "select")
       return (
         <select {...common as any}>
-          <option value="">Seleccione una opción</option>
+          {placeholderOption && <option value="">Seleccione una opción</option>}
           {options?.map((o) => (
             <option key={String(o.value)} value={String(o.value)}>
               {o.label}

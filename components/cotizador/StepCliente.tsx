@@ -1,17 +1,23 @@
 import React, { useState, useCallback } from "react";
+import { FaUser } from "react-icons/fa";
 import { Card } from "./Card";
 import { SmartField } from "./SmartField";
 import { useFormData } from "./FormContext";
 
+interface PersonaItem {
+  id: number;
+  age_range: string;
+  isClient: boolean;
+}
+
 export function StepCliente() {
   const { data, setValue } = useFormData();
-  const [personas, setPersonas] = useState(() => {
-    // Initialize with the client as the first person
+  const [personas, setPersonas] = useState<PersonaItem[]>(() => {
     const existingPersonas = data?.clientes?.[0]?.personas || [];
     if (existingPersonas.length === 0) {
       return [{ id: 0, age_range: '', isClient: true }];
     }
-    return existingPersonas.map((p: any, index: number) => ({
+    return existingPersonas.map((p: { age_range?: string }, index: number) => ({
       id: index,
       age_range: p.age_range || '',
       isClient: index === 0
@@ -19,34 +25,46 @@ export function StepCliente() {
   });
 
   const addPersona = useCallback(() => {
-    const newId = Math.max(...personas.map(p => p.id), -1) + 1;
-    const newPersona = { id: newId, age_range: '', isClient: false };
-    setPersonas(prev => [...prev, newPersona]);
-    
-    // Update form data
+    const newId = Math.max(...personas.map((p: PersonaItem) => p.id), -1) + 1;
+    const newPersona: PersonaItem = { id: newId, age_range: '', isClient: false };
+    setPersonas((prev: PersonaItem[]) => [...prev, newPersona]);
+
     const currentPersonas = data?.clientes?.[0]?.personas || [];
     setValue(`clientes[0].personas[${currentPersonas.length}]`, { age_range: '' });
   }, [personas, data, setValue]);
 
+  const clientesPersonas = data?.clientes?.[0]?.personas;
+  const addPersonas = useCallback((count: number) => {
+    const currentFormPersonas = clientesPersonas || [];
+    const maxId = Math.max(...personas.map((p: PersonaItem) => p.id), -1);
+    const newPersonasState: PersonaItem[] = Array.from({ length: count }, (_, i) => ({
+      id: maxId + 1 + i,
+      age_range: '',
+      isClient: false
+    }));
+    const newFormPersonas = [...currentFormPersonas, ...Array.from({ length: count }, () => ({ age_range: '' }))];
+    setPersonas((prev: PersonaItem[]) => [...prev, ...newPersonasState]);
+    setValue('clientes[0].personas', newFormPersonas);
+  }, [personas, clientesPersonas, setValue]);
+
   const removePersona = useCallback((id: number) => {
-    if (personas.length <= 1) return; // Don't remove the last person
-    
-    setPersonas(prev => {
-      const newPersonas = prev.filter(p => p.id !== id);
-      // Update form data to remove the persona
+    if (personas.length <= 1) return;
+
+    setPersonas((prev: PersonaItem[]) => {
+      const newPersonas = prev.filter((p: PersonaItem) => p.id !== id);
       const currentPersonas = data?.clientes?.[0]?.personas || [];
-      const updatedPersonas = currentPersonas.filter((_: any, index: number) => {
-        const persona = prev.find(p => p.id === id);
-        return persona && index !== prev.indexOf(persona);
-      });
+      const personaToRemove = prev.find((p: PersonaItem) => p.id === id);
+      const removeIndex = personaToRemove ? prev.indexOf(personaToRemove) : -1;
+      const updatedPersonas = currentPersonas.filter((_: unknown, index: number) => index !== removeIndex);
       setValue('clientes[0].personas', updatedPersonas);
       return newPersonas;
     });
   }, [personas, data, setValue]);
 
   const updatePersonaAgeRange = useCallback((id: number, ageRange: string) => {
-    setPersonas(prev => prev.map(p => p.id === id ? { ...p, age_range: ageRange } : p));
-    setValue(`clientes[0].personas[${personas.findIndex(p => p.id === id)}].age_range`, ageRange);
+    setPersonas((prev: PersonaItem[]) => prev.map((p: PersonaItem) => (p.id === id ? { ...p, age_range: ageRange } : p)));
+    const idx = personas.findIndex((p: PersonaItem) => p.id === id);
+    setValue(`clientes[0].personas[${idx}].age_range`, ageRange);
   }, [personas, setValue]);
 
   return (
@@ -72,17 +90,37 @@ export function StepCliente() {
       <div className="mt-6">
         <div className="flex items-center justify-between mb-4">
           <h5 className="text-sm font-semibold">Personas en el viaje</h5>
-          <button 
-            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" 
-            type="button"
-            onClick={addPersona}
-          >
-            + Agregar persona
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => addPersonas(5)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              title="Agregar 5 personas"
+            >
+              <FaUser className="w-4 h-4" />
+              <span>5</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => addPersonas(10)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              title="Agregar 10 personas"
+            >
+              <FaUser className="w-4 h-4" />
+              <span>10</span>
+            </button>
+            <button 
+              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" 
+              type="button"
+              onClick={addPersona}
+            >
+              + Agregar persona
+            </button>
+          </div>
         </div>
 
         <div className="space-y-3">
-          {personas.map((persona, index) => (
+          {personas.map((persona: PersonaItem, index: number) => (
             <div 
               key={persona.id}
               className={`p-4 border rounded-lg transition-all ${

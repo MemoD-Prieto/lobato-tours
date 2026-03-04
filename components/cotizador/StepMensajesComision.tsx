@@ -22,7 +22,7 @@ export function StepMensajesComision() {
       <div className="mt-4">
         <SmartField 
           label="Comisión (%)" 
-          name="comision.porcentaje" 
+          name="cotizacion.commission" 
           type="number" 
           placeholder="0" 
           min={0}
