@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lobato Tours – Manual de Usuario</title>
+<style>
+  :root{--brand:#1e40af;--brand-light:#eff6ff;--accent:#16a34a;--warn:#d97706;--danger:#dc2626;--gray:#374151;--light:#f9fafb;--border:#e5e7eb}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--gray);background:#fff;line-height:1.65}
+  .page-wrap{display:flex;min-height:100vh}
+  nav.sidebar{width:260px;flex-shrink:0;background:var(--brand);color:#fff;padding:2rem 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav.sidebar .logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.15);font-size:1.1rem;font-weight:700}
+  nav.sidebar .logo span{opacity:.65;font-weight:400;font-size:.85rem;display:block;margin-top:.2rem}
+  nav.sidebar h3{padding:.9rem 1.5rem .4rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;opacity:.5}
+  nav.sidebar a{display:block;padding:.55rem 1.5rem;color:rgba(255,255,255,.85);text-decoration:none;font-size:.88rem;border-left:3px solid transparent;transition:.15s}
+  nav.sidebar a:hover{color:#fff;border-left-color:#93c5fd;background:rgba(255,255,255,.08)}
+  main{flex:1;padding:2.5rem 3rem;max-width:960px}
+  h1{font-size:2rem;color:var(--brand);margin-bottom:.4rem}
+  h2{font-size:1.4rem;color:var(--brand);margin:2.5rem 0 .8rem;padding-bottom:.4rem;border-bottom:2px solid var(--brand-light)}
+  h3{font-size:1.05rem;color:#1e3a8a;margin:1.6rem 0 .5rem}
+  p{margin-bottom:.75rem}
+  .subtitle{color:#6b7280;font-size:1rem;margin-bottom:2rem}
+  .ss{display:block;width:100%;border-radius:8px;border:1px solid var(--border);margin:1rem 0 1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+  .btn-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:.88rem}
+  .btn-table th{background:var(--brand);color:#fff;padding:.5rem .8rem;text-align:left}
+  .btn-table td{padding:.5rem .8rem;border-bottom:1px solid var(--border);vertical-align:top}
+  .btn-table tr:nth-child(even) td{background:var(--light)}
+  .btn-name{font-weight:600;white-space:nowrap;color:#1e3a8a}
+  .tip{background:#fffbeb;border-left:4px solid var(--warn);padding:.7rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.88rem}
+  .tip strong{color:var(--warn)}
+  .note{background:var(--brand-light);border-left:4px solid var(--brand);padding:.7rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.88rem}
+  .note strong{color:var(--brand)}
+  .badge{display:inline-block;padding:.15rem .55rem;border-radius:999px;font-size:.75rem;font-weight:600}
+  .badge-green{background:#dcfce7;color:#166534}
+  .badge-yellow{background:#fef9c3;color:#854d0e}
+  .role-block{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:.8rem 0}
+  .role-block strong{color:var(--brand)}
+  ol,ul{padding-left:1.4rem;margin-bottom:.8rem}
+  li{margin-bottom:.35rem}
+  hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+  .toc{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:2rem;font-size:.88rem}
+  .toc h2{margin:0 0 .8rem;font-size:1rem;border:none}
+  .toc a{color:var(--brand);text-decoration:none}
+  .page-section{margin-bottom:3rem}
+  /* ── PRINT BUTTON ─────────────────────────────── */
+  .print-bar{position:fixed;bottom:24px;right:24px;z-index:200}
+  .btn-print{background:var(--brand);color:#fff;border:none;padding:12px 24px;border-radius:100px;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(30,64,175,.4);transition:all .2s}
+  .btn-print:hover{background:#1e3a8a;transform:translateY(-1px);box-shadow:0 6px 20px rgba(30,64,175,.5)}
+  /* ── PRINT / PDF ──────────────────────────────── */
+  @media print{
+    .print-bar{display:none!important}
+    nav.sidebar{display:none!important}
+    main{padding:0;max-width:100%}
+    body{font-size:11pt}
+    h2{page-break-before:always}
+    h2:first-of-type{page-break-before:avoid}
+    .page-section{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="print-bar">
+  <button class="btn-print" onclick="window.print()">🖨️ Exportar a PDF</button>
+</div>
+<div class="page-wrap">
+<nav class="sidebar">
+  <div class="logo">Lobato Tours<span>Manual de Usuario</span></div>
+  <h3>Inicio</h3>
+  <a href="#intro">Introducción</a>
+  <a href="#roles">Roles de Usuario</a>
+  <a href="#login">Iniciar Sesión</a>
+  <h3>Páginas Principales</h3>
+  <a href="#dashboard">Panel Principal</a>
+  <a href="#cotizaciones">Lista de Cotizaciones</a>
+  <a href="#detail">Detalle de Cotización</a>
+  <h3>Crear Cotizaciones</h3>
+  <a href="#wizard">Asistente de Cotización</a>
+  <a href="#step-client">Paso 1 – Cliente</a>
+  <a href="#step-trip">Paso 2 – Info del Viaje</a>
+  <a href="#step-currency">Paso 3 – Moneda</a>
+  <a href="#step-services">Paso 4 – Servicios</a>
+  <a href="#step-service-details">Pasos 5+ – Detalles</a>
+  <a href="#step-messages">Mensajes y Comisión</a>
+  <a href="#step-summary">Paso Resumen</a>
+  <h3>Referencia</h3>
+  <a href="#statuses">Estados de Cotización</a>
+  <a href="#pdf">Exportar PDFs</a>
+  <a href="#tips">Consejos y Buenas Prácticas</a>
+</nav>
+<main>
+  <h1>Manual de Usuario</h1>
+  <p class="subtitle">Guía completa para agentes y gerentes que usan el sistema de cotizaciones de Lobato Tours.</p>
+  <div class="toc">
+    <h2>Tabla de Contenidos</h2>
+    <ol>
+      <li><a href="#intro">Introducción</a></li>
+      <li><a href="#roles">Roles de Usuario</a></li>
+      <li><a href="#login">Iniciar Sesión</a></li>
+      <li><a href="#dashboard">Panel Principal</a></li>
+      <li><a href="#cotizaciones">Lista de Cotizaciones</a></li>
+      <li><a href="#detail">Detalle de Cotización</a></li>
+      <li><a href="#wizard">Asistente de Cotización</a></li>
+      <li><a href="#statuses">Estados de Cotización</a></li>
+      <li><a href="#pdf">Exportar PDFs</a></li>
+      <li><a href="#tips">Consejos y Buenas Prácticas</a></li>
+    </ol>
+  </div>
+
+  <div class="page-section" id="intro">
+    <h2>1. Introducción</h2>
+    <p>El sistema de cotizaciones de Lobato Tours permite a los agentes de viaje crear, administrar y compartir cotizaciones profesionales con sus clientes de manera rápida. Desde una simple cotización de vuelo hasta un paquete completo con hotel, crucero, visa y seguro — todo se construye paso a paso usando el Asistente de Cotización y se exporta como un PDF con la marca de la empresa, listo para enviar al cliente.</p>
+    <p>Este manual cubre cada página y cada botón del sistema para que siempre sepas exactamente qué hace cada acción y por qué es importante.</p>
+  </div>
+
+  <div class="page-section" id="roles">
+    <h2>2. Roles de Usuario</h2>
+    <p>Cada cuenta tiene uno de tres roles, cada uno con diferentes permisos:</p>
+    <div class="role-block"><strong>Agente (Usuario)</strong> — Puede crear y administrar sus propias cotizaciones. No puede ver las cotizaciones de otros agentes. No tiene acceso a la configuración de administrador.</div>
+    <div class="role-block"><strong>Gerente</strong> — Puede ver y administrar las cotizaciones de todos los agentes. Puede generar reportes. No puede administrar cuentas de usuario.</div>
+    <div class="role-block"><strong>Administrador</strong> — Acceso completo a todo: gestión de usuarios, todas las cotizaciones, configuración del sistema y reportes.</div>
+  </div>
+
+  <div class="page-section" id="login">
+    <h2>3. Iniciar Sesión</h2>
+    <img src="doc-screenshots/login-page.jpg" alt="Página de inicio de sesión" class="ss"/>
+    <p>La página de inicio de sesión es el punto de entrada al sistema. Ingresa tus credenciales y haz clic en Iniciar Sesión. Si tu sesión sigue activa, serás llevado directamente al panel principal.</p>
+    <table class="btn-table">
+      <thead><tr><th>Campo / Botón</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Usuario o Correo</td><td>Ingresa tu nombre de usuario asignado o correo electrónico.</td><td>Identifica tu cuenta para que el sistema cargue tu rol y tus cotizaciones.</td></tr>
+        <tr><td class="btn-name">Contraseña</td><td>Ingresa tu contraseña (se muestra como puntos).</td><td>Te autentica de forma segura para evitar accesos no autorizados.</td></tr>
+        <tr><td class="btn-name">Botón Iniciar Sesión</td><td>Envía tus credenciales y te conecta. Muestra un indicador mientras verifica.</td><td>Abre la aplicación. Si las credenciales son incorrectas, aparece un mensaje de error en la pantalla para que puedas intentarlo de nuevo sin recargar la página.</td></tr>
+        <tr><td class="btn-name">Cambio de idioma (EN / ES)</td><td>Cambia el idioma de la interfaz entre inglés y español.</td><td>Trabaja en el idioma con el que te sientas más cómodo. La preferencia se guarda para tu sesión.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Consejo:</strong> Si ves un mensaje de "error de conexión", verifica tu conexión a internet e intenta de nuevo. Si el problema persiste, contacta a tu administrador.</div>
+  </div>
+
+  <div class="page-section" id="dashboard">
+    <h2>4. Panel Principal</h2>
+    <img src="doc-screenshots/admin-dashboard.jpg" alt="Panel principal" class="ss"/>
+    <p>El panel principal es la primera pantalla que ves al iniciar sesión. Te da un resumen en tiempo real de tu actividad de cotizaciones y acceso rápido a todas las partes del sistema.</p>
+    <h3>Navegación de la Barra Lateral</h3>
+    <table class="btn-table">
+      <thead><tr><th>Elemento</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Logo Lobato Tours</td><td>Al hacer clic, te devuelve al panel principal desde cualquier página.</td><td>Atajo rápido para regresar al inicio desde cualquier parte de la app, sin usar el botón Atrás del navegador.</td></tr>
+        <tr><td class="btn-name">Toggle de barra lateral (☰)</td><td>Colapsa la barra lateral izquierda para que solo se muestre el favicon, dando más espacio horizontal al contenido principal. Haz clic de nuevo para expandirla.</td><td>Úsalo cuando trabajes en una tabla ancha o en el asistente de cotización y necesites más espacio en pantalla.</td></tr>
+        <tr><td class="btn-name">Cotizaciones</td><td>Navega a la lista completa de todas tus cotizaciones.</td><td>Tu espacio de trabajo principal para encontrar y administrar cotizaciones existentes.</td></tr>
+        <tr><td class="btn-name">Nueva Cotización</td><td>Abre el Asistente de Cotización en blanco para empezar una nueva cotización.</td><td>La forma más rápida de crear una cotización para un cliente nuevo.</td></tr>
+        <tr><td class="btn-name">Cambio de idioma (EN / ES)</td><td>Cambia el idioma de la interfaz en cualquier momento.</td><td>Alterna entre inglés y español cuando lo necesites.</td></tr>
+        <tr><td class="btn-name">Botón de Ayuda (icono ?, al final de la barra)</td><td>Abre un menú desplegable con enlaces al Manual de Usuario y la Guía del Administrador, cada uno en una nueva pestaña.</td><td>Accede a la documentación sin salir de la app ni buscar en internet.</td></tr>
+        <tr><td class="btn-name">Menú de usuario / Avatar</td><td>Muestra tu nombre de usuario y rol. Puede incluir la opción de cerrar sesión.</td><td>Confirma qué cuenta está activa — importante en computadoras compartidas.</td></tr>
+      </tbody>
+    </table>
+    <h3>Tarjetas de Estadísticas</h3>
+    <table class="btn-table">
+      <thead><tr><th>Tarjeta</th><th>Qué muestra</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Total de Cotizaciones</td><td>Todas las cotizaciones que has creado (o todas en el sistema para gerentes/admins).</td></tr>
+        <tr><td class="btn-name">Terminadas</td><td>Cotizaciones marcadas como finalizadas — completas y listas para enviar al cliente.</td></tr>
+        <tr><td class="btn-name">Borradores</td><td>Cotizaciones en progreso — incompletas o aún no marcadas como terminadas.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Nota:</strong> Los gerentes y administradores ven los totales de todos los agentes del sistema. Los agentes regulares solo ven sus propias cotizaciones.</div>
+  </div>
+
+  <div class="page-section" id="cotizaciones">
+    <h2>5. Lista de Cotizaciones</h2>
+    <img src="doc-screenshots/admin-cotizaciones.jpg" alt="Lista de cotizaciones" class="ss"/>
+    <p>La Lista de Cotizaciones es donde encuentras, filtras y administras todas tus cotizaciones. Cada cotización creada aparece como una fila en la tabla.</p>
+    <h3>Barra de Acciones Superior</h3>
+    <table class="btn-table">
+      <thead><tr><th>Botón</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">+ Nueva Cotización</td><td>Abre el Asistente de Cotización desde cero para empezar una nueva.</td><td>Úsalo cada vez que necesites crear una cotización para un cliente o viaje nuevo.</td></tr>
+        <tr><td class="btn-name">Exportar CSV</td><td>Descarga todas las cotizaciones visibles (respetando los filtros activos) como un archivo .csv.</td><td>Genera reportes, comparte datos con la gerencia, o analiza tendencias en Excel o Google Sheets.</td></tr>
+      </tbody>
+    </table>
+    <h3>Filtros y Búsqueda</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Caja de búsqueda</td><td>Filtra la lista en tiempo real mientras escribes — busca por nombre del cliente, contacto y destino.</td><td>Encuentra la cotización de un cliente específico en segundos sin tener que desplazarte por toda la lista.</td></tr>
+        <tr><td class="btn-name">Filtro de estado</td><td>Mostrar Todas, solo las Terminadas o solo los Borradores.</td><td>Concéntrate en las cotizaciones que necesitan trabajo (borradores) o en las que están listas para compartir (terminadas).</td></tr>
+        <tr><td class="btn-name">Ordenar por</td><td>Ordena la lista por fecha de creación, nombre del cliente o destino.</td><td>Organiza la lista de la manera más útil para tu tarea actual.</td></tr>
+        <tr><td class="btn-name">Orden (Asc / Desc)</td><td>Invierte la dirección del orden para el campo seleccionado.</td><td>Ver las cotizaciones más recientes primero (fecha descendente) o en orden alfabético A-Z (nombre ascendente).</td></tr>
+        <tr><td class="btn-name">Mostrar (filas por página)</td><td>Elige cuántas cotizaciones se muestran por página: 10, 25, 50 o Todas.</td><td>Ver más cotizaciones de una vez en monitores grandes, o menos en pantallas pequeñas.</td></tr>
+      </tbody>
+    </table>
+    <h3>Columnas de la Tabla</h3>
+    <table class="btn-table">
+      <thead><tr><th>Columna</th><th>Qué muestra</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">ID</td><td>El número único asignado a esta cotización cuando se guardó por primera vez.</td></tr>
+        <tr><td class="btn-name">Cliente</td><td>El nombre del cliente principal ingresado en el Paso 1 del asistente.</td></tr>
+        <tr><td class="btn-name">Contacto</td><td>El correo electrónico o teléfono principal del cliente.</td></tr>
+        <tr><td class="btn-name">Destino</td><td>El destino principal del viaje del paso Info del Viaje.</td></tr>
+        <tr><td class="btn-name">Fecha</td><td>La fecha en que se creó la cotización por primera vez en el sistema.</td></tr>
+        <tr><td class="btn-name">Estado</td><td><span class="badge badge-green">Terminada</span> o <span class="badge badge-yellow">Borrador</span>.</td></tr>
+        <tr><td class="btn-name">Acciones</td><td>Cuatro íconos de botón para trabajar con esa cotización (ver abajo).</td></tr>
+      </tbody>
+    </table>
+    <h3>Íconos de Acción por Fila</h3>
+    <table class="btn-table">
+      <thead><tr><th>Ícono</th><th>Nombre</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td>👁</td><td class="btn-name">Ver Detalles</td><td>Abre la página completa de Detalle de Cotización para esa cotización.</td><td>Revisa todos los detalles, pestañas de servicios, totales y opciones para compartir sin entrar en modo de edición.</td></tr>
+        <tr><td>✏️</td><td class="btn-name">Editar</td><td>Vuelve a abrir el Asistente con todos los datos existentes precargados para que puedas hacer cambios.</td><td>Corregir precios, agregar o quitar servicios, actualizar información del cliente o agregar campos faltantes.</td></tr>
+        <tr><td>📋</td><td class="btn-name">Duplicar</td><td>Crea una copia exacta de la cotización como un nuevo borrador con un nuevo ID único.</td><td>Reutilizar una estructura de cotización para otro cliente, o crear una variación sin empezar desde cero.</td></tr>
+        <tr><td>🗑</td><td class="btn-name">Eliminar</td><td>Muestra una confirmación y luego elimina permanentemente la cotización y todos sus datos.</td><td>Eliminar cotizaciones de prueba, viajes cancelados o duplicados accidentales. <strong>Esta acción no se puede deshacer.</strong></td></tr>
+      </tbody>
+    </table>
+    <h3>Paginación</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">« / » (primera/última)</td><td>Salta a la primera o última página de resultados.</td></tr>
+        <tr><td class="btn-name">‹ / › (anterior/siguiente)</td><td>Avanza o retrocede una página a la vez.</td></tr>
+        <tr><td class="btn-name">Botones de número de página</td><td>Haz clic en cualquier número para ir directamente a esa página.</td></tr>
+        <tr><td class="btn-name">Mostrando X–Y de Z resultados</td><td>Te indica qué registros están visibles actualmente y el total que coincide con tus filtros.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="detail">
+    <h2>6. Detalle de Cotización</h2>
+    <img src="doc-screenshots/cotizacion-detail.jpg" alt="Detalle de cotización" class="ss"/>
+    <p>La página de Detalle de Cotización muestra la vista completa de una sola cotización — información del cliente, todos los servicios, desglose de precios y todas las opciones de compartir en un solo lugar.</p>
+    <h3>Botones de Acción del Encabezado</h3>
+    <table class="btn-table">
+      <thead><tr><th>Botón</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">← Volver a la lista</td><td>Regresa a la Lista de Cotizaciones preservando tus filtros y orden anteriores.</td><td>Regresa sin perder tu lugar en la lista.</td></tr>
+        <tr><td class="btn-name">Editar (ícono de lápiz)</td><td>Vuelve a abrir el Asistente con todos los datos precargados para hacer cambios.</td><td>Corregir un precio, agregar un servicio, actualizar datos del cliente o añadir campos faltantes.</td></tr>
+        <tr><td class="btn-name">Duplicar (ícono de copia)</td><td>Crea un nuevo borrador idéntico a éste con un nuevo ID.</td><td>Reutilizar la estructura de una cotización para otro cliente o crear una variación grupal sin empezar de cero.</td></tr>
+        <tr><td class="btn-name">Eliminar (ícono de basura)</td><td>Muestra un diálogo de confirmación y luego elimina permanentemente esta cotización.</td><td>Quitar cotizaciones que ya no son necesarias. No se puede deshacer.</td></tr>
+        <tr><td class="btn-name">PDF (botón rojo)</td><td>Abre el PDF generado en una nueva pestaña del navegador de inmediato.</td><td>Previsualiza exactamente lo que verá el cliente antes de compartir el enlace. También úsalo para imprimir o guardar en tu computadora.</td></tr>
+        <tr><td class="btn-name">Compartir por WhatsApp (botón verde)</td><td>Genera un mensaje de WhatsApp prediseñado con el resumen de la cotización y un enlace directo al PDF, listo para enviar desde tu teléfono o WhatsApp Web.</td><td>La forma más rápida de entregar una cotización terminada a un cliente — un clic y el mensaje está listo para enviar.</td></tr>
+        <tr><td class="btn-name">Insignia de estado</td><td>Muestra <span class="badge badge-green">Terminada</span> o <span class="badge badge-yellow">Borrador</span> para saber de un vistazo si la cotización está lista para compartir.</td><td>Verificación visual rápida antes de enviar cualquier cosa al cliente.</td></tr>
+      </tbody>
+    </table>
+    <h3>Sección Info del Viaje</h3>
+    <p>Esta sección siempre aparece de forma destacada en la parte superior del detalle, independientemente de qué servicios estén incluidos:</p>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué muestra</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Destino Principal</td><td>El destino principal del viaje (ej: Cancún, París, Mallorca).</td></tr>
+        <tr><td class="btn-name">Fecha de Salida</td><td>La fecha en que el cliente parte.</td></tr>
+        <tr><td class="btn-name">Fecha de Regreso</td><td>La fecha en que el cliente regresa. Junto con la fecha de salida define la duración total del viaje.</td></tr>
+      </tbody>
+    </table>
+    <h3>Pestañas de Servicios</h3>
+    <p>Debajo de la info del viaje hay un área con pestañas que muestra cada servicio agregado a la cotización. Haz clic en cualquier pestaña para ver sus detalles y precios. Solo se muestran las pestañas de los servicios realmente incluidos en la cotización.</p>
+    <h3>Panel Lateral de Resumen</h3>
+    <table class="btn-table">
+      <thead><tr><th>Elemento</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Botón Sub-cotización</td><td>Abre el modal de Sub-cotización para crear una cotización separada para un subgrupo de viajeros y/o servicios. Solo visible cuando la cotización tiene más de un viajero.</td><td>Ideal para grupos donde algunos miembros quieren servicios diferentes. Crea una cotización limpia y relevante para cada subgrupo sin duplicar toda la cotización.</td></tr>
+        <tr><td class="btn-name">Líneas de costo por servicio</td><td>Muestra el subtotal de cada servicio (Traslado, Paquete, Vuelo, etc.) de forma individual.</td><td>Ver exactamente cómo se construye el total — útil al discutir el desglose de precios con el cliente.</td></tr>
+        <tr><td class="btn-name">Línea de comisión</td><td>Muestra el porcentaje de comisión configurado y el monto calculado.</td><td>Ver tus ganancias en la cotización de un vistazo sin ningún cálculo manual.</td></tr>
+        <tr><td class="btn-name">Total General</td><td>El precio final que paga el cliente, incluyendo todos los servicios y comisión.</td><td>El número principal que presentas al cliente.</td></tr>
+        <tr><td class="btn-name">Lista de viajeros</td><td>Cada viajero listado con su rango de edad y su parte individual del costo total.</td><td>Útil para cotizaciones grupales para mostrar a cada persona su precio individual.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="wizard">
+    <h2>7. Asistente de Cotización</h2>
+    <p>El asistente te guía paso a paso para construir una cotización de viaje completa y profesional. Puedes moverte libremente entre los pasos usando los puntos de navegación, y tu progreso se guarda automáticamente de forma continua.</p>
+    <h3>Controles de Navegación del Asistente (en todos los pasos)</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Barra de progreso</td><td>Una barra horizontal que se llena conforme avanzas, mostrando el porcentaje de completado.</td><td>Indicación visual de cuántos pasos quedan.</td></tr>
+        <tr><td class="btn-name">Indicador de paso</td><td>Muestra "Paso X de Y: Nombre del Paso" para que siempre sepas exactamente dónde estás.</td><td>Evita confusiones sobre en qué paso estás, especialmente en cotizaciones largas con muchos servicios.</td></tr>
+        <tr><td class="btn-name">Puntos de navegación (● ● ●)</td><td>Un punto por paso. Punto azul = paso actual. Punto verde = ya completado. Punto gris = aún no visitado. Haz clic en cualquier punto para ir directamente a ese paso.</td><td>Salta hacia adelante para llenar cosas en cualquier orden, o regresa a un paso específico para corregir algo — sin necesidad de hacer clic en Anterior/Siguiente muchas veces.</td></tr>
+        <tr><td class="btn-name">Botón Anterior</td><td>Guarda el paso actual y retrocede un paso.</td><td>Revisar o corregir información ingresada en un paso anterior.</td></tr>
+        <tr><td class="btn-name">Botón Siguiente</td><td>Guarda el paso actual y avanza al siguiente paso.</td><td>Avanzar en el asistente después de llenar los campos del paso actual.</td></tr>
+        <tr><td class="btn-name">Indicador de autoguardado (giratorio)</td><td>Un pequeño indicador que aparece cuando los datos se están guardando en el servidor.</td><td>Confirma que tu trabajo se guarda automáticamente — puedes cerrar el navegador en cualquier momento y encontrar tu progreso intacto al regresar.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="step-client">
+    <h2>Paso 1 – Información del Cliente</h2>
+    <img src="doc-screenshots/wizard-step1-cliente.jpg" alt="Paso 1 - Cliente" class="ss"/>
+    <p>El primer paso de toda cotización. Estableces para quién es la cotización y listas a todos los que viajarán.</p>
+    <h3>Campos de Contacto del Cliente</h3>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th><th>Por qué importa</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Nombre del Cliente *</td><td>El nombre completo del cliente principal o líder del grupo.</td><td>Requerido para finalizar. Aparece en el encabezado del PDF e identifica la cotización en la lista. Usa el nombre completo tal como el cliente quiere verlo en el documento.</td></tr>
+        <tr><td class="btn-name">Contacto (email / teléfono) *</td><td>La forma principal de comunicarse con el cliente — correo electrónico o número de teléfono.</td><td>Requerido para finalizar. Se usa para generar el mensaje de WhatsApp. Sin esto el sistema no puede confirmar cómo contactar al cliente.</td></tr>
+        <tr><td class="btn-name">Contacto Secundario</td><td>Un correo o teléfono de respaldo para un segundo punto de contacto.</td><td>Opcional pero útil para reservas grupales donde una segunda persona también está involucrada en la decisión.</td></tr>
+      </tbody>
+    </table>
+    <h3>Viajeros</h3>
+    <p>Cada persona que viaja debe ser agregada con su rango de edad. Los rangos de edad determinan los precios ya que la mayoría de aerolíneas, hoteles y atracciones tienen tarifas diferentes para bebés, niños, adolescentes y adultos.</p>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Botón + Agregar Persona</td><td>Agrega una nueva fila de viajero a la lista.</td><td>Agrega viajeros de uno en uno cuando construyes el grupo manualmente.</td></tr>
+        <tr><td class="btn-name">Botón +5 (grupo)</td><td>Agrega cinco filas de viajero de una vez.</td><td>Ahorra tiempo con grupos medianos — agrega cinco espacios y luego llena cada rango de edad.</td></tr>
+        <tr><td class="btn-name">Botón +10 (grupo)</td><td>Agrega diez filas de viajero de una vez.</td><td>Ahorra tiempo con grupos grandes de tours — agrega un grupo completo de una vez y luego llena las edades.</td></tr>
+        <tr><td class="btn-name">Rango de edad (por viajero)</td><td>Selecciona el rango de edad del viajero: 0–2 (Bebé), 3–11 (Niño), 12–17 (Adolescente), 18+ (Adulto).</td><td>Requerido para cada viajero para finalizar la cotización. Los rangos de edad afectan significativamente las tarifas de aerolíneas, hoteles y actividades.</td></tr>
+        <tr><td class="btn-name">Botón Quitar (por viajero)</td><td>Elimina ese viajero de la lista permanentemente.</td><td>Quitar a alguien agregado por error o a un viajero que ya no participará en el grupo.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Nota:</strong> El primer viajero siempre está etiquetado como <em>Cliente</em> — es la persona principal de la reserva. No puede ser eliminado. Siempre se requiere al menos un viajero.</div>
+    <div class="tip"><strong>Requerido para finalizar:</strong> Nombre del cliente, contacto principal y el rango de edad del primer viajero (el Cliente) deben estar llenos antes de que la cotización pueda marcarse como Terminada.</div>
+  </div>
+
+  <div class="page-section" id="step-trip">
+    <h2>Paso 2 – Info del Viaje</h2>
+    <img src="doc-screenshots/wizard-step2-viaje.jpg" alt="Paso 2 - Info del Viaje" class="ss"/>
+    <p>Este paso captura los datos principales del viaje que aparecen en el PDF independientemente de qué servicios estén incluidos. Llénalo pronto — estos tres campos son requeridos para finalizar cualquier cotización.</p>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th><th>Por qué importa</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Destino Principal *</td><td>El destino principal del viaje (ej: "Cancún", "Roma y Florencia", "Miami y Orlando").</td><td>Requerido para finalizar. Aparece de forma destacada en el encabezado del PDF y en la tabla de la Lista de Cotizaciones. Ayuda tanto a ti como al cliente a identificar la cotización de un vistazo.</td></tr>
+        <tr><td class="btn-name">Fecha de Salida *</td><td>La fecha de partida — el primer día del viaje.</td><td>Requerido para finalizar. Aparece en el PDF para que el cliente sepa exactamente cuándo empieza el viaje.</td></tr>
+        <tr><td class="btn-name">Fecha de Regreso *</td><td>La fecha de retorno — el último día del viaje.</td><td>Requerido para finalizar. Junto con la fecha de salida define la duración total del viaje que se muestra en el PDF.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Consejo:</strong> Llena estos tres campos al principio del proceso — son necesarios antes de generar el PDF y son fáciles de olvidar si se dejan para el final.</div>
+  </div>
+
+  <div class="page-section" id="step-currency">
+    <h2>Paso 3 – Moneda</h2>
+    <img src="doc-screenshots/wizard-step3-moneda.jpg" alt="Paso 3 - Moneda" class="ss"/>
+    <p>Elige la moneda para esta cotización y, cuando el precio sea en USD, establece el tipo de cambio.</p>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Selector de moneda</td><td>Alterna entre MXN (Peso Mexicano) y USD (Dólar Americano).</td><td>Coincide con la moneda en que el cliente espera recibir la cotización. Algunos proveedores internacionales cotizan en USD mientras los clientes presupuestan en MXN.</td></tr>
+        <tr><td class="btn-name">Tipo de cambio</td><td>Ingresa el tipo de cambio actual MXN/USD (ej: 17.5). Solo requerido cuando se selecciona USD.</td><td>El sistema usa esta tasa para mostrar los equivalentes en MXN en el total del PDF. Ingresa siempre la tasa del día para que el cliente obtenga un estimado preciso.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Nota:</strong> El campo de tipo de cambio solo aparece cuando se selecciona USD.</div>
+  </div>
+
+  <div class="page-section" id="step-services">
+    <h2>Paso 4 – Selección de Servicios</h2>
+    <img src="doc-screenshots/wizard-step4-servicios.jpg" alt="Paso 4 - Servicios" class="ss"/>
+    <img src="doc-screenshots/wizard-step4-servicios-selected.jpg" alt="Paso 4 - Servicios seleccionados" class="ss"/>
+    <p>Selecciona cada servicio que quieras incluir en esta cotización. Cada servicio que actives agrega un paso dedicado después de este donde llenas sus detalles específicos y precios. Puedes agregar o quitar servicios en cualquier momento regresando a este paso.</p>
+    <table class="btn-table">
+      <thead><tr><th>Servicio</th><th>Qué agrega a la cotización</th><th>Cuándo usarlo</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Paquete</td><td>Un paquete turístico completo — nombre, precio global y descripción completa.</td><td>Cuando vendes un viaje todo incluido o un paquete prearmado de un operador turístico.</td></tr>
+        <tr><td class="btn-name">Vuelo</td><td>Aerolínea, tarifa base, impuestos, derechos aeroportuarios y cargos por equipaje.</td><td>Cuando el boleto de avión forma parte del viaje cotizado.</td></tr>
+        <tr><td class="btn-name">Hotel</td><td>Nombre del hotel, tipo de habitación, número de noches y tarifa por noche.</td><td>Cuando el alojamiento está incluido en el viaje.</td></tr>
+        <tr><td class="btn-name">Traslado</td><td>Transporte terrestre — transfer aeropuerto, shuttle o servicio privado.</td><td>Cuando el cliente necesita transporte entre el aeropuerto, hotel o atracciones.</td></tr>
+        <tr><td class="btn-name">Crucero</td><td>Línea de crucero, categoría de camarote, itinerario y precios.</td><td>Para itinerarios basados en cruceros.</td></tr>
+        <tr><td class="btn-name">Entradas</td><td>Boletos de entrada a parques o atracciones con precio por persona.</td><td>Disney, Universal, parques temáticos, conciertos, museos, eventos deportivos, etc.</td></tr>
+        <tr><td class="btn-name">Ferry</td><td>Ruta de ferry, operador y tarifa.</td><td>Destinos insulares o costeros que requieren cruce en ferry (ej: Playa del Carmen a Cozumel).</td></tr>
+        <tr><td class="btn-name">Seguro</td><td>Proveedor de seguro de viaje y monto de cobertura.</td><td>Siempre recomendado. Incluir cuando el cliente quiere tranquilidad para emergencias médicas, cancelación o equipaje perdido.</td></tr>
+        <tr><td class="btn-name">Plan de Datos</td><td>Plan de datos móviles para uso en el país de destino.</td><td>Cuando el cliente viajará internacionalmente y necesita datos en su teléfono sin cargos de roaming.</td></tr>
+        <tr><td class="btn-name">Visa</td><td>Tipo de visa, país de destino y costo del trámite.</td><td>Para cualquier destino que requiera visa — ESTA de EE.UU., visa Schengen, eTA canadiense, etc.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Requerido para finalizar:</strong> Debe seleccionarse al menos un servicio. El toggle de Terminada en el paso Resumen no se activará hasta que al menos una tarjeta de servicio esté seleccionada aquí.</div>
+  </div>
+
+  <div class="page-section" id="step-service-details">
+    <h2>Pasos 5+ – Detalles de Servicios</h2>
+    <p>Para cada servicio seleccionado en el Paso 4, aparece un paso dedicado en el asistente. A continuación se muestran los campos clave para los servicios más comúnmente utilizados.</p>
+    <h3>Paso de Paquete</h3>
+    <img src="doc-screenshots/wizard-step5-paquete.jpg" alt="Paso paquete" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th><th>Por qué importa</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Nombre del Paquete</td><td>El nombre del paquete tal como aparecerá en el PDF.</td><td>Usa un nombre descriptivo que el cliente recordará.</td></tr>
+        <tr><td class="btn-name">Precio del Paquete</td><td>El precio total del paquete incluyendo todo lo que cubre.</td><td>Se alimenta directamente al total de la cotización y al PDF. Ingresa el costo neto — la comisión se agregará por separado.</td></tr>
+        <tr><td class="btn-name">Descripción del Paquete</td><td>Área de texto libre que describe todo lo incluido: itinerario, comidas, actividades, inclusiones y exclusiones.</td><td>Este es el texto principal del cuerpo del PDF. Sé detallado — más información ahora significa menos preguntas del cliente después.</td></tr>
+        <tr><td class="btn-name">Número de Personas</td><td>Cuántos viajeros cubre el precio del paquete.</td><td>Se usa para calcular el precio por persona que se muestra en el PDF.</td></tr>
+      </tbody>
+    </table>
+    <h3>Paso de Vuelo</h3>
+    <img src="doc-screenshots/wizard-step6-vuelo.jpg" alt="Paso vuelo" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th><th>Por qué importa</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Aerolínea</td><td>Selecciona del menú desplegable o escribe un nombre personalizado si tu aerolínea no está en la lista.</td><td>Aparece en el PDF para que el cliente sepa qué aerolínea esperar.</td></tr>
+        <tr><td class="btn-name">Tarifa Base</td><td>El precio publicado del boleto antes de impuestos y cargos.</td><td>El punto de partida para el cálculo del costo total del vuelo.</td></tr>
+        <tr><td class="btn-name">IVA / Impuestos</td><td>Los impuestos del gobierno aplicados al vuelo.</td><td>Deben incluirse para que el total refleje con precisión lo que pagará el cliente.</td></tr>
+        <tr><td class="btn-name">TUA (Derecho de Uso de Aeropuerto)</td><td>La tarifa de salida/llegada al aeropuerto cobrada por pasajero.</td><td>Obligatorio en México y muchos otros países — debe incluirse en la cotización.</td></tr>
+        <tr><td class="btn-name">Cargo por Equipaje</td><td>Cargos por maleta documentada por pasajero.</td><td>Muchas aerolíneas de bajo costo cobran por separado el equipaje — incluir esto evita sorpresas desagradables para el cliente.</td></tr>
+        <tr><td class="btn-name">Número de Personas</td><td>Cuántos pasajeros cubre este precio de vuelo.</td><td>El sistema multiplica todos los cargos por persona por este conteo para producir el total correcto.</td></tr>
+      </tbody>
+    </table>
+    <h3>Paso de Hotel</h3>
+    <img src="doc-screenshots/wizard-step7-hotel.jpg" alt="Paso hotel" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Nombre del Hotel</td><td>El nombre de la propiedad tal como aparecerá en el PDF. Usa el nombre oficial exacto.</td></tr>
+        <tr><td class="btn-name">Tipo de Habitación</td><td>Estándar, Junior Suite, Vista al Mar, etc. Establece las expectativas del cliente.</td></tr>
+        <tr><td class="btn-name">Número de Noches</td><td>Total de noches en la propiedad. Se multiplica por la tarifa por noche automáticamente.</td></tr>
+        <tr><td class="btn-name">Tarifa por Noche</td><td>La tarifa por noche en la moneda seleccionada. El sistema calcula el total multiplicando por las noches.</td></tr>
+      </tbody>
+    </table>
+    <h3>Paso de Traslado</h3>
+    <img src="doc-screenshots/wizard-step8-traslado.jpg" alt="Paso traslado" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Tipo de Traslado</td><td>Shuttle compartido, van privada, SUV privada, auto de lujo, etc.</td></tr>
+        <tr><td class="btn-name">Proveedor</td><td>Nombre de la empresa de transporte o servicio.</td></tr>
+        <tr><td class="btn-name">Monto</td><td>Costo total del servicio de traslado. Se agrega al total de la cotización y aparece en el PDF.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="step-messages">
+    <h2>Paso Mensajes y Comisión</h2>
+    <img src="doc-screenshots/wizard-step9-mensajes.jpg" alt="Paso mensajes y comisión" class="ss"/>
+    <p>El penúltimo paso. Agrega notas personales y establece tu comisión antes del resumen final.</p>
+    <table class="btn-table">
+      <thead><tr><th>Campo</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Mensaje al Cliente</td><td>Una nota personal que aparece directamente en el PDF — saludos, condiciones importantes, instrucciones de pago, o cualquier cosa que el cliente deba leer.</td><td>Personaliza la cotización y comunica términos, plazos o condiciones especiales directamente en el documento para que el cliente tenga todo en un solo lugar.</td></tr>
+        <tr><td class="btn-name">Notas Internas</td><td>Notas para tu propio uso que NO aparecen en el PDF del cliente — referencias de reservas de proveedores, nombres de contacto, recordatorios de seguimiento.</td><td>Mantén todo el contexto relevante adjunto a la cotización sin exponerlo al cliente.</td></tr>
+        <tr><td class="btn-name">Comisión %</td><td>El porcentaje de comisión de tu agencia para esta cotización. El sistema calcula el monto exacto automáticamente.</td><td>Establece cuánta ganancia se agrega encima del costo de los servicios. El monto de comisión aparece en el resumen del PDF.</td></tr>
+        <tr><td class="btn-name">Fecha de Comisión</td><td>La fecha usada para el seguimiento y reporte de comisiones.</td><td>Ayuda a los gerentes y administradores a rastrear comisiones por período de tiempo y conciliar reportes de ganancias.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="step-summary">
+    <h2>Paso Resumen</h2>
+    <img src="doc-screenshots/wizard-step10-resumen.jpg" alt="Paso resumen" class="ss"/>
+    <p>El último paso del asistente. Aquí decides si la cotización está completa y lista para compartir con el cliente.</p>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>Qué hace</th><th>Por qué lo usas</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Etiqueta de Estado</td><td>Muestra el estado actual: <span class="badge badge-yellow">Borrador</span> o <span class="badge badge-green">Terminada</span>.</td><td>Referencia rápida — saber de un vistazo si esta cotización está lista para compartir.</td></tr>
+        <tr><td class="btn-name">Toggle de Terminada</td><td>El interruptor verde/gris que marca la cotización como terminada. <strong>Cuando intentas activarlo, el sistema valida todos los campos requeridos.</strong> Si falta algún campo requerido, el toggle regresa a la posición APAGADO con una animación de vibración y aparece una notificación listando exactamente qué campos necesitan completarse. Cuando todos los campos requeridos están llenos, el toggle se activa y permanece en verde.</td><td>Esta es la compuerta de calidad que evita que cotizaciones incompletas sean finalizadas. Úsalo solo cuando estés seguro de que la cotización está completa y lista para el cliente.</td></tr>
+        <tr><td class="btn-name">Botón Guardar Borrador</td><td>Guarda todos los datos actuales como borrador sin marcar la cotización como terminada. La cotización sigue siendo editable.</td><td>Guarda tu trabajo y regresa más tarde para completarla. Úsalo constantemente mientras construyes la cotización para no perder el progreso.</td></tr>
+        <tr><td class="btn-name">Botón Finalizar Cotización</td><td>Guarda la cotización con estado de Terminada. Se muestra en verde cuando el toggle de Terminada está activo.</td><td>Bloquea la cotización como completa y lista para presentar al cliente.</td></tr>
+        <tr><td class="btn-name">Botón Exportar PDF</td><td>Abre el PDF con la marca completa en una nueva pestaña del navegador. Solo aparece después de que la cotización está marcada como Terminada y tiene un ID guardado.</td><td>El documento para el cliente. Revísalo, imprímelo, guárdalo o copia la URL para compartirla directamente con el cliente.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Las 7 cosas requeridas antes de que el toggle de Terminada se active:</strong>
+      <ol>
+        <li>Nombre del cliente</li>
+        <li>Contacto del cliente (email o teléfono)</li>
+        <li>Rango de edad del primer viajero</li>
+        <li>Destino principal</li>
+        <li>Fecha de salida</li>
+        <li>Fecha de regreso</li>
+        <li>Al menos un servicio seleccionado</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="page-section" id="statuses">
+    <h2>8. Estados de Cotización</h2>
+    <table class="btn-table">
+      <thead><tr><th>Estado</th><th>Significado</th><th>Qué puedes hacer</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-yellow">Borrador</span></td><td>La cotización está incompleta o aún no ha sido marcada como terminada. Puede tener campos requeridos faltantes o no tener servicios seleccionados.</td><td>Editar libremente en cualquier momento. No se puede generar un PDF compartible hasta que se finalice.</td></tr>
+        <tr><td><span class="badge badge-green">Terminada</span></td><td>Todos los campos requeridos están completos. La cotización está finalizada y lista para compartir con el cliente.</td><td>Generar y compartir el PDF, enviar por WhatsApp, crear sub-cotizaciones. Sigue siendo totalmente editable — editar reiniciará el estado a Borrador hasta que se finalice de nuevo.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="pdf">
+    <h2>9. Exportar PDFs</h2>
+    <p>Un PDF puede generarse desde dos lugares:</p>
+    <ol>
+      <li>Desde el <strong>paso Resumen</strong> del asistente — haz clic en el botón rojo <em>Exportar PDF</em> (solo visible cuando la cotización está Terminada y tiene un ID guardado).</li>
+      <li>Desde la <strong>página de Detalle de Cotización</strong> — haz clic en el botón rojo <em>PDF</em> en la barra de acciones superior.</li>
+    </ol>
+    <p>El PDF se abre en una nueva pestaña del navegador. Desde ahí puedes:</p>
+    <ul>
+      <li>Imprimir usando la función de impresión del navegador (Ctrl+P o Cmd+P en Mac).</li>
+      <li>Guardar en tu computadora seleccionando "Guardar como PDF" en el diálogo de impresión.</li>
+      <li>Copiar la URL de la barra de direcciones y compartirla directamente con el cliente — el enlace es permanente mientras la cotización exista en el sistema.</li>
+    </ul>
+    <div class="note"><strong>Qué incluye cada PDF:</strong> Marca de Lobato Tours, nombre del cliente, destino, fechas del viaje, desglose completo de cada servicio con precios detallados, tu mensaje personal al cliente, monto de comisión y el total general.</div>
+  </div>
+
+  <div class="page-section" id="tips">
+    <h2>10. Consejos y Buenas Prácticas</h2>
+    <ul>
+      <li><strong>Llena la Info del Viaje en el Paso 2 pronto</strong> — El destino, la fecha de salida y la fecha de regreso son requeridos para el PDF. Ingrésalos justo después del paso del cliente para no olvidarlos al final.</li>
+      <li><strong>El autoguardado siempre está activo</strong> — El sistema guarda cada vez que haces clic en Siguiente, Anterior o en un punto de navegación. Cierra el navegador en cualquier momento y tu progreso estará esperando cuando regreses.</li>
+      <li><strong>Usa Duplicar para variaciones</strong> — Si un cliente quiere comparar dos opciones (7 noches vs. 10 noches, económica vs. primera clase), duplica la cotización y ajusta una copia — mucho más rápido que empezar de cero.</li>
+      <li><strong>Sub-cotizaciones para grupos mixtos</strong> — Cuando un grupo tiene viajeros con diferentes requerimientos, usa sub-cotizaciones en lugar de construir una sola cotización grande y confusa. Cada persona recibe un documento limpio y relevante.</li>
+      <li><strong>Siempre previsualiza el PDF antes de enviar</strong> — Abre el PDF y verifica el nombre del cliente, destino, fechas y totales antes de compartir el enlace. Unos segundos de revisión evitan errores embarazosos.</li>
+      <li><strong>Usa la barra de búsqueda en la Lista de Cotizaciones</strong> — Busca por nombre del cliente, teléfono o destino para encontrar cualquier cotización al instante sin tener que desplazarte.</li>
+      <li><strong>Establece el tipo de cambio siempre para cotizaciones en USD</strong> — Los tipos de cambio cambian diariamente. Ingresa siempre la tasa del día en el Paso 3 para dar al cliente un total en MXN preciso en el PDF.</li>
+      <li><strong>Usa las Notas Internas para detalles del proveedor</strong> — Los códigos de reserva del proveedor, nombres de contacto y fechas límite van en el campo de Notas Internas — son invisibles para el cliente pero están adjuntos a la cotización para tu propio uso.</li>
+    </ul>
+  </div>
+
+  <hr/>
+  <p style="text-align:center;color:#9ca3af;font-size:.82rem;padding:1rem 0">Sistema de Cotizaciones Lobato Tours &nbsp;·&nbsp; Manual de Usuario &nbsp;·&nbsp; Versión 2.0</p>
+</main>
+</div>
+</body>
+</html>

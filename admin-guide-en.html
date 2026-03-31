@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobato Tours – Administrator Guide</title>
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #6d28d9;
+      --primary-light: #f5f3ff;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --info: #2563eb;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --sidebar-w: 290px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--gray-800); background: #fff; line-height: 1.6; }
+
+    @media print {
+      .no-print, .sidebar { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      body { font-size: 11pt; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      .cover { page-break-after: always; }
+    }
+
+    .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: #1e1b4b; color: #fff; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+    .sidebar-logo { padding: 28px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .sidebar-logo .brand { font-size: 19px; font-weight: 800; color: #fff; }
+    .sidebar-logo .subtitle { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+    .sidebar-nav { padding: 16px 0; flex: 1; }
+    .nav-section { padding: 10px 20px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,.3); font-weight: 700; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px; transition: all .15s; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+
+    .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+    .cover { background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 70%, #a855f7 100%); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 40px; position: relative; overflow: hidden; }
+    .cover::before { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: rgba(255,255,255,.04); top: -150px; right: -150px; }
+    .cover::after  { content: ''; position: absolute; width: 350px; height: 350px; border-radius: 50%; background: rgba(255,255,255,.04); bottom: -100px; left: -100px; }
+    .cover h1 { font-size: 50px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 12px; }
+    .cover .tagline { font-size: 19px; opacity: .8; margin-bottom: 40px; font-weight: 300; }
+    .cover .doc-type { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); padding: 8px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+    .cover-badge { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-block; margin-bottom: 28px; }
+    .cover-meta { margin-top: 60px; font-size: 13px; opacity: .55; }
+
+    .section { padding: 64px 56px; max-width: 920px; }
+    .section + .section { border-top: 1px solid var(--gray-200); }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
+    h1.section-title { font-size: 36px; font-weight: 800; color: var(--gray-900); letter-spacing: -.5px; margin-bottom: 16px; }
+    h2.section-title { font-size: 25px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+    h3.sub-title { font-size: 17px; font-weight: 700; color: var(--gray-800); margin-bottom: 8px; }
+    .lead { font-size: 17px; color: var(--gray-500); margin-bottom: 32px; max-width: 700px; }
+    p { margin-bottom: 14px; font-size: 15px; color: var(--gray-700); }
+
+    .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; display: flex; gap: 14px; align-items: flex-start; }
+    .callout.info   { background: #eff6ff; border-left: 4px solid var(--info); }
+    .callout.tip    { background: #f0fdf4; border-left: 4px solid var(--success); }
+    .callout.warn   { background: #fffbeb; border-left: 4px solid var(--warning); }
+    .callout.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+    .callout.admin  { background: var(--primary-light); border-left: 4px solid var(--primary); }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text p { margin: 0; font-size: 14px; }
+    .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+
+    table.docs-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+    .docs-table th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--gray-500); border-bottom: 2px solid var(--gray-200); }
+    .docs-table td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table tr:hover td { background: var(--gray-50); }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+    .badge.green  { background: #d1fae5; color: #065f46; }
+    .badge.yellow { background: #fef3c7; color: #92400e; }
+    .badge.blue   { background: #dbeafe; color: #1e40af; }
+    .badge.purple { background: #ede9fe; color: #5b21b6; }
+    .badge.red    { background: #fee2e2; color: #991b1b; }
+    .badge.gray   { background: var(--gray-100); color: var(--gray-600); }
+
+    .role-card { border-radius: 12px; padding: 20px 24px; margin: 12px 0; display: flex; gap: 20px; align-items: flex-start; border: 1px solid; }
+    .role-card.admin  { background: #f5f3ff; border-color: #c4b5fd; }
+    .role-card.manager{ background: #eff6ff; border-color: #93c5fd; }
+    .role-card.user   { background: #f0fdf4; border-color: #86efac; }
+    .role-icon { font-size: 28px; }
+    .role-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+    .role-perms { list-style: none; margin-top: 8px; }
+    .role-perms li { font-size: 13px; color: var(--gray-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .role-perms li::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .role-perms li.denied::before { content: '✕'; color: var(--danger); }
+
+    .mockup { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; margin: 28px 0; box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+    .mockup-bar { background: var(--gray-200); padding: 10px 16px; display: flex; align-items: center; gap: 6px; }
+    .mockup-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-bar .dot.red    { background: #ff5f57; }
+    .mockup-bar .dot.yellow { background: #ffbd2e; }
+    .mockup-bar .dot.green  { background: #28c840; }
+    .mockup-bar .url { margin-left: 10px; background: #fff; border-radius: 6px; padding: 3px 14px; font-size: 12px; color: var(--gray-500); font-family: monospace; }
+    .mockup-body { padding: 24px; }
+
+    .steps-list { list-style: none; margin: 20px 0; }
+    .steps-list li { display: flex; gap: 16px; margin-bottom: 24px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .step-content p { margin: 0; font-size: 14px; color: var(--gray-600); }
+
+    .field-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+    .field-row { display: grid; grid-template-columns: 200px 90px 1fr; gap: 0; padding: 12px 16px; border-bottom: 1px solid var(--gray-100); font-size: 14px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-row:nth-child(even) { background: var(--gray-50); }
+    .field-name { font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 13px; }
+    .field-req  { color: var(--danger); font-size: 12px; font-weight: 600; }
+    .field-desc { color: var(--gray-600); }
+
+    .api-block { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 20px 24px; margin: 16px 0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; }
+    .api-method { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-right: 8px; }
+    .api-method.get  { background: #1d4ed8; color: #fff; }
+    .api-method.post { background: #15803d; color: #fff; }
+    .api-method.put  { background: #b45309; color: #fff; }
+    .api-method.del  { background: #b91c1c; color: #fff; }
+    .api-endpoint { color: #7dd3fc; }
+    .api-desc { color: #94a3b8; margin-left: 8px; font-size: 12px; }
+
+    .db-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 12px 0; }
+    .db-table-header { background: #1e1b4b; color: #fff; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 8px; }
+    .db-cols { padding: 0; }
+    .db-col { display: grid; grid-template-columns: 160px 100px 1fr; padding: 9px 16px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+    .db-col:last-child { border-bottom: none; }
+    .db-col-name { font-family: monospace; color: var(--gray-800); font-weight: 600; }
+    .db-col-type { color: #7c3aed; font-family: monospace; font-size: 12px; }
+    .db-col-desc { color: var(--gray-500); font-size: 12px; }
+
+    .env-block { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 20px 24px; margin: 16px 0; font-family: monospace; font-size: 13px; line-height: 2; }
+    .env-key   { color: #7dd3fc; }
+    .env-val   { color: #a7f3d0; }
+    .env-comment { color: #64748b; }
+
+    .print-bar { position: fixed; bottom: 24px; right: 24px; z-index: 200; }
+    .btn-print { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(124,58,237,.4); transition: all .2s; }
+    .btn-print:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .divider { height: 1px; background: var(--gray-200); margin: 32px 0; }
+    .tag { display: inline-block; background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .section { padding: 40px 24px; }
+    }
+
+    .app-screenshot { width: 100%; max-width: 800px; border-radius: 10px; border: 1px solid var(--gray-200); box-shadow: 0 4px 20px rgba(0,0,0,.08); margin: 20px 0 8px; display: block; }
+    .screenshot-caption { font-size: 12px; color: var(--gray-500); text-align: center; margin-bottom: 28px; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar no-print">
+  <div class="sidebar-logo">
+    <div class="brand">⚙️ Lobato Tours</div>
+    <div class="subtitle">Administrator Guide · EN</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Introduction</div>
+    <a class="nav-item" href="#intro"><span class="dot"></span> Overview</a>
+    <a class="nav-item" href="#roles"><span class="dot"></span> Roles &amp; Permissions</a>
+
+    <div class="nav-section">User Management</div>
+    <a class="nav-item" href="#users"><span class="dot"></span> User Management Page</a>
+    <a class="nav-item" href="#create-user"><span class="dot"></span> Creating Users</a>
+    <a class="nav-item" href="#edit-user"><span class="dot"></span> Editing Users</a>
+    <a class="nav-item" href="#deactivate"><span class="dot"></span> Deactivating / Deleting</a>
+
+    <div class="nav-section">Quote Management</div>
+    <a class="nav-item" href="#quotes-admin"><span class="dot"></span> Managing All Quotes</a>
+    <a class="nav-item" href="#export"><span class="dot"></span> Export &amp; Reporting</a>
+
+    <div class="nav-section">System Setup</div>
+    <a class="nav-item" href="#environment"><span class="dot"></span> Environment Variables</a>
+    <a class="nav-item" href="#database"><span class="dot"></span> Database Schema</a>
+    <a class="nav-item" href="#api"><span class="dot"></span> API Reference</a>
+    <a class="nav-item" href="#docker"><span class="dot"></span> Docker Setup</a>
+
+    <div class="nav-section">Operations</div>
+    <a class="nav-item" href="#initialization"><span class="dot"></span> First-Time Setup</a>
+    <a class="nav-item" href="#troubleshooting"><span class="dot"></span> Troubleshooting</a>
+    <a class="nav-item" href="#security"><span class="dot"></span> Security Notes</a>
+  </div>
+</nav>
+
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">🖨️ Export to PDF</button>
+</div>
+
+<div class="main-content">
+
+  <!-- COVER -->
+  <div class="cover" id="cover">
+    <div class="cover-badge">🔐 RESTRICTED — ADMIN ONLY</div>
+    <div class="doc-type">Administrator Guide</div>
+    <h1>Lobato Tours<br>System Admin Manual</h1>
+    <p class="tagline">User management, system configuration, API reference, and operations guide</p>
+    <div class="cover-meta">Version 1.0 &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; English Edition</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section" id="intro">
+    <div class="section-label">Chapter 1</div>
+    <h1 class="section-title">Administrator Overview</h1>
+    <p class="lead">This guide is intended for system administrators of the Lobato Tours Quotation System. It covers user management, role configuration, system setup, the database schema, and the REST API.</p>
+    <img src="/doc-screenshots/admin-dashboard.jpg" alt="Admin dashboard overview" class="app-screenshot">
+    <p class="screenshot-caption">Admin dashboard — full statistics and monthly trend chart</p>
+
+    <p>As an administrator, you have full access to all features of the application plus exclusive access to:</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Admin-Only Feature</th><th>Description</th><th>URL</th></tr></thead>
+      <tbody>
+        <tr><td>👥 <strong>User Management</strong></td><td>Create, edit, deactivate, and delete user accounts</td><td><span class="tag">/admin/users</span></td></tr>
+        <tr><td>📊 <strong>All Quotes</strong></td><td>View and manage every quote in the system (not just your own)</td><td><span class="tag">/cotizaciones</span></td></tr>
+        <tr><td>⚙️ <strong>System Init</strong></td><td>Initialize or reset the database via the API</td><td><span class="tag">/api/init</span></td></tr>
+        <tr><td>📤 <strong>Full CSV Export</strong></td><td>Export all quotes across all users</td><td><span class="tag">/api/cotizaciones/export</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout admin">
+      <div class="callout-icon">🛡️</div>
+      <div class="callout-text">
+        <div class="callout-title">Admin Access is Protected</div>
+        <p>Admin-only routes (like <code>/admin/users</code>) redirect non-admin users back to the dashboard automatically. The API enforces role checks server-side on every request.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section" id="roles">
+    <div class="section-label">Chapter 2</div>
+    <h1 class="section-title">Roles &amp; Permissions</h1>
+    <p class="lead">The system uses three role levels. Each role controls what a user can see and do.</p>
+
+    <div class="role-card admin">
+      <div class="role-icon">👑</div>
+      <div>
+        <div class="role-name" style="color:#5b21b6;">Administrator</div>
+        <div style="font-size:13px;color:#374151;">Internal code: <code>admin</code></div>
+        <ul class="role-perms">
+          <li>Access all quotes from all users</li>
+          <li>Create, edit, deactivate, and delete user accounts</li>
+          <li>Access the <code>/admin/users</code> page</li>
+          <li>Initialize and manage the database</li>
+          <li>Export all system data</li>
+          <li>All Manager and User permissions</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card manager">
+      <div class="role-icon">🎯</div>
+      <div>
+        <div class="role-name" style="color:#1e40af;">Manager</div>
+        <div style="font-size:13px;color:#374151;">Internal code: <code>manager</code></div>
+        <ul class="role-perms">
+          <li>View and manage all quotes from all users</li>
+          <li>Export CSV of all quotes</li>
+          <li>Create and manage their own quotes</li>
+          <li class="denied">Cannot access user management</li>
+          <li class="denied">Cannot delete other users' accounts</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card user">
+      <div class="role-icon">👤</div>
+      <div>
+        <div class="role-name" style="color:#065f46;">User</div>
+        <div style="font-size:13px;color:#374151;">Internal code: <code>user</code></div>
+        <ul class="role-perms">
+          <li>Create, view, edit, and delete their own quotes</li>
+          <li>Export their own quotes to CSV</li>
+          <li class="denied">Cannot view other users' quotes</li>
+          <li class="denied">Cannot access admin panel</li>
+          <li class="denied">Cannot manage users</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <div class="callout-title">Default credentials</div>
+        <p>The initial admin account created during database setup uses <strong>username: admin</strong> and <strong>password: admin123</strong>. Change this password immediately after first login in production.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER MANAGEMENT PAGE -->
+  <div class="section" id="users">
+    <div class="section-label">Chapter 3</div>
+    <h1 class="section-title">User Management Page</h1>
+    <p class="lead">Navigate to <span class="tag">/admin/users</span> (or click the user icon in the top bar) to manage all system accounts.</p>
+    <img src="/doc-screenshots/admin-users.jpg" alt="User Management page" class="app-screenshot">
+    <p class="screenshot-caption">User Management page showing all accounts with role badges</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/admin/users</span>
+      </div>
+      <div class="mockup-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div>
+            <div style="font-size:18px;font-weight:800;">User Management</div>
+            <div style="font-size:13px;color:#6b7280;">Manage system accounts and permissions</div>
+          </div>
+          <div style="background:#7c3aed;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;">+ New User</div>
+        </div>
+        <!-- Role legend -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+          <div style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:12px;"><span style="background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Admin</span><p style="font-size:11px;color:#6b7280;margin-top:6px;margin-bottom:0;">Full access: users, all quotes, settings</p></div>
+          <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:12px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Manager</span><p style="font-size:11px;color:#6b7280;margin-top:6px;margin-bottom:0;">Views all quotes, no user management</p></div>
+          <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">User</span><p style="font-size:11px;color:#6b7280;margin-top:6px;margin-bottom:0;">Only sees and manages their own quotes</p></div>
+        </div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <thead><tr style="background:#f9fafb;">
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Username</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Name</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Email</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Role</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Status</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid #f3f4f6;">
+              <td style="padding:9px 8px;font-family:monospace;font-weight:600;">admin</td>
+              <td style="padding:9px 8px;">Admin User</td>
+              <td style="padding:9px 8px;color:#6b7280;">admin@lobatotours.com</td>
+              <td style="padding:9px 8px;"><span style="background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Admin</span></td>
+              <td style="padding:9px 8px;"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Active</span></td>
+              <td style="padding:9px 8px;"><span style="background:#eff6ff;color:#1e40af;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;">Edit</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p>The page shows a role legend at the top explaining what each role can do, followed by the users table. You can click any row's <strong>Edit</strong> button to modify that user.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>Only users with the <span class="badge purple">Admin</span> role can access this page. Attempting to visit <code>/admin/users</code> as a non-admin will redirect to the Dashboard.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE USER -->
+  <div class="section" id="create-user">
+    <div class="section-label">Chapter 3.1</div>
+    <h1 class="section-title">Creating a New User</h1>
+    <p class="lead">Click the <strong>+ New User</strong> button on the User Management page to open the Create User modal.</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Field</span><span>Required</span><span>Notes</span></div>
+      <div class="field-row"><span class="field-name">username</span><span class="field-req">Yes</span><span class="field-desc">Unique login identifier (e.g., <code>jperez</code>). Cannot be changed after creation. Lowercase, no spaces.</span></div>
+      <div class="field-row"><span class="field-name">real_name</span><span class="field-req">Yes</span><span class="field-desc">Full name shown in the interface and in quote author attribution</span></div>
+      <div class="field-row"><span class="field-name">email</span><span class="field-req">Yes</span><span class="field-desc">Must be a valid, unique email address. Used for login and identification.</span></div>
+      <div class="field-row"><span class="field-name">password</span><span class="field-req">Yes</span><span class="field-desc">Minimum 6 characters. Stored as a bcrypt hash — never stored in plain text.</span></div>
+      <div class="field-row"><span class="field-name">phone_number</span><span class="field-req">No</span><span class="field-desc">Contact phone number (optional, shown in user table)</span></div>
+      <div class="field-row"><span class="field-name">role</span><span class="field-req">Yes</span><span class="field-desc">Select <strong>Admin</strong>, <strong>Manager</strong>, or <strong>User</strong>. See Chapter 2 for permission differences.</span></div>
+    </div>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content"><h4>Click "New User"</h4><p>The create modal opens with an empty form.</p></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content"><h4>Fill in required fields</h4><p>Enter username, full name, email, and a temporary password. Phone is optional.</p></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content"><h4>Select the appropriate role</h4><p>Click one of the three role cards (Admin, Manager, User). The selected card is highlighted with a purple border.</p></div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content"><h4>Click "Create User"</h4><p>The new account is created immediately. Share the username and temporary password with the user securely.</p></div>
+      </li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-icon">🔒</div>
+      <div class="callout-text">
+        <div class="callout-title">Security Best Practice</div>
+        <p>Set a temporary password and ask the user to change it on first login. Do not reuse passwords across accounts.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT USER -->
+  <div class="section" id="edit-user">
+    <div class="section-label">Chapter 3.2</div>
+    <h1 class="section-title">Editing a User</h1>
+    <p class="lead">Click the <strong>Edit</strong> button on any user row to open the Edit modal. The form is pre-filled with the current values.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Field</th><th>Editable?</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Username</td><td><span class="badge red">No</span></td><td>Username cannot be changed after account creation to preserve quote attribution</td></tr>
+        <tr><td>Full Name</td><td><span class="badge green">Yes</span></td><td>Update to correct spelling or name changes</td></tr>
+        <tr><td>Email</td><td><span class="badge green">Yes</span></td><td>Must remain unique in the system</td></tr>
+        <tr><td>Password</td><td><span class="badge green">Yes</span></td><td>Leave blank to keep current password; enter a new value to reset it</td></tr>
+        <tr><td>Phone</td><td><span class="badge green">Yes</span></td><td>Optional field</td></tr>
+        <tr><td>Role</td><td><span class="badge green">Yes</span></td><td>Change at any time. Takes effect on the user's next page load.</td></tr>
+        <tr><td>Active Status</td><td><span class="badge green">Yes</span></td><td>Toggle to deactivate an account without deleting it (see Chapter 3.3)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <p>You cannot edit your own account's active status (the toggle is disabled for the currently logged-in admin). This prevents accidentally locking yourself out of the system.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEACTIVATE/DELETE -->
+  <div class="section" id="deactivate">
+    <div class="section-label">Chapter 3.3</div>
+    <h1 class="section-title">Deactivating &amp; Deleting Users</h1>
+    <p class="lead">There are two ways to remove a user's access: deactivation (reversible) and deletion (permanent).</p>
+
+    <h2 class="section-title">Deactivating a User</h2>
+    <p>Click the green <span class="badge green">Active</span> status badge in the users table to toggle it to <span class="badge gray">Inactive</span>. The user will be prevented from logging in, but their account and all their quotes remain intact.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p><strong>Prefer deactivation over deletion</strong> for employees who leave the company. Their historical quotes remain accessible to managers and admins, preserving important business records.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Deleting a User</h2>
+    <p>Click the red <strong>Delete</strong> button on a user's row. A confirmation dialog will appear showing the user's name and username. Click <strong>Eliminar</strong> to permanently delete the account.</p>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚨</div>
+      <div class="callout-text">
+        <div class="callout-title">Deletion is permanent</div>
+        <p>Deleting a user account cannot be undone. All their quotes will remain in the system attributed to their employee ID, but they will no longer be able to log in and their profile information will be removed. The delete button is not available for the currently logged-in admin.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTES ADMIN -->
+  <div class="section" id="quotes-admin">
+    <div class="section-label">Chapter 4</div>
+    <h1 class="section-title">Managing All Quotes (Admin View)</h1>
+    <p class="lead">Unlike regular users who only see their own quotes, Admins and Managers see all quotes from all agents in the Quotes List.</p>
+    <img src="/doc-screenshots/admin-cotizaciones.jpg" alt="Admin quotes list" class="app-screenshot">
+    <p class="screenshot-caption">Admin/Manager view — all quotes from every agent are visible</p>
+
+    <p>From <span class="tag">/cotizaciones</span>, admins can:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:16px;">
+      <li style="margin-bottom:6px;">View, edit, duplicate, and delete any quote regardless of who created it</li>
+      <li style="margin-bottom:6px;">Search and filter across all customer names, statuses, and dates</li>
+      <li style="margin-bottom:6px;">Export the full dataset to CSV for reporting</li>
+    </ul>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>The server-side logic automatically checks the logged-in user's role on every API call. Admins and Managers automatically receive unfiltered data; regular Users receive only their own records.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="section" id="export">
+    <div class="section-label">Chapter 4.1</div>
+    <h1 class="section-title">Export &amp; Reporting</h1>
+    <p class="lead">The CSV export allows you to pull all quote data into a spreadsheet for analysis, reporting, or archiving.</p>
+
+    <h2 class="section-title">Exporting from the UI</h2>
+    <p>On the Quotes List page, click <strong>Export CSV</strong>. The download respects the active filters — if you want all quotes, clear all filters first.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Exporting via API</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span><span class="api-endpoint">/api/cotizaciones/export</span><br>
+      <br>
+      <span class="env-comment"># Optional query parameters:</span><br>
+      <span class="env-key">?status</span>=<span class="api-endpoint">all|finished|draft</span><br>
+      <span class="env-key">?search</span>=<span class="api-endpoint">customer_name_or_phone</span><br>
+      <span class="env-key">?sortBy</span>=<span class="api-endpoint">id|creation_date|finished</span><br>
+      <span class="env-key">?sortOrder</span>=<span class="api-endpoint">ASC|DESC</span>
+    </div>
+
+    <p>The response is a <code>text/csv</code> file with all matching quotes. The export includes customer name, contact, destination, travel dates, status, and creation date.</p>
+  </div>
+
+  <!-- ENVIRONMENT -->
+  <div class="section" id="environment">
+    <div class="section-label">Chapter 5</div>
+    <h1 class="section-title">Environment Variables</h1>
+    <p class="lead">Create a <code>.env</code> file in the project root with these variables before starting the application.</p>
+
+    <div class="env-block">
+      <span class="env-comment"># ─── Database Configuration ─────────────────────</span><br>
+      <span class="env-key">DB_USER</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_PASSWORD</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_NAME</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_HOST</span>=<span class="env-val">localhost</span><br>
+      <span class="env-key">DB_PORT</span>=<span class="env-val">5430</span><br>
+      <br>
+      <span class="env-comment"># ─── Next.js / Auth ─────────────────────────────</span><br>
+      <span class="env-key">NEXTAUTH_URL</span>=<span class="env-val">http://localhost:3000</span><br>
+      <span class="env-key">NEXTAUTH_SECRET</span>=<span class="env-val">your-strong-secret-key-here</span>
+    </div>
+
+    <table class="docs-table">
+      <thead><tr><th>Variable</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>DB_USER</code></td><td>PostgreSQL username</td><td>postgres</td></tr>
+        <tr><td><code>DB_PASSWORD</code></td><td>PostgreSQL password</td><td>postgres</td></tr>
+        <tr><td><code>DB_NAME</code></td><td>Database name</td><td>postgres</td></tr>
+        <tr><td><code>DB_HOST</code></td><td>Database host</td><td>localhost</td></tr>
+        <tr><td><code>DB_PORT</code></td><td>Database port (default Docker port: 5430)</td><td>5430</td></tr>
+        <tr><td><code>NEXTAUTH_URL</code></td><td>The public-facing URL of the application</td><td>https://app.lobatotours.com</td></tr>
+        <tr><td><code>NEXTAUTH_SECRET</code></td><td>Secret key for signing session cookies. Must be at least 32 random characters.</td><td>Generate with: <code>openssl rand -hex 32</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🔑</div>
+      <div class="callout-text">
+        <div class="callout-title">Never commit .env to version control</div>
+        <p>The <code>.env</code> file contains sensitive credentials. Make sure <code>.env</code> is listed in your <code>.gitignore</code>. Use environment secrets in production deployments instead of .env files.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATABASE -->
+  <div class="section" id="database">
+    <div class="section-label">Chapter 6</div>
+    <h1 class="section-title">Database Schema</h1>
+    <p class="lead">The system uses a PostgreSQL database. The following tables are created automatically by the initialization endpoint <span class="tag">POST /api/init</span>.</p>
+
+    <div class="db-table">
+      <div class="db-table-header">📋 cotizacion — Main Quotes Table</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing quote ID</span></div>
+        <div class="db-col"><span class="db-col-name">employee_id</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Foreign key to empleado (the creating user)</span></div>
+        <div class="db-col"><span class="db-col-name">greeting_message</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Opening message displayed on the quote</span></div>
+        <div class="db-col"><span class="db-col-name">goodbye_message</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Closing message displayed on the quote</span></div>
+        <div class="db-col"><span class="db-col-name">commission</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Agent commission percentage</span></div>
+        <div class="db-col"><span class="db-col-name">finished</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">true = Finished, false = Draft</span></div>
+        <div class="db-col"><span class="db-col-name">valid_until</span><span class="db-col-type">DATE</span><span class="db-col-desc">Optional expiry date for the quote</span></div>
+        <div class="db-col"><span class="db-col-name">creation_date</span><span class="db-col-type">TIMESTAMP</span><span class="db-col-desc">Auto-set on creation</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">👤 empleado — Users / Employees</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing user ID</span></div>
+        <div class="db-col"><span class="db-col-name">user_name</span><span class="db-col-type">VARCHAR UNIQUE</span><span class="db-col-desc">Login username (immutable after creation)</span></div>
+        <div class="db-col"><span class="db-col-name">real_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Display name</span></div>
+        <div class="db-col"><span class="db-col-name">email</span><span class="db-col-type">VARCHAR UNIQUE</span><span class="db-col-desc">Email address (also used for login)</span></div>
+        <div class="db-col"><span class="db-col-name">password_hash</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">bcrypt-hashed password</span></div>
+        <div class="db-col"><span class="db-col-name">phone_number</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Optional phone number</span></div>
+        <div class="db-col"><span class="db-col-name">role</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">'admin' | 'manager' | 'user'</span></div>
+        <div class="db-col"><span class="db-col-name">active</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">false = account disabled, cannot log in</span></div>
+        <div class="db-col"><span class="db-col-name">creation_date</span><span class="db-col-type">TIMESTAMP</span><span class="db-col-desc">Account creation date</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">👥 cliente — Customer Information</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing ID</span></div>
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote reference</span></div>
+        <div class="db-col"><span class="db-col-name">customer_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Customer display name</span></div>
+        <div class="db-col"><span class="db-col-name">customer_contact</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Primary contact (phone or email)</span></div>
+        <div class="db-col"><span class="db-col-name">customer_contact2</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Secondary contact</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🧑‍🤝‍🧑 persona — Travelers per Quote</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing ID</span></div>
+        <div class="db-col"><span class="db-col-name">cliente_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent customer reference</span></div>
+        <div class="db-col"><span class="db-col-name">age_range</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Age category code (adult, child, infant, senior)</span></div>
+      </div>
+    </div>
+
+    <p style="margin-top:16px;">Additional tables: <code>viaje</code>, <code>vuelo</code>, <code>hotel</code>, <code>habitacion</code>, <code>distribucion</code>, <code>comida</code>, <code>moneda</code>, <code>itinerario_viaje</code>, <code>actividad</code>, <code>itinerario_vuelo</code> — each stores the service-specific data for each quote section.</p>
+  </div>
+
+  <!-- API REFERENCE -->
+  <div class="section" id="api">
+    <div class="section-label">Chapter 7</div>
+    <h1 class="section-title">API Reference</h1>
+    <p class="lead">The application exposes a REST API under <span class="tag">/api</span>. All endpoints require a valid session cookie (set by the login endpoint).</p>
+
+    <h2 class="section-title">Authentication</h2>
+    <div class="api-block">
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/auth/login</span>
+      <span class="api-desc">— Log in. Body: { username, password }</span><br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/auth/me</span>
+      <span class="api-desc">— Get current session info (id, role)</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/auth/logout</span>
+      <span class="api-desc">— Log out and clear session</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Dashboard</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/dashboard</span>
+      <span class="api-desc">— Returns stats: totals, thisMonth, growth, expiringSoon, recentQuotes, monthlyTrend</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Quotes (Cotizaciones)</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizaciones</span>
+      <span class="api-desc">— List quotes (paginated). Params: page, search, status, sortBy, sortOrder, limit</span><br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]</span>
+      <span class="api-desc">— Get a single quote with all nested data</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/cotizacion/[id]</span>
+      <span class="api-desc">— Create or update a quote (upsert)</span><br>
+      <span class="api-method del">DEL</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]</span>
+      <span class="api-desc">— Delete a quote (Admin/Manager: any; User: own only)</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/cotizacion/[id]/duplicate</span>
+      <span class="api-desc">— Create a copy of the quote as a new draft</span><br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizaciones/export</span>
+      <span class="api-desc">— Download filtered quotes as CSV file</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Users</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users</span>
+      <span class="api-desc">— List all users. Admin only.</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/users</span>
+      <span class="api-desc">— Create a new user. Admin only. Body: { user_name, real_name, email, password, role, phone_number? }</span><br>
+      <span class="api-method put">PUT</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users/[id]</span>
+      <span class="api-desc">— Update user fields. Admin only. Body: any editable fields.</span><br>
+      <span class="api-method del">DEL</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users/[id]</span>
+      <span class="api-desc">— Delete user account. Admin only. Cannot delete own account.</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Database Initialization</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/init</span>
+      <span class="api-desc">— Check if tables exist and return database status</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/init</span>
+      <span class="api-desc">— Create all tables and seed the default admin user</span>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <p>The <code>POST /api/init</code> endpoint is safe to call multiple times (it uses CREATE TABLE IF NOT EXISTS), but restrict access to it in production via middleware or firewall rules.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCKER -->
+  <div class="section" id="docker">
+    <div class="section-label">Chapter 8</div>
+    <h1 class="section-title">Docker Setup</h1>
+    <p class="lead">The application uses Docker to run a PostgreSQL database in a container. The application itself runs on Node.js outside Docker during development.</p>
+
+    <h2 class="section-title">Docker Commands</h2>
+    <div class="api-block">
+      <span class="env-comment"># Start the PostgreSQL container</span><br>
+      npm run docker:up<br>
+      <br>
+      <span class="env-comment"># Stop the container</span><br>
+      npm run docker:down<br>
+      <br>
+      <span class="env-comment"># View database logs</span><br>
+      npm run docker:logs<br>
+      <br>
+      <span class="env-comment"># Check container status</span><br>
+      docker ps
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">docker-compose.yml Summary</h2>
+    <table class="docs-table">
+      <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Image</td><td>postgres:latest</td></tr>
+        <tr><td>Internal port</td><td>5432</td></tr>
+        <tr><td>Host port</td><td>5430</td></tr>
+        <tr><td>Database</td><td>postgres</td></tr>
+        <tr><td>Username</td><td>postgres</td></tr>
+        <tr><td>Password</td><td>postgres</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FIRST-TIME SETUP -->
+  <div class="section" id="initialization">
+    <div class="section-label">Chapter 9</div>
+    <h1 class="section-title">First-Time Setup</h1>
+    <p class="lead">Follow these steps to set up the Lobato Tours system from scratch on a new machine.</p>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Prerequisites</h4>
+          <p>Install Node.js (v18+), npm, and Docker Desktop on the server or development machine.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Clone the repository and install dependencies</h4>
+          <p>Run <code>npm install</code> in the project directory to install all Node.js packages.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Create the .env file</h4>
+          <p>Copy the environment variables from Chapter 5 into a new <code>.env</code> file at the project root. Update NEXTAUTH_SECRET with a strong random value.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Start the database container</h4>
+          <p>Run <code>npm run docker:up</code>. Wait a few seconds for PostgreSQL to be ready.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Start the development server</h4>
+          <p>Run <code>npm run dev</code>. The application starts on <code>http://localhost:3000</code>.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Initialize the database</h4>
+          <p>Visit <code>http://localhost:3000</code>. If tables don't exist, send a <code>POST</code> request to <code>/api/init</code> (or run <code>npm run init-db</code>). This creates all tables and the default admin account.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>Log in and change the admin password</h4>
+          <p>Log in with <strong>admin</strong> / <strong>admin123</strong>. Go to User Management and edit the admin account to set a secure password immediately.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-text">
+        <div class="callout-title">Automated Setup</div>
+        <p>Run <code>npm run setup</code> to execute steps 4–6 automatically with a single command.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="section" id="troubleshooting">
+    <div class="section-label">Chapter 10</div>
+    <h1 class="section-title">Troubleshooting</h1>
+    <p class="lead">Common issues and their solutions.</p>
+
+    <div style="margin-top:12px;">
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#991b1b;margin-bottom:8px;">🔴 Cannot connect to database</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Run <code>docker ps</code> to confirm the container is running</li>
+          <li style="margin-bottom:4px;">Verify DB_PORT in .env matches the docker-compose host port (5430)</li>
+          <li style="margin-bottom:4px;">Check for port conflicts: <code>lsof -i :5430</code></li>
+          <li>Run <code>npm run docker:logs</code> to see PostgreSQL startup errors</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Tables not created / "relation does not exist"</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Send <code>POST /api/init</code> to create all tables</li>
+          <li style="margin-bottom:4px;">Or run: <code>npm run init-db</code></li>
+          <li>Check the browser console for API errors and verify DB connection first</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Login failing with correct credentials</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Verify NEXTAUTH_SECRET is set in .env</li>
+          <li style="margin-bottom:4px;">Clear browser cookies and try again</li>
+          <li>Confirm NEXTAUTH_URL matches the URL you're accessing in the browser</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 /admin/users redirects to dashboard</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Your account does not have the Admin role</li>
+          <li>Log in with an Admin account, or ask another admin to upgrade your role</li>
+        </ul>
+      </div>
+
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#065f46;margin-bottom:8px;">🟢 Permission errors on startup script</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li>Run: <code>chmod +x scripts/start-dev.sh</code></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="section" id="security">
+    <div class="section-label">Chapter 11</div>
+    <h1 class="section-title">Security Notes</h1>
+    <p class="lead">Key security practices for operating the Lobato Tours system.</p>
+
+    <h2 class="section-title">Authentication &amp; Sessions</h2>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:20px;">
+      <li style="margin-bottom:8px;">Sessions are stored server-side, signed with NEXTAUTH_SECRET. Use a minimum 32-character random secret in production.</li>
+      <li style="margin-bottom:8px;">Passwords are hashed with bcrypt before storage. Plain-text passwords are never logged or stored.</li>
+      <li style="margin-bottom:8px;">Role checks are enforced on every API call server-side — they cannot be bypassed by modifying cookies or URLs.</li>
+    </ul>
+
+    <h2 class="section-title">Production Checklist</h2>
+    <table class="docs-table">
+      <thead><tr><th>Item</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Default admin password</td><td>Change immediately after first setup</td></tr>
+        <tr><td>NEXTAUTH_SECRET</td><td>Use <code>openssl rand -hex 32</code> to generate</td></tr>
+        <tr><td>Database password</td><td>Change from default "postgres" to a strong password</td></tr>
+        <tr><td>NEXTAUTH_URL</td><td>Set to the actual production domain, not localhost</td></tr>
+        <tr><td>HTTPS</td><td>Always serve the application over HTTPS in production</td></tr>
+        <tr><td><code>POST /api/init</code></td><td>Restrict access after initial setup (firewall or middleware)</td></tr>
+        <tr><td>Database port</td><td>Do not expose the database port (5430) to the public internet</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🛡️</div>
+      <div class="callout-text">
+        <div class="callout-title">Sensitive Data</div>
+        <p>Quote data may contain personal customer information (names, phone numbers, email). Ensure the production server is compliant with applicable data protection regulations (e.g., GDPR, LFPDPPP in Mexico).</p>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding-top:32px;border-top:1px solid var(--gray-200);text-align:center;color:var(--gray-500);font-size:13px;">
+      <p>Lobato Tours · Travel Quotation System · Administrator Guide (English) · v1.0 · March 2026</p>
+      <p style="margin-top:4px;">Confidential — For system administrators only</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const a = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

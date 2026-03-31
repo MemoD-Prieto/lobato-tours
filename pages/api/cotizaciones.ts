@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import db from '@/models/index-simple';
 import { Op } from 'sequelize';
+import { requireAuth } from '@/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const actor = requireAuth(req, res);
+  if (!actor) return;
+
   if (req.method === 'GET') {
     try {
       // Test and establish connection
@@ -28,33 +32,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const limitNum = parseInt(limit as string);
       const offset = (pageNum - 1) * limitNum;
 
-      // Build where conditions
-      const whereConditions: any = {};
-      
-      // Search filter
+      // Build where conditions for Cliente (search only)
+      const clienteWhereConditions: any = {};
+
       if (search) {
-        whereConditions[Op.or] = [
+        clienteWhereConditions[Op.or] = [
           { customer_name: { [Op.iLike]: `%${search}%` } },
           { customer_contact: { [Op.iLike]: `%${search}%` } },
           { customer_contact2: { [Op.iLike]: `%${search}%` } }
         ];
       }
 
-      // Status filter
+      // Build where conditions for Cotizacion (status only)
+      const cotizacionWhereConditions: any = {};
+
       if (status === 'finished') {
-        whereConditions.finished = true;
+        cotizacionWhereConditions.finished = true;
       } else if (status === 'draft') {
-        whereConditions.finished = false;
+        cotizacionWhereConditions.finished = false;
       }
+
+      const hasClienteFilters = Object.keys(clienteWhereConditions).length > 0;
+      const hasCotizacionFilters = Object.keys(cotizacionWhereConditions).length > 0;
 
       // Get total count
       const totalCount = await db.Cotizacion.count({
+        where: hasCotizacionFilters ? cotizacionWhereConditions : undefined,
         include: [
           {
             model: db.Cliente,
             as: 'clientes',
-            where: whereConditions,
-            required: true
+            ...(hasClienteFilters && { where: clienteWhereConditions, required: true }),
           }
         ],
         distinct: true
@@ -62,12 +70,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Get cotizaciones with pagination
       const cotizaciones = await db.Cotizacion.findAll({
+        where: hasCotizacionFilters ? cotizacionWhereConditions : undefined,
         include: [
           {
             model: db.Cliente,
             as: 'clientes',
-            where: whereConditions,
-            required: true,
+            ...(hasClienteFilters && { where: clienteWhereConditions, required: true }),
             include: [
               {
                 model: db.Persona,

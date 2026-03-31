@@ -7,6 +7,7 @@ export class Vuelo extends Model {
   public luggage_check!: number;
   public airport_right_of_use!: number;
   public suitcases_tax!: number;
+  public num_personas?: number;
 
   static initModel(sequelize: Sequelize) {
     Vuelo.init({
@@ -18,7 +19,12 @@ export class Vuelo extends Model {
       iva: DataTypes.DECIMAL,
       luggage_check: DataTypes.DECIMAL,
       airport_right_of_use: DataTypes.DECIMAL,
-      suitcases_tax: DataTypes.DECIMAL
+      suitcases_tax: DataTypes.DECIMAL,
+      num_personas: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null
+      }
     }, {
       sequelize,
       tableName: 'vuelo',

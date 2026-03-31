@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobato Tours – Administrator Guide</title>
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #6d28d9;
+      --primary-light: #f5f3ff;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --info: #2563eb;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --sidebar-w: 290px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--gray-800); background: #fff; line-height: 1.6; }
+
+    @media print {
+      .no-print, .sidebar { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      body { font-size: 11pt; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      .cover { page-break-after: always; }
+    }
+
+    .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: #1e1b4b; color: #fff; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+    .sidebar-logo { padding: 28px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .sidebar-logo .brand { font-size: 19px; font-weight: 800; color: #fff; }
+    .sidebar-logo .subtitle { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+    .sidebar-nav { padding: 16px 0; flex: 1; }
+    .nav-section { padding: 10px 20px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,.3); font-weight: 700; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px; transition: all .15s; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+
+    .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+    .cover { background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 70%, #a855f7 100%); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 40px; position: relative; overflow: hidden; }
+    .cover::before { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: rgba(255,255,255,.04); top: -150px; right: -150px; }
+    .cover::after  { content: ''; position: absolute; width: 350px; height: 350px; border-radius: 50%; background: rgba(255,255,255,.04); bottom: -100px; left: -100px; }
+    .cover h1 { font-size: 50px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 12px; }
+    .cover .tagline { font-size: 19px; opacity: .8; margin-bottom: 40px; font-weight: 300; }
+    .cover .doc-type { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); padding: 8px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+    .cover-badge { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-block; margin-bottom: 28px; }
+    .cover-meta { margin-top: 60px; font-size: 13px; opacity: .55; }
+
+    .section { padding: 64px 56px; max-width: 920px; }
+    .section + .section { border-top: 1px solid var(--gray-200); }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
+    h1.section-title { font-size: 36px; font-weight: 800; color: var(--gray-900); letter-spacing: -.5px; margin-bottom: 16px; }
+    h2.section-title { font-size: 25px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+    h3.sub-title { font-size: 17px; font-weight: 700; color: var(--gray-800); margin-bottom: 8px; }
+    .lead { font-size: 17px; color: var(--gray-500); margin-bottom: 32px; max-width: 700px; }
+    p { margin-bottom: 14px; font-size: 15px; color: var(--gray-700); }
+
+    .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; display: flex; gap: 14px; align-items: flex-start; }
+    .callout.info   { background: #eff6ff; border-left: 4px solid var(--info); }
+    .callout.tip    { background: #f0fdf4; border-left: 4px solid var(--success); }
+    .callout.warn   { background: #fffbeb; border-left: 4px solid var(--warning); }
+    .callout.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+    .callout.admin  { background: var(--primary-light); border-left: 4px solid var(--primary); }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text p { margin: 0; font-size: 14px; }
+    .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+
+    table.docs-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+    .docs-table th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--gray-500); border-bottom: 2px solid var(--gray-200); }
+    .docs-table td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table tr:hover td { background: var(--gray-50); }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+    .badge.green  { background: #d1fae5; color: #065f46; }
+    .badge.yellow { background: #fef3c7; color: #92400e; }
+    .badge.blue   { background: #dbeafe; color: #1e40af; }
+    .badge.purple { background: #ede9fe; color: #5b21b6; }
+    .badge.red    { background: #fee2e2; color: #991b1b; }
+    .badge.gray   { background: var(--gray-100); color: var(--gray-600); }
+
+    .role-card { border-radius: 12px; padding: 20px 24px; margin: 12px 0; display: flex; gap: 20px; align-items: flex-start; border: 1px solid; }
+    .role-card.admin  { background: #f5f3ff; border-color: #c4b5fd; }
+    .role-card.manager{ background: #eff6ff; border-color: #93c5fd; }
+    .role-card.user   { background: #f0fdf4; border-color: #86efac; }
+    .role-icon { font-size: 28px; }
+    .role-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+    .role-perms { list-style: none; margin-top: 8px; }
+    .role-perms li { font-size: 13px; color: var(--gray-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .role-perms li::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .role-perms li.denied::before { content: '✕'; color: var(--danger); }
+
+    .mockup { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; margin: 28px 0; box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+    .mockup-bar { background: var(--gray-200); padding: 10px 16px; display: flex; align-items: center; gap: 6px; }
+    .mockup-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-bar .dot.red    { background: #ff5f57; }
+    .mockup-bar .dot.yellow { background: #ffbd2e; }
+    .mockup-bar .dot.green  { background: #28c840; }
+    .mockup-bar .url { margin-left: 10px; background: #fff; border-radius: 6px; padding: 3px 14px; font-size: 12px; color: var(--gray-500); font-family: monospace; }
+    .mockup-body { padding: 24px; }
+
+    .steps-list { list-style: none; margin: 20px 0; }
+    .steps-list li { display: flex; gap: 16px; margin-bottom: 24px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .step-content p { margin: 0; font-size: 14px; color: var(--gray-600); }
+
+    .field-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+    .field-row { display: grid; grid-template-columns: 200px 90px 1fr; gap: 0; padding: 12px 16px; border-bottom: 1px solid var(--gray-100); font-size: 14px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-row:nth-child(even) { background: var(--gray-50); }
+    .field-name { font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 13px; }
+    .field-req  { color: var(--danger); font-size: 12px; font-weight: 600; }
+    .field-desc { color: var(--gray-600); }
+
+    .api-block { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 20px 24px; margin: 16px 0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; }
+    .api-method { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-right: 8px; }
+    .api-method.get  { background: #1d4ed8; color: #fff; }
+    .api-method.post { background: #15803d; color: #fff; }
+    .api-method.put  { background: #b45309; color: #fff; }
+    .api-method.del  { background: #b91c1c; color: #fff; }
+    .api-endpoint { color: #7dd3fc; }
+    .api-desc { color: #94a3b8; margin-left: 8px; font-size: 12px; }
+
+    .db-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 12px 0; }
+    .db-table-header { background: #1e1b4b; color: #fff; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 8px; }
+    .db-cols { padding: 0; }
+    .db-col { display: grid; grid-template-columns: 160px 100px 1fr; padding: 9px 16px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+    .db-col:last-child { border-bottom: none; }
+    .db-col-name { font-family: monospace; color: var(--gray-800); font-weight: 600; }
+    .db-col-type { color: #7c3aed; font-family: monospace; font-size: 12px; }
+    .db-col-desc { color: var(--gray-500); font-size: 12px; }
+
+    .env-block { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 20px 24px; margin: 16px 0; font-family: monospace; font-size: 13px; line-height: 2; }
+    .env-key   { color: #7dd3fc; }
+    .env-val   { color: #a7f3d0; }
+    .env-comment { color: #64748b; }
+
+    .print-bar { position: fixed; bottom: 24px; right: 24px; z-index: 200; }
+    .btn-print { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(124,58,237,.4); transition: all .2s; }
+    .btn-print:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .divider { height: 1px; background: var(--gray-200); margin: 32px 0; }
+    .tag { display: inline-block; background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .section { padding: 40px 24px; }
+    }
+
+    .app-screenshot { width: 100%; max-width: 800px; border-radius: 10px; border: 1px solid var(--gray-200); box-shadow: 0 4px 20px rgba(0,0,0,.08); margin: 20px 0 8px; display: block; }
+    .screenshot-caption { font-size: 12px; color: var(--gray-500); text-align: center; margin-bottom: 28px; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar no-print">
+  <div class="sidebar-logo">
+    <div class="brand">⚙️ Lobato Tours</div>
+    <div class="subtitle">Administrator Guide · EN</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Introduction</div>
+    <a class="nav-item" href="#intro"><span class="dot"></span> Overview</a>
+    <a class="nav-item" href="#roles"><span class="dot"></span> Roles &amp; Permissions</a>
+
+    <div class="nav-section">Dashboard</div>
+    <a class="nav-item" href="#dashboard"><span class="dot"></span> Dashboard &amp; Metrics</a>
+
+    <div class="nav-section">User Management</div>
+    <a class="nav-item" href="#users"><span class="dot"></span> User Management Page</a>
+    <a class="nav-item" href="#create-user"><span class="dot"></span> Creating Users</a>
+    <a class="nav-item" href="#edit-user"><span class="dot"></span> Editing Users</a>
+    <a class="nav-item" href="#deactivate"><span class="dot"></span> Deactivating / Deleting</a>
+
+    <div class="nav-section">Quote Management</div>
+    <a class="nav-item" href="#quotes-admin"><span class="dot"></span> The Quotes List</a>
+    <a class="nav-item" href="#quote-search"><span class="dot"></span> Search, Filter &amp; Sort</a>
+    <a class="nav-item" href="#quote-actions"><span class="dot"></span> Row Actions</a>
+    <a class="nav-item" href="#quote-detail"><span class="dot"></span> Quote Detail Page</a>
+
+    <div class="nav-section">PDF &amp; Export</div>
+    <a class="nav-item" href="#pdf-gen"><span class="dot"></span> PDF Generation</a>
+    <a class="nav-item" href="#export"><span class="dot"></span> CSV Export Reference</a>
+
+    <div class="nav-section">System Setup</div>
+    <a class="nav-item" href="#environment"><span class="dot"></span> Environment Variables</a>
+    <a class="nav-item" href="#database"><span class="dot"></span> Database Schema</a>
+    <a class="nav-item" href="#api"><span class="dot"></span> API Reference</a>
+    <a class="nav-item" href="#docker"><span class="dot"></span> Docker Setup</a>
+
+    <div class="nav-section">Operations</div>
+    <a class="nav-item" href="#initialization"><span class="dot"></span> First-Time Setup</a>
+    <a class="nav-item" href="#troubleshooting"><span class="dot"></span> Troubleshooting</a>
+    <a class="nav-item" href="#security"><span class="dot"></span> Security Notes</a>
+  </div>
+</nav>
+
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">🖨️ Export to PDF</button>
+</div>
+
+<div class="main-content">
+
+  <!-- COVER -->
+  <div class="cover" id="cover">
+    <div class="cover-badge">🔐 RESTRICTED — ADMIN ONLY</div>
+    <div class="doc-type">Administrator Guide</div>
+    <h1>Lobato Tours<br>System Admin Manual</h1>
+    <p class="tagline">User management, system configuration, API reference, and operations guide</p>
+    <div class="cover-meta">Version 1.0 &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; English Edition</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section" id="intro">
+    <div class="section-label">Chapter 1</div>
+    <h1 class="section-title">Administrator Overview</h1>
+    <p class="lead">This guide is for system administrators of the Lobato Tours Quotation System. It covers every admin feature in depth: user management, the dashboard metrics, quote oversight, PDF generation, CSV export, the database schema, and the full REST API.</p>
+    <img src="/doc-screenshots/admin-dashboard.jpg" alt="Admin dashboard overview" class="app-screenshot">
+    <p class="screenshot-caption">Admin dashboard — full statistics, monthly trend chart, expiry warnings, and recent quotes</p>
+
+    <p>The application has three pages that are exclusive to admin and manager roles, plus one page that is admin-only:</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Feature</th><th>Admin</th><th>Manager</th><th>User</th><th>URL</th></tr></thead>
+      <tbody>
+        <tr><td>👥 <strong>User Management</strong></td><td><span class="badge green">✓</span></td><td><span class="badge red">✕</span></td><td><span class="badge red">✕</span></td><td><span class="tag">/admin/users</span></td></tr>
+        <tr><td>📊 <strong>All quotes (every agent)</strong></td><td><span class="badge green">✓</span></td><td><span class="badge green">✓</span></td><td><span class="badge red">✕</span></td><td><span class="tag">/cotizaciones</span></td></tr>
+        <tr><td>📤 <strong>Full CSV export</strong></td><td><span class="badge green">✓</span></td><td><span class="badge green">✓</span></td><td><span class="badge red">✕</span></td><td><span class="tag">/api/cotizaciones/export</span></td></tr>
+        <tr><td>⚙️ <strong>Database initialization</strong></td><td><span class="badge green">✓</span></td><td><span class="badge red">✕</span></td><td><span class="badge red">✕</span></td><td><span class="tag">/api/init</span></td></tr>
+        <tr><td>📋 <strong>Dashboard full stats</strong></td><td><span class="badge green">✓</span></td><td><span class="badge green">✓</span></td><td><span class="badge green">✓</span></td><td><span class="tag">/</span></td></tr>
+        <tr><td>✏️ <strong>Own quotes (CRUD)</strong></td><td><span class="badge green">✓</span></td><td><span class="badge green">✓</span></td><td><span class="badge green">✓</span></td><td><span class="tag">/clientes/cotizador</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout admin">
+      <div class="callout-icon">🛡️</div>
+      <div class="callout-text">
+        <div class="callout-title">Access is enforced server-side</div>
+        <p>Every API endpoint verifies the caller's role from their session cookie before returning data. Visiting <code>/admin/users</code> as a non-admin triggers an immediate redirect to <code>/</code>. Role checks cannot be bypassed by modifying cookies, URLs, or request headers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section" id="roles">
+    <div class="section-label">Chapter 2</div>
+    <h1 class="section-title">Roles &amp; Permissions</h1>
+    <p class="lead">The system uses three role levels stored in the <code>empleado.role</code> column. Role is checked server-side on every API call — it is never trusted from the client.</p>
+
+    <div class="role-card admin">
+      <div class="role-icon">👑</div>
+      <div style="flex:1;">
+        <div class="role-name" style="color:#5b21b6;">Administrator <span style="font-size:12px;font-weight:400;color:#6b7280;">— internal code: <code>admin</code></span></div>
+        <ul class="role-perms">
+          <li>Full access to every quote in the system, regardless of who created it</li>
+          <li>Access <code>/admin/users</code> — create, edit, deactivate, and delete user accounts</li>
+          <li>Call <code>POST /api/init</code> to initialize or re-seed the database</li>
+          <li>Export all quotes across all agents via <code>/api/cotizaciones/export</code></li>
+          <li>All manager and user capabilities listed below</li>
+          <li>Cannot delete or deactivate their own account (self-protection lock)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card manager">
+      <div class="role-icon">🎯</div>
+      <div style="flex:1;">
+        <div class="role-name" style="color:#1e40af;">Manager <span style="font-size:12px;font-weight:400;color:#6b7280;">— internal code: <code>manager</code></span></div>
+        <ul class="role-perms">
+          <li>View, edit, duplicate, and delete every quote from every agent</li>
+          <li>Export the full CSV dataset (all agents, all statuses)</li>
+          <li>See the full dashboard statistics including all-agent totals</li>
+          <li>Create and manage their own quotes</li>
+          <li class="denied">Cannot access <code>/admin/users</code> — redirected to dashboard</li>
+          <li class="denied">Cannot call <code>POST /api/init</code></li>
+          <li class="denied">Cannot create, edit, or delete any user account</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card user">
+      <div class="role-icon">👤</div>
+      <div style="flex:1;">
+        <div class="role-name" style="color:#065f46;">User <span style="font-size:12px;font-weight:400;color:#6b7280;">— internal code: <code>user</code></span></div>
+        <ul class="role-perms">
+          <li>Create, view, edit, duplicate, and delete their own quotes only</li>
+          <li>Export a CSV of their own quotes only</li>
+          <li>Generate PDFs for their own finished quotes</li>
+          <li class="denied">The Quotes List only returns quotes they created — other agents' data is invisible</li>
+          <li class="denied">Cannot access <code>/admin/users</code></li>
+          <li class="denied">Cannot call any user management API endpoints</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">How Role Changes Take Effect</h2>
+    <p>When you change a user's role in the admin panel, the change is applied immediately to their database record. The effect kicks in on their <strong>next page load or API request</strong> — their current browser session retains the old role until they refresh. For a same-session role downgrade to take effect immediately, the user would need to log out and back in.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <div class="callout-title">Default credentials — change immediately</div>
+        <p>The database seed creates one admin account: <strong>username: admin</strong>, <strong>password: admin123</strong>. This password is stored as a bcrypt hash — but the plaintext default is well-known. Change it in User Management the moment the system is deployed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section" id="dashboard">
+    <div class="section-label">Chapter 3</div>
+    <h1 class="section-title">Dashboard &amp; Metrics</h1>
+    <p class="lead">The dashboard at <span class="tag">/</span> is the home screen for all roles. Admins and Managers see system-wide totals; regular Users see only their own data. All numbers are calculated live on each page load by <code>GET /api/dashboard</code>.</p>
+
+    <h2 class="section-title">Stat Cards</h2>
+    <p>Four cards appear at the top of the dashboard. Each card shows a count and a trend indicator.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Card</th><th>What it counts</th><th>Server-side calculation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Total Quotes</strong></td>
+          <td>All quotes ever created in the system (or by this user for the User role)</td>
+          <td><code>Cotizacion.count()</code> — no date filter, no status filter</td>
+        </tr>
+        <tr>
+          <td><strong>Finished</strong></td>
+          <td>Quotes where <code>finished = true</code></td>
+          <td><code>Cotizacion.count({ where: { finished: true } })</code></td>
+        </tr>
+        <tr>
+          <td><strong>Drafts</strong></td>
+          <td>Quotes where <code>finished = false</code></td>
+          <td>Derived: <code>totalAll − totalFinished</code></td>
+        </tr>
+        <tr>
+          <td><strong>This Month</strong></td>
+          <td>Quotes created since the 1st of the current calendar month (midnight)</td>
+          <td><code>creation_date &gt;= startOfMonth</code> where <code>startOfMonth = new Date(year, month, 1)</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Month-over-Month Growth</h2>
+    <p>Below the stat cards a percentage growth figure is shown. The formula is:</p>
+    <div class="api-block">
+      growth = round( (thisMonthCount − lastMonthCount) / lastMonthCount × 100 )<br>
+      <br>
+      <span class="env-comment"># Edge cases:</span><br>
+      <span class="env-comment"># If lastMonth = 0 and thisMonth > 0  →  growth = 100%</span><br>
+      <span class="env-comment"># If lastMonth = 0 and thisMonth = 0  →  growth = 0%</span><br>
+      <span class="env-comment"># Negative result = fewer quotes than last month</span>
+    </div>
+    <p><strong>Last month</strong> is the complete previous calendar month (from its first day 00:00:00 to its last day 23:59:59).</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Monthly Trend Chart</h2>
+    <p>A bar chart shows quote volume for the last 6 calendar months. Each bar is a count of quotes whose <code>creation_date</code> falls within that month. Month labels are in Spanish short format (e.g., <em>ene 25</em>, <em>feb 25</em>) because the dashboard uses the <code>es-MX</code> locale for formatting. The chart helps you spot seasonal peaks and slowdowns at a glance.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Expiring Quotes Warning</h2>
+    <p>If any <strong>draft</strong> quotes have a <code>valid_until</code> date within the next 7 calendar days, a yellow warning banner appears beneath the stat cards. The count shown is the number of such quotes.</p>
+    <div class="api-block">
+      <span class="env-comment"># Condition:</span><br>
+      valid_until BETWEEN today AND (today + 7 days)<br>
+      AND finished = false
+    </div>
+    <p>Clicking the warning banner opens the Quotes List pre-filtered to show those expiring drafts so you can act on them immediately. Finished quotes are excluded because they are already complete.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Recent Quotes Table</h2>
+    <p>The bottom of the dashboard shows the 5 most recently created quotes, sorted newest-first by <code>creation_date</code>. Each row displays the quote ID, customer name, contact, creation date, and status badge. Clicking the arrow button navigates directly to that quote's detail page.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <div class="callout-title">Dashboard does not auto-refresh</div>
+        <p>All metrics are loaded once when the page mounts. Reload the page to get updated counts after other agents create or finalize quotes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER MANAGEMENT PAGE -->
+  <div class="section" id="users">
+    <div class="section-label">Chapter 4</div>
+    <h1 class="section-title">User Management Page</h1>
+    <p class="lead">Navigate to <span class="tag">/admin/users</span> to manage all system accounts. This page is accessible only to the <span class="badge purple">Admin</span> role — all other roles are silently redirected to the dashboard.</p>
+    <img src="/doc-screenshots/admin-users.jpg" alt="User Management page" class="app-screenshot">
+    <p class="screenshot-caption">User Management page — role legend, users table, and action buttons</p>
+
+    <h2 class="section-title">Page Layout</h2>
+    <p>The page has three visual areas:</p>
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Header bar</h4>
+          <p>Title "User Management" with a subtitle. The purple <strong>+ New User</strong> button opens the Create User modal.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Role legend cards</h4>
+          <p>Three color-coded cards summarize what each role can and cannot do. These are informational only — clicking them does nothing.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Users table</h4>
+          <p>Lists all accounts with columns: Username, Full Name, Email, Phone, Role badge, Status badge (Active/Inactive), Creation Date, and an Actions column with Edit and Delete buttons.</p>
+        </div>
+      </li>
+    </ol>
+
+    <h2 class="section-title">Users Table Columns</h2>
+    <table class="docs-table">
+      <thead><tr><th>Column</th><th>Source field</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Username</td><td><code>user_name</code></td><td>Monospace font. Immutable after creation.</td></tr>
+        <tr><td>Full Name</td><td><code>real_name</code></td><td>Display name shown throughout the app</td></tr>
+        <tr><td>Email</td><td><code>email</code></td><td>Must be unique. Used for identification.</td></tr>
+        <tr><td>Phone</td><td><code>phone_number</code></td><td>Optional. Shows "—" if not set.</td></tr>
+        <tr><td>Role</td><td><code>role</code></td><td>Color-coded badge: purple=Admin, blue=Manager, green=User</td></tr>
+        <tr><td>Status</td><td><code>active</code></td><td>Green "Active" or gray "Inactive". Clicking the badge toggles the status instantly via <code>PUT /api/users/[id]</code> (disabled for the currently logged-in admin).</td></tr>
+        <tr><td>Created</td><td><code>creation_date</code></td><td>Date the account was created</td></tr>
+        <tr><td>Actions</td><td>—</td><td>Edit button (opens edit modal) + red Delete button (opens confirmation dialog). Both disabled for the currently logged-in admin's own row.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout admin">
+      <div class="callout-icon">🔒</div>
+      <div class="callout-text">
+        <div class="callout-title">Self-protection lock</div>
+        <p>The Status toggle, Edit active field, and Delete button are all disabled for the row belonging to the currently logged-in admin. This prevents accidentally locking yourself out of the system. The UI grays out these controls with a tooltip explaining why.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE USER -->
+  <div class="section" id="create-user">
+    <div class="section-label">Chapter 4.1</div>
+    <h1 class="section-title">Creating a New User</h1>
+    <p class="lead">Click the <strong>+ New User</strong> button on the User Management page to open the Create User modal.</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Field</span><span>Required</span><span>Notes</span></div>
+      <div class="field-row"><span class="field-name">username</span><span class="field-req">Yes</span><span class="field-desc">Unique login identifier (e.g., <code>jperez</code>). Cannot be changed after creation. Lowercase, no spaces.</span></div>
+      <div class="field-row"><span class="field-name">real_name</span><span class="field-req">Yes</span><span class="field-desc">Full name shown in the interface and in quote author attribution</span></div>
+      <div class="field-row"><span class="field-name">email</span><span class="field-req">Yes</span><span class="field-desc">Must be a valid, unique email address. Used for login and identification.</span></div>
+      <div class="field-row"><span class="field-name">password</span><span class="field-req">Yes</span><span class="field-desc">Minimum 6 characters. Stored as a bcrypt hash — never stored in plain text.</span></div>
+      <div class="field-row"><span class="field-name">phone_number</span><span class="field-req">No</span><span class="field-desc">Contact phone number (optional, shown in user table)</span></div>
+      <div class="field-row"><span class="field-name">role</span><span class="field-req">Yes</span><span class="field-desc">Select <strong>Admin</strong>, <strong>Manager</strong>, or <strong>User</strong>. See Chapter 2 for permission differences.</span></div>
+    </div>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content"><h4>Click "New User"</h4><p>The create modal opens with an empty form.</p></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content"><h4>Fill in required fields</h4><p>Enter username, full name, email, and a temporary password. Phone is optional.</p></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content"><h4>Select the appropriate role</h4><p>Click one of the three role cards (Admin, Manager, User). The selected card is highlighted with a purple border.</p></div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content"><h4>Click "Create User"</h4><p>The new account is created immediately. Share the username and temporary password with the user securely.</p></div>
+      </li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-icon">🔒</div>
+      <div class="callout-text">
+        <div class="callout-title">Security Best Practice</div>
+        <p>Set a temporary password and ask the user to change it on first login. Do not reuse passwords across accounts.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT USER -->
+  <div class="section" id="edit-user">
+    <div class="section-label">Chapter 4.2</div>
+    <h1 class="section-title">Editing a User</h1>
+    <p class="lead">Click the <strong>Edit</strong> button on any user row to open the Edit modal. The form is pre-filled with the current values.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Field</th><th>Editable?</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Username</td><td><span class="badge red">No</span></td><td>Username cannot be changed after account creation to preserve quote attribution</td></tr>
+        <tr><td>Full Name</td><td><span class="badge green">Yes</span></td><td>Update to correct spelling or name changes</td></tr>
+        <tr><td>Email</td><td><span class="badge green">Yes</span></td><td>Must remain unique in the system</td></tr>
+        <tr><td>Password</td><td><span class="badge green">Yes</span></td><td>Leave blank to keep current password; enter a new value to reset it</td></tr>
+        <tr><td>Phone</td><td><span class="badge green">Yes</span></td><td>Optional field</td></tr>
+        <tr><td>Role</td><td><span class="badge green">Yes</span></td><td>Change at any time. Takes effect on the user's next page load.</td></tr>
+        <tr><td>Active Status</td><td><span class="badge green">Yes</span></td><td>Toggle to deactivate an account without deleting it (see Chapter 3.3)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <p>You cannot edit your own account's active status (the toggle is disabled for the currently logged-in admin). This prevents accidentally locking yourself out of the system.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEACTIVATE/DELETE -->
+  <div class="section" id="deactivate">
+    <div class="section-label">Chapter 4.3</div>
+    <h1 class="section-title">Deactivating &amp; Deleting Users</h1>
+    <p class="lead">There are two ways to remove a user's access: deactivation (reversible) and deletion (permanent).</p>
+
+    <h2 class="section-title">Deactivating a User</h2>
+    <p>Click the green <span class="badge green">Active</span> status badge in the users table to toggle it to <span class="badge gray">Inactive</span>. The user will be prevented from logging in, but their account and all their quotes remain intact.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p><strong>Prefer deactivation over deletion</strong> for employees who leave the company. Their historical quotes remain accessible to managers and admins, preserving important business records.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Deleting a User</h2>
+    <p>Click the red <strong>Delete</strong> button on a user's row. A confirmation dialog will appear showing the user's name and username. Click <strong>Eliminar</strong> to permanently delete the account.</p>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚨</div>
+      <div class="callout-text">
+        <div class="callout-title">Deletion is permanent</div>
+        <p>Deleting a user account cannot be undone. All their quotes will remain in the system attributed to their employee ID, but they will no longer be able to log in and their profile information will be removed. The delete button is not available for the currently logged-in admin.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTES ADMIN -->
+  <div class="section" id="quotes-admin">
+    <div class="section-label">Chapter 5</div>
+    <h1 class="section-title">The Quotes List — Admin View</h1>
+    <p class="lead">Navigate to <span class="tag">/cotizaciones</span> to see all quotes. Admins and Managers see every quote from every agent. Regular Users see only their own. The data scope is enforced server-side — the frontend never receives data for quotes that don't belong to the logged-in user (for the User role).</p>
+    <img src="/doc-screenshots/admin-cotizaciones.jpg" alt="Admin quotes list" class="app-screenshot">
+    <p class="screenshot-caption">Admin/Manager Quotes List — all agents, all statuses, with search, sort, and filter controls</p>
+
+    <h2 class="section-title">Table Columns</h2>
+    <table class="docs-table">
+      <thead><tr><th>Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ID</strong></td><td>Auto-incrementing quote number. Default sort is newest-first (ID DESC).</td></tr>
+        <tr><td><strong>Customer</strong></td><td>Full name from <code>cliente.customer_name</code></td></tr>
+        <tr><td><strong>Contact</strong></td><td>Primary contact number/email from <code>cliente.customer_contact</code></td></tr>
+        <tr><td><strong>Destination</strong></td><td>From <code>viaje.travel_destiny</code>. Empty if trip info was not filled.</td></tr>
+        <tr><td><strong>Travel dates</strong></td><td>Start and end dates from <code>viaje.travel_begin</code> / <code>viaje.travel_end</code></td></tr>
+        <tr><td><strong>People</strong></td><td>Total traveler count from <code>persona</code> rows linked to this quote</td></tr>
+        <tr><td><strong>Currency</strong></td><td>MXN or USD from <code>moneda.dollar</code></td></tr>
+        <tr><td><strong>Status</strong></td><td><span class="badge green">Finished</span> or <span class="badge yellow">Draft</span> from <code>cotizacion.finished</code></td></tr>
+        <tr><td><strong>Created</strong></td><td><code>cotizacion.creation_date</code></td></tr>
+        <tr><td><strong>Actions</strong></td><td>Four icon buttons — see Row Actions section below</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SEARCH FILTER SORT -->
+  <div class="section" id="quote-search">
+    <div class="section-label">Chapter 5.1</div>
+    <h1 class="section-title">Search, Filter &amp; Sort</h1>
+
+    <h2 class="section-title">Search Bar</h2>
+    <p>The search box runs a case-insensitive (<code>ILIKE</code>) partial-match query against three fields simultaneously:</p>
+    <div class="api-block">
+      WHERE customer_name    ILIKE '%{query}%'<br>
+         OR customer_contact  ILIKE '%{query}%'<br>
+         OR customer_contact2 ILIKE '%{query}%'
+    </div>
+    <p>You can search by <strong>client name</strong>, <strong>primary phone/email</strong>, or <strong>secondary phone/email</strong>. Partial matches work — entering "garcia" will find "Ana García" and "Luis Garciaparra". The search is accent-insensitive at the database collation level.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Status Filter</h2>
+    <table class="docs-table">
+      <thead><tr><th>Filter value</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td><code>all</code> (default)</td><td>Both finished and draft quotes</td></tr>
+        <tr><td><code>finished</code></td><td>Only quotes where <code>finished = true</code></td></tr>
+        <tr><td><code>draft</code></td><td>Only quotes where <code>finished = false</code></td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Sort Options</h2>
+    <table class="docs-table">
+      <thead><tr><th>Sort field</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>id</code> (default)</td><td>Newest quote first by default (<code>DESC</code>)</td></tr>
+        <tr><td><code>creation_date</code></td><td>Order by when the quote was created</td></tr>
+        <tr><td><code>finished</code></td><td>Groups finished and draft quotes together</td></tr>
+      </tbody>
+    </table>
+    <p>Each sort column can be toggled ASC/DESC by clicking the column header. The direction is passed as <code>?sortOrder=ASC|DESC</code> to the API.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Pagination</h2>
+    <p>Results are paginated at <strong>10 quotes per page</strong> by default. The API returns a <code>pagination</code> object:</p>
+    <div class="api-block">
+      &#123;<br>
+      &nbsp;&nbsp;"currentPage": 1,<br>
+      &nbsp;&nbsp;"totalPages": 7,<br>
+      &nbsp;&nbsp;"totalCount": 68,<br>
+      &nbsp;&nbsp;"limit": 10,<br>
+      &nbsp;&nbsp;"hasNext": true,<br>
+      &nbsp;&nbsp;"hasPrev": false<br>
+      &#125;
+    </div>
+    <p>Page controls at the bottom of the table let you jump to any specific page number, or use Previous/Next buttons.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p><strong>Tip:</strong> Filters and search are cumulative. You can search "cancun" AND filter to "finished" to see only finalized Cancún quotes. Clear the search field and reset the status filter to "all" before exporting to CSV if you want the full dataset.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW ACTIONS -->
+  <div class="section" id="quote-actions">
+    <div class="section-label">Chapter 5.2</div>
+    <h1 class="section-title">Row Actions</h1>
+    <p>Each row in the Quotes List has four action icon buttons on the right side:</p>
+    <table class="docs-table">
+      <thead><tr><th>Icon</th><th>Action</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>👁 <strong>View</strong></td>
+          <td>Open Quote Detail</td>
+          <td>Navigates to <code>/cotizacion/[id]</code>. Shows the full read-only detail page with all service tabs, pricing summary, messages, and action buttons.</td>
+        </tr>
+        <tr>
+          <td>✏️ <strong>Edit</strong></td>
+          <td>Open Quote Wizard</td>
+          <td>Navigates to <code>/clientes/cotizador?id=[id]</code>. Opens the 10-step wizard pre-filled with all saved data. The auto-save system is active — changes persist on every step navigation.</td>
+        </tr>
+        <tr>
+          <td>📋 <strong>Duplicate</strong></td>
+          <td>Clone the quote</td>
+          <td>Calls <code>POST /api/cotizacion/[id]/duplicate</code>. Creates an exact copy as a new Draft quote with a new ID. The duplicate has the same customer name, services, and pricing, but status is reset to Draft and <code>finished = false</code>. You are navigated to the new quote's wizard.</td>
+        </tr>
+        <tr>
+          <td>🗑 <strong>Delete</strong></td>
+          <td>Permanently delete</td>
+          <td>Opens a confirmation dialog showing the quote ID and customer name. Click Confirm to call <code>DELETE /api/cotizacion/[id]</code>. This cascade-deletes all associated child records (client, travelers, services). Irreversible.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <div class="callout-title">Admins can act on any quote</div>
+        <p>As an admin or manager, the Edit and Delete actions work on any quote in the system, not just your own. Use caution when deleting quotes created by other agents — there is no undo and no recycle bin.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTE DETAIL PAGE -->
+  <div class="section" id="quote-detail">
+    <div class="section-label">Chapter 5.3</div>
+    <h1 class="section-title">Quote Detail Page</h1>
+    <p class="lead">The Quote Detail page at <span class="tag">/cotizacion/[id]</span> gives a structured read/write view of a single quote. It's the primary place to review a finished quote before sharing it with a client.</p>
+    <img src="/doc-screenshots/cotizacion-detail.jpg" alt="Quote detail page" class="app-screenshot">
+    <p class="screenshot-caption">Quote Detail page — header actions, customer info, service tabs, and pricing sidebar</p>
+
+    <h2 class="section-title">Header Action Bar</h2>
+    <table class="docs-table">
+      <thead><tr><th>Button</th><th>Color</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PDF</strong></td><td>Red</td><td>Opens <code>/api/cotizacion/[id]/pdf</code> in a new tab. Generates a live 2-page branded PDF using PDFKit. See Chapter 6 for the full PDF structure.</td></tr>
+        <tr><td><strong>WhatsApp</strong></td><td>Green</td><td>Opens a pre-composed <code>wa.me</code> link containing the quote summary and a direct link to the PDF URL. The agent can tap Send immediately from their phone or WhatsApp Web.</td></tr>
+        <tr><td><strong>Edit</strong></td><td>Purple</td><td>Opens the wizard for this quote, pre-filled with all data.</td></tr>
+        <tr><td><strong>Duplicate</strong></td><td>Gray</td><td>Clones the quote to a new Draft and opens the new quote's wizard.</td></tr>
+        <tr><td><strong>Delete</strong></td><td>Red outline</td><td>Confirmation dialog then cascade-delete. Redirects to <code>/cotizaciones</code> after deletion.</td></tr>
+        <tr><td><strong>Sub-quote</strong></td><td>Blue outline</td><td>Only shown when the quote has more than one traveler. Opens the Sub-quote modal (see below).</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Status Badge</h2>
+    <p>A badge in the header shows <span class="badge green">Finished</span> or <span class="badge yellow">Draft</span>. This reflects the <code>cotizacion.finished</code> field. When Finished, the PDF button is fully active. When Draft, the PDF button still works but the quote may be missing required fields so the PDF could be incomplete.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Customer &amp; Trip Info Cards</h2>
+    <p>Two cards below the header display:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:16px;">
+      <li style="margin-bottom:6px;"><strong>Customer info</strong> — name, primary and secondary contact, list of travelers with their age ranges</li>
+      <li style="margin-bottom:6px;"><strong>Trip info</strong> — destination, start date, end date, currency (MXN or USD with exchange rate if applicable)</li>
+    </ul>
+
+    <h2 class="section-title" style="margin-top:28px;">Service Tabs</h2>
+    <p>A tabbed area shows only the services that were actually added to this quote. Possible tabs:</p>
+    <table class="docs-table">
+      <thead><tr><th>Tab</th><th>DB table</th><th>Key fields shown</th></tr></thead>
+      <tbody>
+        <tr><td>Package</td><td><code>viaje</code></td><td>Package name, price, per-person breakdown, full description/itinerary</td></tr>
+        <tr><td>Flight</td><td><code>vuelo</code></td><td>Airline, route segments, base fee, IVA, luggage, airport charges, per-person total</td></tr>
+        <tr><td>Hotel</td><td><code>hotel</code> + <code>habitacion</code></td><td>Hotel name, nights, room distributions with type, occupancy, price, and IVA per room</td></tr>
+        <tr><td>Transfer</td><td><code>traslado</code></td><td>Type, total amount</td></tr>
+        <tr><td>Cruise</td><td><code>crucero</code></td><td>Cruise line, ship name, duration, price per person</td></tr>
+        <tr><td>Insurance</td><td><code>seguro</code></td><td>Insurance company, total cost</td></tr>
+        <tr><td>Tickets</td><td><code>entradas</code></td><td>Attraction name, quantity, price per person</td></tr>
+        <tr><td>Ferry</td><td><code>ferry</code></td><td>Route, schedule, price per person</td></tr>
+        <tr><td>Data SIM</td><td><code>datos</code></td><td>Provider/plan name, total cost</td></tr>
+        <tr><td>Visa</td><td><code>visa</code></td><td>Country, total cost</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Pricing Sidebar</h2>
+    <p>A sticky sidebar on the right recaps the cost breakdown:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:16px;">
+      <li style="margin-bottom:6px;"><strong>Subtotal</strong> — sum of all service costs before commission</li>
+      <li style="margin-bottom:6px;"><strong>Commission</strong> — <code>subtotal × (commission% / 100)</code></li>
+      <li style="margin-bottom:6px;"><strong>Total</strong> — <code>subtotal + commission</code></li>
+      <li style="margin-bottom:6px;"><strong>Per person</strong> — <code>total / traveler count</code></li>
+    </ul>
+
+    <h2 class="section-title" style="margin-top:28px;">Messages Card</h2>
+    <p>Shows the Greeting Message and Goodbye Message that appear verbatim in the generated PDF. These are editable via the wizard's final Messages &amp; Commission step.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Internal Notes (Admin/Agent Only)</h2>
+    <p>An amber-highlighted card shows the Internal Notes field. This text is <strong>never included in the PDF</strong> or the WhatsApp share message. It is private to the agent and admin — use it for supplier booking references, deadlines, and follow-up reminders.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Sub-quote Modal</h2>
+    <p>Only visible when <code>persona</code> count &gt; 1. Lets you select a subset of travelers and a subset of services to produce a separate quote for a subgroup. Clicking <strong>Create Sub-quote</strong> calls <code>POST /api/cotizacion/[id]/duplicate</code> with the selected subset. The resulting quote is a new independent Draft with its own ID and its own PDF.</p>
+  </div>
+
+  <!-- PDF GENERATION -->
+  <div class="section" id="pdf-gen">
+    <div class="section-label">Chapter 6</div>
+    <h1 class="section-title">PDF Generation</h1>
+    <p class="lead">The PDF is generated server-side by the Node.js <strong>PDFKit</strong> library. It is a <strong>letter-size</strong> (8.5 × 11 in) two-page document streamed directly to the browser — no file is saved to disk. The endpoint is <code>GET /api/cotizacion/[id]/pdf</code>.</p>
+
+    <h2 class="section-title">How to Generate a PDF</h2>
+    <p>There are two entry points:</p>
+    <ol class="steps-list">
+      <li><div class="step-num">1</div><div class="step-content"><h4>From the Quote Detail page</h4><p>Click the red <strong>PDF</strong> button in the header. Opens in a new browser tab.</p></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><h4>From the Quote Wizard — Summary step (Step 10)</h4><p>A red <strong>Export PDF</strong> button appears once the quote has been saved with an ID and marked Finished.</p></div></li>
+    </ol>
+    <p>The direct URL format is: <code>http://[host]/api/cotizacion/[id]/pdf</code>. This URL can be shared directly with a client — they can open it in any browser without logging in (the PDF endpoint does not require authentication, making it safe to share).</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Page 1 — Services &amp; Itinerary</h2>
+    <table class="docs-table">
+      <thead><tr><th>Element</th><th>Source</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Logo</td><td><code>public/assets/images/logos/logo-lobato-2.jpg</code></td><td>104 × 52 px, top-left. Falls back to text "LOBATO TOURS" if file missing.</td></tr>
+        <tr><td>Quote number</td><td><code>cotizacion.id</code></td><td>Small gray text centered above the destination</td></tr>
+        <tr><td>Destination heading</td><td><code>viaje.travel_destiny</code></td><td>36pt bold, ALL CAPS, centered. This is the most prominent element on the page.</td></tr>
+        <tr><td>Date range</td><td><code>viaje.travel_begin</code> / <code>travel_end</code></td><td>Smart formatting: if same month → "15 AL 22 DE JULIO 2025"; if different months → full dates</td></tr>
+        <tr><td>Client + traveler count</td><td><code>cliente.customer_name</code> + <code>persona</code> rows</td><td>"Para: Juan García  •  4 personas"</td></tr>
+        <tr><td>Greeting message</td><td><code>cotizacion.greeting_message</code></td><td>Italic gray text, full width</td></tr>
+        <tr><td>Flight row</td><td><code>vuelo</code></td><td>Gray card row. Shows airline logo for Aeromexico, Volaris, or Viva Aerobus. Price = (base_fee + IVA + luggage + airport charge + suitcase tax) × people. Itemized breakdown in small text below.</td></tr>
+        <tr><td>Cruise row</td><td><code>crucero</code></td><td>Shows Royal Caribbean, Norwegian, or Princess logo if available.</td></tr>
+        <tr><td>Ferry row</td><td><code>ferry</code></td><td>Shows route and schedule as subtitle</td></tr>
+        <tr><td>Transfer row</td><td><code>traslado</code></td><td>Shows transfer type as subtitle</td></tr>
+        <tr><td>Tickets/Entradas row</td><td><code>entradas</code></td><td>Shows "N personas × $price" breakdown</td></tr>
+        <tr><td>Package itinerary</td><td><code>viaje.package_description</code></td><td>Free-text rendered line by line. Lines starting with a date pattern (e.g., "15 enero") are bolded as day headers.</td></tr>
+        <tr><td>Footer (both pages)</td><td>Hardcoded</td><td>Address: AV PASEO CENTENARIO No. 9211 MOD 6 LOCAL 15 C.C. PUEBLO AMIGO. CP 22010 TIJUANA, B.C. — Phone: 664-682-82-75 / USA 619-730-3578 / 664 350 6767 — Email: lobatotours@gmail.com — Page number rotated vertically.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Page 2 — Summary &amp; Pricing</h2>
+    <table class="docs-table">
+      <thead><tr><th>Element</th><th>Source</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Logo + destination reminder</td><td>Same as page 1</td><td>Smaller (14pt) destination header for context</td></tr>
+        <tr><td>INCLUYE list</td><td>Derived from which services are present</td><td>Auto-generated bullet list: "Avion Viaje Redondo Aeromexico con equipaje documentado", "Hospedaje en Barceló Maya (7 noches)", "Crucero Royal Caribbean - Harmony (5 dias)", etc.</td></tr>
+        <tr><td>Hotel detail</td><td><code>hotel</code> + <code>habitacion</code></td><td>Hotel name, number of nights, then one line per room type: "Suite  •  2 personas  •  $8,500.00 MXN"</td></tr>
+        <tr><td>NO INCLUYE</td><td>Hardcoded</td><td>Always shows: "• Tours Opcionales." and "• Propinas"</td></tr>
+        <tr><td>PRECIO POR PERSONA</td><td>Calculated</td><td>16pt bold centered. Formula: <code>(subtotal + commission) / person_count</code></td></tr>
+        <tr><td>Occupancy sub-line</td><td><code>habitacion.type</code></td><td>"Cotizado en Ocupacion Doble. / No reembolsable" or "Cotizado para N persona(s). / No reembolsable"</td></tr>
+        <tr><td>Commission line</td><td><code>cotizacion.commission</code></td><td>Only shown if commission &gt; 0%: "Incluye X% de comision"</td></tr>
+        <tr><td>Legal disclaimer box</td><td>Hardcoded</td><td>Gray box: "TARIFAS SUJETAS A CAMBIO SIN PREVIO AVISO. TARIFA NO SE GARANTIZA HASTA REALIZAR UN ANTICIPO" + "TARIFA PAGADERA EN MONEDA NACIONAL AL TIPO DE CAMBIO BANCARIO DEL DIA"</td></tr>
+        <tr><td>Passport warning</td><td>Hardcoded</td><td>"Favor de revisar el vencimiento de su Pasaporte y Visa. Para Viajes Internacionales y Cruceros, se requiere que el Pasaporte tenga 6 meses de vigencia…"</td></tr>
+        <tr><td>Goodbye message</td><td><code>cotizacion.goodbye_message</code></td><td>Italic gray text at bottom of page 2</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Cost Calculation Logic</h2>
+    <p>The subtotal is the sum of all service costs. Each service's contribution:</p>
+    <div class="api-block">
+      Flight:    (base_fee + iva + luggage_check + airport_right_of_use + suitcases_tax) × num_personas<br>
+      Cruise:    precio × num_personas<br>
+      Ferry:     precio × num_personas<br>
+      Tickets:   precio × cantidad  (or × num_personas if cantidad is 0)<br>
+      Transfer:  amount  (flat total, no per-person multiply)<br>
+      Insurance: costo   (flat total)<br>
+      Data SIM:  costo   (flat total)<br>
+      Visa:      costo   (flat total)<br>
+      Package:   package_price (flat total)<br>
+      Hotel:     SUM of (habitacion.price + habitacion.iva) for all rooms<br>
+      <br>
+      commission_amount = subtotal × (commission_pct / 100)<br>
+      total             = subtotal + commission_amount<br>
+      per_person        = total / total_traveler_count
+    </div>
+    <p>If a service's <code>num_personas</code> is 0 or null, it falls back to the quote's total traveler count.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Fonts &amp; Assets</h2>
+    <table class="docs-table">
+      <thead><tr><th>Asset</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td>Regular font</td><td><code>public/assets/fonts/Sans-Regular.ttf</code></td></tr>
+        <tr><td>Bold font</td><td><code>public/assets/fonts/Sans-Bold.ttf</code></td></tr>
+        <tr><td>Italic font</td><td><code>public/assets/fonts/Sans-Italic.ttf</code></td></tr>
+        <tr><td>Company logo</td><td><code>public/assets/images/logos/logo-lobato-2.jpg</code></td></tr>
+        <tr><td>Airline logos</td><td><code>public/assets/images/airlines/{aeromexico|volaris|viva-aerobus}.jpeg</code></td></tr>
+        <tr><td>Cruise logos</td><td><code>public/assets/images/cruises/{royal-caribbean|norwegian|princess}.jpeg</code></td></tr>
+      </tbody>
+    </table>
+    <p>If any asset file is missing, the PDF still generates — the logo or brand image is simply omitted. The fonts are critical; if the font files are missing PDFKit will fall back to Helvetica, which may not render Spanish characters (ñ, á, etc.) correctly.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <div class="callout-title">Adding new airline or cruise logos</div>
+        <p>Drop a JPEG into the appropriate directory and add the airline/cruise name mapping in <code>pages/api/cotizacion/[id]/pdf.ts</code> inside the <code>airlineImg()</code> or <code>cruiseImg()</code> helper function. The key must match the lowercase trimmed version of the name entered in the wizard.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="section" id="export">
+    <div class="section-label">Chapter 7</div>
+    <h1 class="section-title">CSV Export Reference</h1>
+    <p class="lead">The CSV export allows you to pull all quote data into a spreadsheet for analysis, reporting, or archiving.</p>
+
+    <h2 class="section-title">Exporting from the UI</h2>
+    <p>On the Quotes List page, click <strong>Export CSV</strong>. The download respects active filters — search text and status filter are both applied. To export the full dataset, clear all filters first, then click Export CSV.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Exporting via API</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span><span class="api-endpoint">/api/cotizaciones/export</span><br>
+      <br>
+      <span class="env-comment"># Optional query parameters (same as the Quotes List):</span><br>
+      <span class="env-key">?status</span>=<span class="api-endpoint">all|finished|draft</span><br>
+      <span class="env-key">?search</span>=<span class="api-endpoint">customer_name_or_contact</span>
+    </div>
+    <p>The response is <code>Content-Type: text/csv; charset=utf-8</code> with a UTF-8 BOM prepended so Excel opens it correctly without an import wizard. The filename is <code>cotizaciones_YYYY-MM-DD.csv</code> using today's date. All rows are sorted newest-first by <code>creation_date</code>.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">CSV Column Reference — All 31 Columns</h2>
+    <table class="docs-table">
+      <thead><tr><th>#</th><th>Column header</th><th>Source field</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>ID</td><td><code>cotizacion.id</code></td><td>Auto-incrementing quote number</td></tr>
+        <tr><td>2</td><td>Fecha Creación</td><td><code>cotizacion.creation_date</code></td><td>Formatted DD/MM/YYYY</td></tr>
+        <tr><td>3</td><td>Estado</td><td><code>cotizacion.finished</code></td><td>"Finalizada" or "Borrador"</td></tr>
+        <tr><td>4</td><td>Cliente</td><td><code>cliente.customer_name</code></td><td>Full client name</td></tr>
+        <tr><td>5</td><td>Contacto</td><td><code>cliente.customer_contact</code></td><td>Primary phone or email</td></tr>
+        <tr><td>6</td><td>Contacto 2</td><td><code>cliente.customer_contact2</code></td><td>Secondary contact; empty string if not set</td></tr>
+        <tr><td>7</td><td>Total Personas</td><td><code>persona</code> count</td><td>Number of traveler rows associated with the quote</td></tr>
+        <tr><td>8</td><td>Rangos de Edad</td><td><code>persona.age_range</code> values</td><td>Semicolon-separated age category codes for all travelers</td></tr>
+        <tr><td>9</td><td>Destino</td><td><code>viaje.travel_destiny</code></td><td>Empty if trip info not filled</td></tr>
+        <tr><td>10</td><td>Fecha Inicio Viaje</td><td><code>viaje.travel_begin</code></td><td>DD/MM/YYYY</td></tr>
+        <tr><td>11</td><td>Fecha Fin Viaje</td><td><code>viaje.travel_end</code></td><td>DD/MM/YYYY</td></tr>
+        <tr><td>12</td><td>Aerolínea</td><td><code>vuelo.airline</code></td><td>Dropdown selection value; empty if no flight</td></tr>
+        <tr><td>13</td><td>Otra Aerolínea</td><td><code>vuelo.other_airline</code></td><td>Free-text airline name when "Other" was selected</td></tr>
+        <tr><td>14</td><td>Tarifa Base Vuelo</td><td><code>vuelo.base_fee</code></td><td>Numeric, 0 if no flight</td></tr>
+        <tr><td>15</td><td>IVA Vuelo</td><td><code>vuelo.iva</code></td><td>Tax portion of flight cost</td></tr>
+        <tr><td>16</td><td>Equipaje</td><td><code>vuelo.luggage_check</code></td><td>Checked luggage fee</td></tr>
+        <tr><td>17</td><td>Derecho de Uso Aeropuerto</td><td><code>vuelo.airport_right_of_use</code></td><td>Airport TUA fee</td></tr>
+        <tr><td>18</td><td>Impuesto Maletas</td><td><code>vuelo.suitcases_tax</code></td><td>Additional baggage tax</td></tr>
+        <tr><td>19</td><td>Moneda Dólar</td><td><code>moneda.dollar</code></td><td>"Sí" or "No"</td></tr>
+        <tr><td>20</td><td>Tipo de Cambio</td><td><code>moneda.exchange_rate</code></td><td>MXN per 1 USD; 0 if MXN quote</td></tr>
+        <tr><td>21</td><td>Traslado Tipo</td><td><code>traslado.tipo</code></td><td>Transfer type description; empty if no transfer</td></tr>
+        <tr><td>22</td><td>Traslado Monto</td><td><code>traslado.amount</code></td><td>Total transfer cost</td></tr>
+        <tr><td>23</td><td>Seguro Compañía</td><td><code>seguro.insurance_company</code> or <code>other_insurance_company</code></td><td>Uses the "other" field when company = "Otra"</td></tr>
+        <tr><td>24</td><td>Seguro Costo</td><td><code>seguro.costo</code></td><td>Total insurance cost</td></tr>
+        <tr><td>25</td><td>Plan de Datos Proveedor</td><td><code>datos.proveedor_plan</code></td><td>SIM card provider/plan name</td></tr>
+        <tr><td>26</td><td>Plan de Datos Costo</td><td><code>datos.costo</code></td><td>Total SIM cost</td></tr>
+        <tr><td>27</td><td>Visa País</td><td><code>visa.pais</code></td><td>Country requiring visa</td></tr>
+        <tr><td>28</td><td>Visa Costo</td><td><code>visa.costo</code></td><td>Total visa cost</td></tr>
+        <tr><td>29</td><td>Comisión</td><td><code>cotizacion.commission</code></td><td>Commission percentage (e.g., 15 = 15%)</td></tr>
+        <tr><td>30</td><td>Mensaje de Bienvenida</td><td><code>cotizacion.greeting_message</code></td><td>Greeting text from the Messages step</td></tr>
+        <tr><td>31</td><td>Mensaje de Despedida</td><td><code>cotizacion.goodbye_message</code></td><td>Closing text from the Messages step</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <div class="callout-title">Hotel, Cruise, Ferry, and Tickets are not in the CSV</div>
+        <p>The CSV export covers the most common fields but does not include hotel room breakdowns, cruise details, ferry routes, or ticket specifics. For a complete data dump of those services, query the database directly or use the <code>GET /api/cotizacion/[id]</code> endpoint which returns the full nested JSON for a single quote.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENVIRONMENT -->
+  <div class="section" id="environment">
+    <div class="section-label">Chapter 8</div>
+    <h1 class="section-title">Environment Variables</h1>
+    <p class="lead">Create a <code>.env</code> file in the project root with these variables before starting the application.</p>
+
+    <div class="env-block">
+      <span class="env-comment"># ─── Database Configuration ─────────────────────</span><br>
+      <span class="env-key">DB_USER</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_PASSWORD</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_NAME</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_HOST</span>=<span class="env-val">localhost</span><br>
+      <span class="env-key">DB_PORT</span>=<span class="env-val">5430</span><br>
+      <br>
+      <span class="env-comment"># ─── Next.js / Auth ─────────────────────────────</span><br>
+      <span class="env-key">NEXTAUTH_URL</span>=<span class="env-val">http://localhost:3000</span><br>
+      <span class="env-key">NEXTAUTH_SECRET</span>=<span class="env-val">your-strong-secret-key-here</span>
+    </div>
+
+    <table class="docs-table">
+      <thead><tr><th>Variable</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>DB_USER</code></td><td>PostgreSQL username</td><td>postgres</td></tr>
+        <tr><td><code>DB_PASSWORD</code></td><td>PostgreSQL password</td><td>postgres</td></tr>
+        <tr><td><code>DB_NAME</code></td><td>Database name</td><td>postgres</td></tr>
+        <tr><td><code>DB_HOST</code></td><td>Database host</td><td>localhost</td></tr>
+        <tr><td><code>DB_PORT</code></td><td>Database port (default Docker port: 5430)</td><td>5430</td></tr>
+        <tr><td><code>NEXTAUTH_URL</code></td><td>The public-facing URL of the application</td><td>https://app.lobatotours.com</td></tr>
+        <tr><td><code>NEXTAUTH_SECRET</code></td><td>Secret key for signing session cookies. Must be at least 32 random characters.</td><td>Generate with: <code>openssl rand -hex 32</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🔑</div>
+      <div class="callout-text">
+        <div class="callout-title">Never commit .env to version control</div>
+        <p>The <code>.env</code> file contains sensitive credentials. Make sure <code>.env</code> is listed in your <code>.gitignore</code>. Use environment secrets in production deployments instead of .env files.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATABASE -->
+  <div class="section" id="database">
+    <div class="section-label">Chapter 9</div>
+    <h1 class="section-title">Database Schema</h1>
+    <p class="lead">The system uses a PostgreSQL database. The following tables are created automatically by the initialization endpoint <span class="tag">POST /api/init</span>.</p>
+
+    <div class="db-table">
+      <div class="db-table-header">📋 cotizacion — Main Quotes Table</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing quote ID</span></div>
+        <div class="db-col"><span class="db-col-name">employee_id</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Foreign key to empleado (the creating user)</span></div>
+        <div class="db-col"><span class="db-col-name">greeting_message</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Opening message displayed on the quote</span></div>
+        <div class="db-col"><span class="db-col-name">goodbye_message</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Closing message displayed on the quote</span></div>
+        <div class="db-col"><span class="db-col-name">commission</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Agent commission percentage</span></div>
+        <div class="db-col"><span class="db-col-name">finished</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">true = Finished, false = Draft</span></div>
+        <div class="db-col"><span class="db-col-name">valid_until</span><span class="db-col-type">DATE</span><span class="db-col-desc">Optional expiry date for the quote</span></div>
+        <div class="db-col"><span class="db-col-name">creation_date</span><span class="db-col-type">TIMESTAMP</span><span class="db-col-desc">Auto-set on creation</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">👤 empleado — Users / Employees</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing user ID</span></div>
+        <div class="db-col"><span class="db-col-name">user_name</span><span class="db-col-type">VARCHAR UNIQUE</span><span class="db-col-desc">Login username (immutable after creation)</span></div>
+        <div class="db-col"><span class="db-col-name">real_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Display name</span></div>
+        <div class="db-col"><span class="db-col-name">email</span><span class="db-col-type">VARCHAR UNIQUE</span><span class="db-col-desc">Email address (also used for login)</span></div>
+        <div class="db-col"><span class="db-col-name">password_hash</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">bcrypt-hashed password</span></div>
+        <div class="db-col"><span class="db-col-name">phone_number</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Optional phone number</span></div>
+        <div class="db-col"><span class="db-col-name">role</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">'admin' | 'manager' | 'user'</span></div>
+        <div class="db-col"><span class="db-col-name">active</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">false = account disabled, cannot log in</span></div>
+        <div class="db-col"><span class="db-col-name">creation_date</span><span class="db-col-type">TIMESTAMP</span><span class="db-col-desc">Account creation date</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">👥 cliente — Customer Information</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing ID</span></div>
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote reference</span></div>
+        <div class="db-col"><span class="db-col-name">customer_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Customer display name</span></div>
+        <div class="db-col"><span class="db-col-name">customer_contact</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Primary contact (phone or email)</span></div>
+        <div class="db-col"><span class="db-col-name">customer_contact2</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Secondary contact</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🧑‍🤝‍🧑 persona — Travelers per Quote</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">Auto-incrementing ID</span></div>
+        <div class="db-col"><span class="db-col-name">cliente_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent customer reference</span></div>
+        <div class="db-col"><span class="db-col-name">age_range</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Age category code (adult, child, infant, senior)</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">✈️ vuelo — Flight Details</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote (one-to-one)</span></div>
+        <div class="db-col"><span class="db-col-name">airline</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Dropdown selection (e.g., "aeromexico")</span></div>
+        <div class="db-col"><span class="db-col-name">other_airline</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Free-text when airline = "Otra"</span></div>
+        <div class="db-col"><span class="db-col-name">base_fee</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Base ticket fare per person</span></div>
+        <div class="db-col"><span class="db-col-name">iva</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Tax (IVA) per person</span></div>
+        <div class="db-col"><span class="db-col-name">luggage_check</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Checked luggage fee per person</span></div>
+        <div class="db-col"><span class="db-col-name">airport_right_of_use</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">TUA airport tax per person</span></div>
+        <div class="db-col"><span class="db-col-name">suitcases_tax</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Additional baggage tax per person</span></div>
+        <div class="db-col"><span class="db-col-name">num_personas</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Override passenger count (falls back to quote total if 0)</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🗺️ viaje — Trip / Package Info</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote (one-to-one)</span></div>
+        <div class="db-col"><span class="db-col-name">travel_destiny</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Main destination — appears as the large heading in the PDF</span></div>
+        <div class="db-col"><span class="db-col-name">travel_begin</span><span class="db-col-type">DATE</span><span class="db-col-desc">Trip start date</span></div>
+        <div class="db-col"><span class="db-col-name">travel_end</span><span class="db-col-type">DATE</span><span class="db-col-desc">Trip end date</span></div>
+        <div class="db-col"><span class="db-col-name">package_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Package name (only if Package service selected)</span></div>
+        <div class="db-col"><span class="db-col-name">package_price</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Total package price (flat, not per-person)</span></div>
+        <div class="db-col"><span class="db-col-name">package_description</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Full itinerary / description block rendered in PDF page 1</span></div>
+        <div class="db-col"><span class="db-col-name">num_personas</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Persons covered by the package price</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🏨 hotel — Hotel Header</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote (one hotel per quote)</span></div>
+        <div class="db-col"><span class="db-col-name">name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Hotel name as it appears in the PDF</span></div>
+        <div class="db-col"><span class="db-col-name">nights</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Number of nights of the stay</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🛏️ distribucion + habitacion — Room Breakdown</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">hotel_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent hotel record</span></div>
+        <div class="db-col"><span class="db-col-name">habitacion.type</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Room type (e.g., "Doble", "Triple", "Suite")</span></div>
+        <div class="db-col"><span class="db-col-name">habitacion.number_of_people</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">People assigned to this room</span></div>
+        <div class="db-col"><span class="db-col-name">habitacion.price</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Room price before IVA</span></div>
+        <div class="db-col"><span class="db-col-name">habitacion.iva</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">IVA on the room</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🚌 traslado — Airport Transfer</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">tipo</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Transfer type description (e.g., "Shuttle aeropuerto-hotel")</span></div>
+        <div class="db-col"><span class="db-col-name">amount</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Total cost for all passengers (not per-person)</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🚢 crucero — Cruise Details</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">cruise_line</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Dropdown selection ("royal-caribbean", "norwegian", "princess", "Otra")</span></div>
+        <div class="db-col"><span class="db-col-name">other_cruise_line</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Free-text when cruise_line = "Otra"</span></div>
+        <div class="db-col"><span class="db-col-name">nombre</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Ship name (e.g., "Harmony of the Seas")</span></div>
+        <div class="db-col"><span class="db-col-name">duracion</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Duration in days</span></div>
+        <div class="db-col"><span class="db-col-name">precio</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Price per person</span></div>
+        <div class="db-col"><span class="db-col-name">num_personas</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Passenger count override</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🛡️ seguro — Travel Insurance</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">insurance_company</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Company name from dropdown</span></div>
+        <div class="db-col"><span class="db-col-name">other_insurance_company</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Free-text when company = "Otra"</span></div>
+        <div class="db-col"><span class="db-col-name">costo</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Total insurance cost (flat)</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🎟️ entradas — Attraction Tickets</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">atraccion</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Name of the attraction or event</span></div>
+        <div class="db-col"><span class="db-col-name">precio</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Price per ticket</span></div>
+        <div class="db-col"><span class="db-col-name">cantidad</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Number of tickets; falls back to total travelers if 0</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">⛴️ ferry — Ferry / Boat</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">ruta</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Route description (e.g., "Ensenada → Ensenada")</span></div>
+        <div class="db-col"><span class="db-col-name">horario</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Departure schedule/time</span></div>
+        <div class="db-col"><span class="db-col-name">precio</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Price per person</span></div>
+        <div class="db-col"><span class="db-col-name">num_personas</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Passenger count override</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">📱 datos — Data SIM Card</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">proveedor_plan</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Carrier and plan name</span></div>
+        <div class="db-col"><span class="db-col-name">costo</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Total cost (flat)</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🛂 visa — Visa Service</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">pais</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Destination country requiring the visa</span></div>
+        <div class="db-col"><span class="db-col-name">costo</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Total visa processing cost (flat)</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">💱 moneda — Currency Settings</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Parent quote</span></div>
+        <div class="db-col"><span class="db-col-name">dollar</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">true = USD quote, false = MXN quote</span></div>
+        <div class="db-col"><span class="db-col-name">exchange_rate</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">MXN per 1 USD on the day the quote was created. 0 if MXN quote.</span></div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <div class="callout-title">Cascade deletes</div>
+        <p>All service tables have a foreign key to <code>cotizacion.id</code> with <code>ON DELETE CASCADE</code>. Deleting a quote row removes all its linked records (client, travelers, all service rows) automatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- API REFERENCE -->
+  <div class="section" id="api">
+    <div class="section-label">Chapter 9</div>
+    <h1 class="section-title">API Reference</h1>
+    <p class="lead">All API endpoints live under <span class="tag">/api</span>. Every request must include a valid <code>authToken</code> session cookie (set automatically by the login endpoint). The cookie is <code>HttpOnly</code> and <code>SameSite=Strict</code>. Role is read from the session on each request — not from any header or body field.</p>
+
+    <h2 class="section-title">Authentication Endpoints</h2>
+    <div class="api-block">
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/auth/login</span><br>
+      <span class="env-comment">Body:    { "username": "jperez", "password": "secret" }</span><br>
+      <span class="env-comment">Returns: { ok: true, user: { id, user_name, real_name, role } }</span><br>
+      <span class="env-comment">Errors:  401 Invalid credentials | 403 Account inactive</span><br>
+      <br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/auth/me</span><br>
+      <span class="env-comment">Returns: { id, role } of the logged-in session</span><br>
+      <span class="env-comment">Errors:  401 if no valid session</span><br>
+      <br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/auth/logout</span><br>
+      <span class="env-comment">Clears the authToken cookie. Returns { ok: true }.</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Dashboard</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/dashboard</span><br>
+      <span class="env-comment">Returns: &#123;</span><br>
+      <span class="env-comment">&nbsp;&nbsp;totals: &#123; all, finished, draft &#125;,</span><br>
+      <span class="env-comment">&nbsp;&nbsp;thisMonth: N, lastMonth: N, last7Days: N, growth: N%,</span><br>
+      <span class="env-comment">&nbsp;&nbsp;expiringSoon: N,</span><br>
+      <span class="env-comment">&nbsp;&nbsp;recentQuotes: [ &#123; id, creation_date, finished, clientes &#125; × 5 ],</span><br>
+      <span class="env-comment">&nbsp;&nbsp;monthlyTrend: [ &#123; month: "ene 25", count: 12 &#125; × 6 ]</span><br>
+      <span class="env-comment">&#125;</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Quotes — List &amp; Filter</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizaciones</span><br>
+      <span class="env-comment">Query params (all optional):</span><br>
+      <span class="env-key">page</span>=1 &nbsp;<span class="env-key">limit</span>=10 &nbsp;<span class="env-key">search</span>=text &nbsp;<span class="env-key">status</span>=all|finished|draft<br>
+      <span class="env-key">sortBy</span>=id|creation_date|finished &nbsp;<span class="env-key">sortOrder</span>=ASC|DESC<br>
+      <br>
+      <span class="env-comment">Returns: &#123; ok: true, data: &#123; cotizaciones: [...], pagination: &#123; currentPage, totalPages, totalCount, limit, hasNext, hasPrev &#125; &#125; &#125;</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Quotes — Single Quote CRUD</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]</span><br>
+      <span class="env-comment">Returns the full quote object with all nested associations:</span><br>
+      <span class="env-comment">clientes → personas, viaje, vuelo, moneda, crucero, hoteles → distribuciones → habitaciones, traslado, entradas, ferry, seguro, datos, visa</span><br>
+      <br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/cotizacion/[id]</span><br>
+      <span class="env-comment">Upsert: if id = "new" creates a new quote, otherwise updates. Body is the full quote JSON tree.</span><br>
+      <span class="env-comment">Returns: &#123; ok: true, cotizacion: &#123; id, ... &#125; &#125;</span><br>
+      <br>
+      <span class="api-method del">DEL</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]</span><br>
+      <span class="env-comment">Admin/Manager: can delete any quote. User: can only delete own quote.</span><br>
+      <span class="env-comment">Returns: &#123; ok: true &#125; | 403 if User trying to delete another user's quote</span><br>
+      <br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]/pdf</span><br>
+      <span class="env-comment">Streams a PDF directly. Content-Type: application/pdf.</span><br>
+      <span class="env-comment">No auth required — safe to share the URL with clients.</span><br>
+      <br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/cotizacion/[id]/duplicate</span><br>
+      <span class="env-comment">Clones the quote. Returns &#123; ok: true, newId: N &#125;.</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Quotes — CSV Export</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizaciones/export</span><br>
+      <span class="env-comment">Query: ?search=text &amp;status=all|finished|draft</span><br>
+      <span class="env-comment">Returns: text/csv with UTF-8 BOM. Filename: cotizaciones_YYYY-MM-DD.csv</span><br>
+      <span class="env-comment">31 columns (see Chapter 7). No pagination — all matching rows.</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">User Management (Admin only)</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users</span><br>
+      <span class="env-comment">Returns: [ &#123; id, user_name, real_name, email, phone_number, role, active, creation_date &#125; ]</span><br>
+      <span class="env-comment">403 if not admin.</span><br>
+      <br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/users</span><br>
+      <span class="env-comment">Body: &#123; user_name*, real_name*, email*, password*, role*, phone_number? &#125;</span><br>
+      <span class="env-comment">Returns: &#123; ok: true, user: &#123; id, user_name, real_name, role &#125; &#125;</span><br>
+      <span class="env-comment">400 if username or email already exists. Password is bcrypt-hashed before storage.</span><br>
+      <br>
+      <span class="api-method put">PUT</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users/[id]</span><br>
+      <span class="env-comment">Body: any subset of &#123; real_name, email, password, phone_number, role, active &#125;</span><br>
+      <span class="env-comment">Leave password blank (or omit) to keep the existing hash. user_name is not editable.</span><br>
+      <span class="env-comment">Returns: &#123; ok: true &#125;</span><br>
+      <br>
+      <span class="api-method del">DEL</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users/[id]</span><br>
+      <span class="env-comment">403 if attempting to delete own account. Cascade-deletes nothing — quotes remain.</span><br>
+      <span class="env-comment">Returns: &#123; ok: true &#125;</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Database Initialization</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/init</span><br>
+      <span class="env-comment">Returns: &#123; ok: true, tablesExist: true|false, tables: [...] &#125;</span><br>
+      <br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/init</span><br>
+      <span class="env-comment">Runs CREATE TABLE IF NOT EXISTS for all tables.</span><br>
+      <span class="env-comment">Seeds the default admin account if no users exist yet.</span><br>
+      <span class="env-comment">Safe to call multiple times — idempotent.</span><br>
+      <span class="env-comment">Returns: &#123; ok: true, message: "Database initialized" &#125;</span>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <p><strong>Protect <code>POST /api/init</code> in production.</strong> Although it uses <code>IF NOT EXISTS</code> and won't drop existing data, it can re-seed the default admin account if the <code>empleado</code> table is empty. Add middleware or a firewall rule to block external access to this endpoint after initial setup.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCKER -->
+  <div class="section" id="docker">
+    <div class="section-label">Chapter 10</div>
+    <h1 class="section-title">Docker Setup</h1>
+    <p class="lead">The application uses Docker to run a PostgreSQL database in a container. The application itself runs on Node.js outside Docker during development.</p>
+
+    <h2 class="section-title">Docker Commands</h2>
+    <div class="api-block">
+      <span class="env-comment"># Start the PostgreSQL container</span><br>
+      npm run docker:up<br>
+      <br>
+      <span class="env-comment"># Stop the container</span><br>
+      npm run docker:down<br>
+      <br>
+      <span class="env-comment"># View database logs</span><br>
+      npm run docker:logs<br>
+      <br>
+      <span class="env-comment"># Check container status</span><br>
+      docker ps
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">docker-compose.yml Summary</h2>
+    <table class="docs-table">
+      <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Image</td><td>postgres:latest</td></tr>
+        <tr><td>Internal port</td><td>5432</td></tr>
+        <tr><td>Host port</td><td>5430</td></tr>
+        <tr><td>Database</td><td>postgres</td></tr>
+        <tr><td>Username</td><td>postgres</td></tr>
+        <tr><td>Password</td><td>postgres</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FIRST-TIME SETUP -->
+  <div class="section" id="initialization">
+    <div class="section-label">Chapter 11</div>
+    <h1 class="section-title">First-Time Setup</h1>
+    <p class="lead">Follow these steps to set up the Lobato Tours system from scratch on a new machine.</p>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Prerequisites</h4>
+          <p>Install Node.js (v18+), npm, and Docker Desktop on the server or development machine.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Clone the repository and install dependencies</h4>
+          <p>Run <code>npm install</code> in the project directory to install all Node.js packages.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Create the .env file</h4>
+          <p>Copy the environment variables from Chapter 5 into a new <code>.env</code> file at the project root. Update NEXTAUTH_SECRET with a strong random value.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Start the database container</h4>
+          <p>Run <code>npm run docker:up</code>. Wait a few seconds for PostgreSQL to be ready.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Start the development server</h4>
+          <p>Run <code>npm run dev</code>. The application starts on <code>http://localhost:3000</code>.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Initialize the database</h4>
+          <p>Visit <code>http://localhost:3000</code>. If tables don't exist, send a <code>POST</code> request to <code>/api/init</code> (or run <code>npm run init-db</code>). This creates all tables and the default admin account.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>Log in and change the admin password</h4>
+          <p>Log in with <strong>admin</strong> / <strong>admin123</strong>. Go to User Management and edit the admin account to set a secure password immediately.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-text">
+        <div class="callout-title">Automated Setup</div>
+        <p>Run <code>npm run setup</code> to execute steps 4–6 automatically with a single command.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="section" id="troubleshooting">
+    <div class="section-label">Chapter 12</div>
+    <h1 class="section-title">Troubleshooting</h1>
+    <p class="lead">Symptoms, causes, and step-by-step resolutions for the most common issues.</p>
+
+    <div style="margin-top:12px;">
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#991b1b;margin-bottom:8px;">🔴 Cannot connect to database / "ECONNREFUSED"</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;">Run <code>docker ps</code> — the <code>lobato-postgres</code> container must be listed as <strong>Up</strong>. If it's missing, run <code>npm run docker:up</code>.</li>
+          <li style="margin-bottom:6px;">Check <code>DB_PORT</code> in <code>.env</code> matches the docker-compose host port (<strong>5430</strong> by default). The container's internal port is 5432 — don't confuse the two.</li>
+          <li style="margin-bottom:6px;">Check for port conflicts: <code>lsof -i :5430</code> (macOS/Linux) or <code>netstat -ano | findstr :5430</code> (Windows). Another app may be binding that port.</li>
+          <li>Run <code>npm run docker:logs</code> to see PostgreSQL startup errors (e.g., data directory corruption, auth issues).</li>
+        </ul>
+      </div>
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#991b1b;margin-bottom:8px;">🔴 PDF is blank or shows "Not found"</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;">The quote ID in the URL does not exist in the database — verify the quote was saved (has a numeric ID, not "new").</li>
+          <li style="margin-bottom:6px;">Font files may be missing from <code>public/assets/fonts/</code>. PDFKit will throw an error if <code>Sans-Regular.ttf</code> is not found. Check the server terminal for errors.</li>
+          <li>The logo file path <code>public/assets/images/logos/logo-lobato-2.jpg</code> does not exist — the PDF still generates but without the logo. Not a fatal error.</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Tables not created / "relation does not exist"</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;">The database container is running but the schema was never initialized. Send <code>POST /api/init</code> from a browser (or with curl/Postman) to create all tables.</li>
+          <li style="margin-bottom:6px;">Alternatively run the npm script: <code>npm run init-db</code></li>
+          <li>If the error persists after init, the DB_NAME in <code>.env</code> may point to the wrong database. The default is <code>postgres</code>.</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Login failing with correct credentials</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;"><strong>Account is inactive</strong> — the <code>active</code> field was set to false. An admin must toggle it back to Active in User Management.</li>
+          <li style="margin-bottom:6px;"><strong>Wrong password</strong> — the default password for the seed admin is <code>admin123</code> (case-sensitive). If it was changed and forgotten, update the bcrypt hash directly in the database.</li>
+          <li style="margin-bottom:6px;"><strong>NEXTAUTH_SECRET missing</strong> — the session cookie can't be signed. Set a value in <code>.env</code> and restart the server.</li>
+          <li>Clear all browser cookies for <code>localhost:3000</code> and try again in a private window to rule out stale session issues.</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 /admin/users redirects to dashboard</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;">Your session's role is not <code>admin</code>. The page checks <code>/api/auth/me</code> on load and redirects immediately if role ≠ admin.</li>
+          <li>Log in as an admin account, or ask another admin to change your role in User Management. The role change takes effect on your next page load.</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 CSV export opens as garbled text in Excel</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;">The file includes a UTF-8 BOM (<code>\uFEFF</code>) precisely to prevent this. If Excel still shows garbled text, use <strong>Data → From Text/CSV</strong> in Excel and select UTF-8 encoding during the import wizard.</li>
+          <li>Google Sheets: File → Import → select the downloaded CSV file. Encoding auto-detects correctly.</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Quote wizard loses data between steps</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:6px;">Auto-save fires on every Next/Previous/dot click. If the server is unavailable (DB down, dev server crashed), the save call fails silently. Check the browser's Network tab for failing <code>POST /api/cotizacion/[id]</code> calls.</li>
+          <li>If the quote was never saved (still shows ID "new"), the first save creates the record. All subsequent steps update it. Data is not lost unless the browser tab is closed before the first step is saved.</li>
+        </ul>
+      </div>
+
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#065f46;margin-bottom:8px;">🟢 Permission error on startup scripts</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Make the script executable: <code>chmod +x scripts/start-dev.sh</code></li>
+          <li>On Windows, run the commands in <code>package.json</code> manually in PowerShell.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="section" id="security">
+    <div class="section-label">Chapter 13</div>
+    <h1 class="section-title">Security Notes</h1>
+    <p class="lead">Security practices for operating the Lobato Tours system in production.</p>
+
+    <h2 class="section-title">Authentication &amp; Session Model</h2>
+    <p>Login calls <code>POST /api/auth/login</code>, which verifies the password with <code>bcrypt.compare()</code>, then writes a signed <code>authToken</code> cookie. The cookie is <code>HttpOnly</code> (not accessible to JavaScript), <code>SameSite=Strict</code> (blocks CSRF), and scoped to the app's path. The payload contains the user ID and role, signed with <code>NEXTAUTH_SECRET</code> using a JWT-style signature.</p>
+    <p>Every subsequent request reads and verifies that cookie on the server. The role stored in the token is cross-checked against <code>empleado.active</code> on sensitive operations — a deactivated user's existing cookie will be rejected on their next API call.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Password Storage</h2>
+    <p>Passwords are hashed with <strong>bcrypt</strong> (cost factor 10) before being stored in the <code>password_hash</code> column. Plaintext passwords are never logged, stored, or returned by any endpoint. The default password <code>admin123</code> is seeded as a bcrypt hash — not the plaintext string — but it is still a well-known value and must be changed immediately in any non-development deployment.</p>
+    <p>To manually reset a forgotten admin password directly in the database:</p>
+    <div class="api-block">
+      <span class="env-comment"># Generate a new bcrypt hash (e.g., for "newpassword"):</span><br>
+      node -e "const b=require('bcryptjs');b.hash('newpassword',10).then(h=&gt;console.log(h))"<br>
+      <br>
+      <span class="env-comment"># Then update in psql:</span><br>
+      UPDATE empleado SET password_hash = '&lt;hash&gt;' WHERE user_name = 'admin';
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Role Enforcement</h2>
+    <p>Every API handler that requires elevated permissions calls an auth check helper at the top of the function. The check pattern is:</p>
+    <ol style="margin-left:20px;font-size:14px;color:var(--gray-700);margin-top:8px;margin-bottom:16px;">
+      <li style="margin-bottom:6px;">Read the <code>authToken</code> cookie from the incoming request.</li>
+      <li style="margin-bottom:6px;">Verify the JWT signature with <code>NEXTAUTH_SECRET</code>.</li>
+      <li style="margin-bottom:6px;">Extract the user ID and role from the payload.</li>
+      <li style="margin-bottom:6px;">If the endpoint requires admin: reject with <code>403 Forbidden</code> if role ≠ "admin".</li>
+      <li>If the endpoint is user-scoped (e.g., delete own quote): reject with <code>403</code> if the record's <code>employee_id</code> ≠ session user ID (unless admin/manager).</li>
+    </ol>
+    <p>This means a User-role session token cannot access admin endpoints even if the URL is known — the server always validates server-side before touching the database.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">PDF URL Sharing</h2>
+    <p>The PDF endpoint (<code>GET /api/cotizacion/[id]/pdf</code>) intentionally does <strong>not</strong> require an auth cookie. This allows agents to share the direct PDF URL with clients. The trade-off is that anyone who knows a quote's numeric ID can view that quote's PDF. IDs are sequential integers — be aware that a motivated user could enumerate them. If this is a concern in production, add token-based URL signing or restrict access behind auth.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Customer Data &amp; Privacy</h2>
+    <p>Quotes contain personal customer data: full names, phone numbers, and in some cases secondary contact information. This data is subject to Mexico's <strong>LFPDPPP</strong> (Ley Federal de Protección de Datos Personales en Posesión de los Particulares). Ensure the production server:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:20px;">
+      <li style="margin-bottom:8px;">Is served over <strong>HTTPS</strong> (TLS 1.2 minimum) so data in transit is encrypted.</li>
+      <li style="margin-bottom:8px;">Has automated database backups with encryption at rest.</li>
+      <li style="margin-bottom:8px;">Does not expose the PostgreSQL port (5430) to the public internet.</li>
+      <li style="margin-bottom:8px;">Has a defined data retention and deletion policy.</li>
+    </ul>
+
+    <h2 class="section-title">Production Security Checklist</h2>
+    <table class="docs-table">
+      <thead><tr><th>Item</th><th>Required action</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td>Default admin password</td><td>Change from <code>admin123</code> immediately after first login</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>NEXTAUTH_SECRET</td><td>Generate with <code>openssl rand -hex 32</code>. Min 32 chars.</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>HTTPS / TLS</td><td>Serve behind a reverse proxy (Nginx/Caddy) with a valid certificate</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>NEXTAUTH_URL</td><td>Set to the actual production domain, not localhost</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>Database password</td><td>Change DB_PASSWORD from the default "postgres"</td><td><span class="badge yellow">High</span></td></tr>
+        <tr><td>Database port</td><td>Block port 5430 from public internet at firewall level</td><td><span class="badge yellow">High</span></td></tr>
+        <tr><td><code>POST /api/init</code></td><td>Add middleware or IP allowlist to block public access post-setup</td><td><span class="badge yellow">High</span></td></tr>
+        <tr><td>Inactive users</td><td>Deactivate accounts for employees who leave — don't delete, deactivate</td><td><span class="badge blue">Medium</span></td></tr>
+        <tr><td>PDF URL enumeration</td><td>Consider token-based PDF URLs if quote data is sensitive</td><td><span class="badge blue">Medium</span></td></tr>
+        <tr><td>Log monitoring</td><td>Monitor server logs for repeated 401/403 responses (brute force indicators)</td><td><span class="badge blue">Medium</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🛡️</div>
+      <div class="callout-text">
+        <div class="callout-title">No built-in rate limiting</div>
+        <p>The login endpoint has no built-in brute-force protection. In production, place the application behind a reverse proxy (Nginx, Caddy, Cloudflare) that enforces rate limiting on <code>POST /api/auth/login</code> — e.g., max 10 attempts per minute per IP.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding-top:32px;border-top:1px solid var(--gray-200);text-align:center;color:var(--gray-500);font-size:13px;">
+      <p>Lobato Tours · Travel Quotation System · Administrator Guide (English) · v1.0 · March 2026</p>
+      <p style="margin-top:4px;">Confidential — For system administrators only</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const a = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

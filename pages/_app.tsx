@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import { ReactElement, ReactNode, Suspense } from 'react';
+import { ReactElement, ReactNode, useEffect } from 'react';
 import DefaultLayout from '../components/Layouts/DefaultLayout';
 import { Provider } from 'react-redux';
 import store from '../store/index';
@@ -7,6 +7,7 @@ import Head from 'next/head';
 
 import { appWithI18Next } from 'ni18n';
 import { ni18nConfig } from 'ni18n.config.ts';
+import { useTranslation } from 'react-i18next';
 
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -26,11 +27,24 @@ type AppPropsWithLayout = AppProps & {
     Component: NextPageWithLayout;
 };
 
-const App = ({ Component, pageProps }: AppPropsWithLayout) => {
+// Inner component: can use hooks (i18n context is provided by appWithI18Next above it)
+const AppContent = ({ Component, pageProps }: AppPropsWithLayout) => {
+    const { i18n } = useTranslation();
     const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
+    // Sync i18n language with whatever is saved in localStorage on first mount
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('i18nextLng') || 'es';
+            if (i18n.language !== saved) {
+                i18n.changeLanguage(saved);
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
-        <Provider store={store}>
+        <>
             <Head>
                 <title>Lobato Tours - Cotizador</title>
                 <meta charSet="UTF-8" />
@@ -41,7 +55,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
             </Head>
 
             {getLayout(<Component {...pageProps} />)}
-            
+
             <ToastContainer
                 position="top-right"
                 autoClose={3000}
@@ -54,7 +68,15 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
                 pauseOnHover
                 theme="light"
             />
-        </Provider>
+        </>
     );
 };
+
+// Outer App wraps everything with the Redux Provider
+const App = (props: AppPropsWithLayout) => (
+    <Provider store={store}>
+        <AppContent {...props} />
+    </Provider>
+);
+
 export default appWithI18Next(App, ni18nConfig);

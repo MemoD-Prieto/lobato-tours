@@ -1,11 +1,14 @@
 import React from "react";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import { Card } from "./Card";
 import { SmartField } from "./SmartField";
 import { useFormData } from "./FormContext";
 import { FaShip } from "react-icons/fa";
+import { PersonasWidget } from "./PersonasWidget";
 
 export function StepCrucero() {
+  const { t } = useTranslation();
   const { data, setValue } = useFormData();
 
   const cruiseLines = [
@@ -22,11 +25,11 @@ export function StepCrucero() {
   return (
     <Card title={
       <div className="flex items-center justify-between">
-        <h4 className="text-base font-semibold">Crucero</h4>
-        <div className="w-32 h-32 border rounded-lg p-2 bg-gray-50 flex items-center justify-center flex-shrink-0">
+        <h4 className="text-base font-semibold">{t('cruise')}</h4>
+        <div className="w-32 h-32 border rounded-lg p-2 bg-gray-50 dark:bg-[#253a5e] dark:border-[#253a5e] flex items-center justify-center flex-shrink-0">
           {selectedCruiseLine && !isOtherSelected && selectedCruiseData?.image ? (
-            <Image 
-              src={selectedCruiseData.image} 
+            <Image
+              src={selectedCruiseData.image}
               alt={selectedCruiseData.label}
               width={112}
               height={112}
@@ -37,7 +40,7 @@ export function StepCrucero() {
               <FaShip className="w-8 h-8" />
             </div>
           ) : (
-            <div className="w-8 h-8 flex items-center justify-center text-gray-400">
+            <div className="w-8 h-8 flex items-center justify-center text-gray-400 dark:text-[#5c6f8a]">
               <FaShip className="w-8 h-8" />
             </div>
           )}
@@ -46,15 +49,15 @@ export function StepCrucero() {
     }>
       <div className="grid grid-cols-1 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Línea de crucero</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-[#e0e6ed] mb-1">{t('cruise_line')}</label>
           {isOtherSelected ? (
             <div className="flex gap-2">
-              <select 
-                className="w-1/2 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              <select
+                className="w-1/2 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-[#1b2e4b] dark:border-[#253a5e] dark:text-white"
                 value={selectedCruiseLine}
                 onChange={(e) => setValue("crucero.cruise_line", e.target.value)}
               >
-                <option value="">Seleccione una línea de crucero</option>
+                <option value="">{t('select_cruise_line')}</option>
                 {cruiseLines.map((cruise) => (
                   <option key={cruise.value} value={cruise.value}>
                     {cruise.label}
@@ -63,19 +66,19 @@ export function StepCrucero() {
               </select>
               <input
                 type="text"
-                className="w-1/2 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Nombre de la línea de crucero"
+                className="w-1/2 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-[#1b2e4b] dark:border-[#253a5e] dark:text-white"
+                placeholder={t('cruise_name')}
                 value={data.crucero?.other_cruise_line || ""}
                 onChange={(e) => setValue("crucero.other_cruise_line", e.target.value)}
               />
             </div>
           ) : (
-            <select 
-              className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            <select
+              className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-[#1b2e4b] dark:border-[#253a5e] dark:text-white"
               value={selectedCruiseLine}
               onChange={(e) => setValue("crucero.cruise_line", e.target.value)}
             >
-              <option value="">Seleccione una línea de crucero</option>
+              <option value="">{t('select_cruise_line')}</option>
               {cruiseLines.map((cruise) => (
                 <option key={cruise.value} value={cruise.value}>
                   {cruise.label}
@@ -85,14 +88,15 @@ export function StepCrucero() {
           )}
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <SmartField label="Nombre del crucero" name="crucero.nombre" placeholder="Ej: Caribbean Princess" />
-        <SmartField label="Precio por persona" name="crucero.precio" type="currency" prefix="$" placeholder="0.00" />
+        <SmartField label={t('cruise_name')} name="crucero.nombre" placeholder="Ej: Caribbean Princess" />
+        <SmartField label={t('price_per_person')} name="crucero.precio" type="currency" prefix="$" placeholder="0.00" />
       </div>
       <div className="mt-4">
-        <SmartField label="Duración (días)" name="crucero.duracion" type="number" placeholder="0" min={1} />
+        <SmartField label={t('duration_days')} name="crucero.duracion" type="number" placeholder="0" min={1} />
       </div>
+      <PersonasWidget fieldPath="crucero.num_personas" />
     </Card>
   );
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>Screenshot Helper</title></head>
+<body>
+<input type="file" id="f" accept="image/*" style="display:none">
+<div id="status">Ready</div>
+<script>
+document.getElementById('f').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const name = new URLSearchParams(location.search).get('name') || 'screenshot';
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const data = ev.target.result;
+    const res = await fetch('/api/save-screenshot', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name, data})
+    });
+    const j = await res.json();
+    document.getElementById('status').textContent = JSON.stringify(j);
+  };
+  reader.readAsDataURL(file);
+});
+</script>
+</body>
+</html>

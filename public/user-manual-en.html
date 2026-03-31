@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lobato Tours – User Manual</title>
+<style>
+  :root{--brand:#1e40af;--brand-light:#eff6ff;--accent:#16a34a;--warn:#d97706;--danger:#dc2626;--gray:#374151;--light:#f9fafb;--border:#e5e7eb}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--gray);background:#fff;line-height:1.65}
+  .page-wrap{display:flex;min-height:100vh}
+  nav.sidebar{width:260px;flex-shrink:0;background:var(--brand);color:#fff;padding:2rem 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav.sidebar .logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.15);font-size:1.1rem;font-weight:700}
+  nav.sidebar .logo span{opacity:.65;font-weight:400;font-size:.85rem;display:block;margin-top:.2rem}
+  nav.sidebar h3{padding:.9rem 1.5rem .4rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;opacity:.5}
+  nav.sidebar a{display:block;padding:.55rem 1.5rem;color:rgba(255,255,255,.85);text-decoration:none;font-size:.88rem;border-left:3px solid transparent;transition:.15s}
+  nav.sidebar a:hover{color:#fff;border-left-color:#93c5fd;background:rgba(255,255,255,.08)}
+  main{flex:1;padding:2.5rem 3rem;max-width:960px}
+  h1{font-size:2rem;color:var(--brand);margin-bottom:.4rem}
+  h2{font-size:1.4rem;color:var(--brand);margin:2.5rem 0 .8rem;padding-bottom:.4rem;border-bottom:2px solid var(--brand-light)}
+  h3{font-size:1.05rem;color:#1e3a8a;margin:1.6rem 0 .5rem}
+  p{margin-bottom:.75rem}
+  .subtitle{color:#6b7280;font-size:1rem;margin-bottom:2rem}
+  .ss{display:block;width:100%;border-radius:8px;border:1px solid var(--border);margin:1rem 0 1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+  .btn-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:.88rem}
+  .btn-table th{background:var(--brand);color:#fff;padding:.5rem .8rem;text-align:left}
+  .btn-table td{padding:.5rem .8rem;border-bottom:1px solid var(--border);vertical-align:top}
+  .btn-table tr:nth-child(even) td{background:var(--light)}
+  .btn-name{font-weight:600;white-space:nowrap;color:#1e3a8a}
+  .tip{background:#fffbeb;border-left:4px solid var(--warn);padding:.7rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.88rem}
+  .tip strong{color:var(--warn)}
+  .note{background:var(--brand-light);border-left:4px solid var(--brand);padding:.7rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.88rem}
+  .note strong{color:var(--brand)}
+  .badge{display:inline-block;padding:.15rem .55rem;border-radius:999px;font-size:.75rem;font-weight:600}
+  .badge-green{background:#dcfce7;color:#166534}
+  .badge-yellow{background:#fef9c3;color:#854d0e}
+  .role-block{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:.8rem 0}
+  .role-block strong{color:var(--brand)}
+  ol,ul{padding-left:1.4rem;margin-bottom:.8rem}
+  li{margin-bottom:.35rem}
+  hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+  .toc{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:2rem;font-size:.88rem}
+  .toc h2{margin:0 0 .8rem;font-size:1rem;border:none}
+  .toc ol{margin:0}
+  .toc a{color:var(--brand);text-decoration:none}
+  .page-section{margin-bottom:3rem}
+  /* ── PRINT BUTTON ─────────────────────────────── */
+  .print-bar{position:fixed;bottom:24px;right:24px;z-index:200}
+  .btn-print{background:var(--brand);color:#fff;border:none;padding:12px 24px;border-radius:100px;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(30,64,175,.4);transition:all .2s}
+  .btn-print:hover{background:#1e3a8a;transform:translateY(-1px);box-shadow:0 6px 20px rgba(30,64,175,.5)}
+  /* ── PRINT / PDF ──────────────────────────────── */
+  @media print{
+    .print-bar{display:none!important}
+    nav.sidebar{display:none!important}
+    main{padding:0;max-width:100%}
+    body{font-size:11pt}
+    h2{page-break-before:always}
+    h2:first-of-type{page-break-before:avoid}
+    .page-section{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="print-bar">
+  <button class="btn-print" onclick="window.print()">🖨️ Export to PDF</button>
+</div>
+<div class="page-wrap">
+<nav class="sidebar">
+  <div class="logo">Lobato Tours<span>User Manual</span></div>
+  <h3>Getting Started</h3>
+  <a href="#intro">Introduction</a>
+  <a href="#roles">User Roles</a>
+  <a href="#login">Signing In</a>
+  <h3>Main Pages</h3>
+  <a href="#dashboard">Dashboard</a>
+  <a href="#cotizaciones">Quotes List</a>
+  <a href="#detail">Quote Detail</a>
+  <h3>Creating Quotes</h3>
+  <a href="#wizard">Quote Wizard</a>
+  <a href="#step-client">Step 1 – Client</a>
+  <a href="#step-trip">Step 2 – Trip Info</a>
+  <a href="#step-currency">Step 3 – Currency</a>
+  <a href="#step-services">Step 4 – Services</a>
+  <a href="#step-service-details">Steps 5+ – Details</a>
+  <a href="#step-messages">Messages &amp; Commission</a>
+  <a href="#step-summary">Summary Step</a>
+  <h3>Reference</h3>
+  <a href="#statuses">Quote Statuses</a>
+  <a href="#pdf">Exporting PDFs</a>
+  <a href="#tips">Tips &amp; Best Practices</a>
+</nav>
+<main>
+  <h1>User Manual</h1>
+  <p class="subtitle">Complete guide for agents and managers using the Lobato Tours quoting system.</p>
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#roles">User Roles</a></li>
+      <li><a href="#login">Signing In</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#cotizaciones">Quotes List</a></li>
+      <li><a href="#detail">Quote Detail View</a></li>
+      <li><a href="#wizard">Quote Creation Wizard</a></li>
+      <li><a href="#statuses">Quote Statuses</a></li>
+      <li><a href="#pdf">Exporting PDFs</a></li>
+      <li><a href="#tips">Tips &amp; Best Practices</a></li>
+    </ol>
+  </div>
+
+  <div class="page-section" id="intro">
+    <h2>1. Introduction</h2>
+    <p>The Lobato Tours quoting system lets travel agents quickly create, manage, and share professional travel quotes with clients. From a simple flight quote to a full package including hotel, cruise, visa, and insurance — every quote is built step-by-step using the Quote Wizard, then exported as a branded PDF ready to send to the client.</p>
+    <p>This manual covers every page and every button in the system so you always know exactly what each action does and why it matters.</p>
+  </div>
+
+  <div class="page-section" id="roles">
+    <h2>2. User Roles</h2>
+    <p>Every account has one of three roles, each with different permissions:</p>
+    <div class="role-block"><strong>Agent (User)</strong> — Can create and manage their own quotes. Cannot see quotes from other agents. Cannot access admin settings.</div>
+    <div class="role-block"><strong>Manager</strong> — Can see and manage all agents' quotes. Can run reports. Cannot manage user accounts.</div>
+    <div class="role-block"><strong>Admin</strong> — Full access to everything: user management, all quotes, system settings, and reports.</div>
+  </div>
+
+  <div class="page-section" id="login">
+    <h2>3. Signing In</h2>
+    <img src="doc-screenshots/login-page.jpg" alt="Login page" class="ss"/>
+    <p>The login page is the entry point to the system. Enter your credentials and click Sign In. If your session is still active you will be taken directly to the dashboard.</p>
+    <table class="btn-table">
+      <thead><tr><th>Field / Button</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Username or Email</td><td>Enter your assigned username or email address.</td><td>Identifies your account so the system loads your role and your quotes.</td></tr>
+        <tr><td class="btn-name">Password</td><td>Enter your account password (hidden as dots).</td><td>Authenticates you securely to prevent unauthorized access.</td></tr>
+        <tr><td class="btn-name">Sign In button</td><td>Submits your credentials and logs you in. Shows a spinner while verifying.</td><td>Opens the application. If credentials are wrong an error message appears inline so you can retry without refreshing the page.</td></tr>
+        <tr><td class="btn-name">Language toggle (EN / ES)</td><td>Switches the interface language between English and Spanish.</td><td>Work in whichever language feels most comfortable. The preference is remembered for your session.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Tip:</strong> If you see a "connection error" message, check your internet connection and try again. If the problem persists, contact your administrator.</div>
+  </div>
+
+  <div class="page-section" id="dashboard">
+    <h2>4. Dashboard</h2>
+    <img src="doc-screenshots/admin-dashboard.jpg" alt="Dashboard" class="ss"/>
+    <p>The dashboard is the first screen you see after logging in. It gives you a real-time overview of your quote activity and quick access to every part of the system.</p>
+    <h3>Sidebar Navigation</h3>
+    <table class="btn-table">
+      <thead><tr><th>Element</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Lobato Tours logo</td><td>Click to return to the dashboard from any page.</td><td>Quick "go home" shortcut from anywhere in the app without using the browser back button.</td></tr>
+        <tr><td class="btn-name">Sidebar toggle (hamburger ☰)</td><td>Collapses the left sidebar so only the favicon icon shows, giving more horizontal space to the main content. Click again to expand.</td><td>Use when working on a wide table or quote wizard and needing more screen real estate.</td></tr>
+        <tr><td class="btn-name">Quotes (Cotizaciones)</td><td>Navigates to the full list of all your quotes.</td><td>Your main workspace for finding and managing existing quotes.</td></tr>
+        <tr><td class="btn-name">New Quote (Nueva Cotización)</td><td>Opens the Quote Creation Wizard for a brand-new quote.</td><td>The fastest way to start building a new quote for a client.</td></tr>
+        <tr><td class="btn-name">Language switcher (EN / ES)</td><td>Changes the interface language at any time.</td><td>Switch between English and Spanish whenever you need to.</td></tr>
+        <tr><td class="btn-name">Help button (? icon, bottom of sidebar)</td><td>Opens a dropdown with links to the User Manual and the Admin Guide, each opening in a new tab.</td><td>Access documentation without leaving the app or searching the internet.</td></tr>
+        <tr><td class="btn-name">User menu / Avatar</td><td>Displays your username and role. May include a logout option.</td><td>Confirm which account is currently active — important on shared computers.</td></tr>
+      </tbody>
+    </table>
+    <h3>Dashboard Stat Cards</h3>
+    <table class="btn-table">
+      <thead><tr><th>Card</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Total Quotes</td><td>All quotes you have created (all quotes system-wide for managers/admins).</td></tr>
+        <tr><td class="btn-name">Finished</td><td>Quotes marked as finalized — complete and ready to send to clients.</td></tr>
+        <tr><td class="btn-name">Drafts</td><td>Quotes still in progress — incomplete or not yet marked as finished.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Note:</strong> Managers and admins see totals for all agents in the system. Regular agents only see counts for their own quotes.</div>
+  </div>
+
+  <div class="page-section" id="cotizaciones">
+    <h2>5. Quotes List</h2>
+    <img src="doc-screenshots/admin-cotizaciones.jpg" alt="Quotes list" class="ss"/>
+    <p>The Quotes List is where you find, filter, and manage all of your quotes. Every quote ever created appears here as a row in the table.</p>
+    <h3>Top Action Bar</h3>
+    <table class="btn-table">
+      <thead><tr><th>Button</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">+ New Quote</td><td>Opens the Quote Creation Wizard from scratch to start a new quote.</td><td>Use this every time you need to create a quote for a new client or trip.</td></tr>
+        <tr><td class="btn-name">Export CSV</td><td>Downloads all currently visible quotes (respecting active filters) as a .csv spreadsheet file.</td><td>Generate reports, share data with management, or analyze quote trends in Excel or Google Sheets.</td></tr>
+      </tbody>
+    </table>
+    <h3>Filters and Search</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Search box</td><td>Filters the list instantly as you type — matches against client name, contact info, and destination.</td><td>Find a specific client's quote in seconds without scrolling through the entire list.</td></tr>
+        <tr><td class="btn-name">Status filter</td><td>Show All quotes, only Finished quotes, or only Drafts.</td><td>Focus on quotes that still need work (drafts) or quotes that are ready to share (finished).</td></tr>
+        <tr><td class="btn-name">Sort By dropdown</td><td>Sort the list by creation date, client name, or destination.</td><td>Organize the list in the most useful way for your current task.</td></tr>
+        <tr><td class="btn-name">Order (Ascending / Descending)</td><td>Flip the sort direction for whichever field is selected.</td><td>See newest quotes first (date descending) or alphabetical A-Z (name ascending).</td></tr>
+        <tr><td class="btn-name">Show (rows per page)</td><td>Choose how many quotes appear per page: 10, 25, 50, or All.</td><td>View more quotes at once on a large monitor, or fewer on a smaller screen.</td></tr>
+      </tbody>
+    </table>
+    <h3>Quote Table Columns</h3>
+    <table class="btn-table">
+      <thead><tr><th>Column</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">ID</td><td>The unique number assigned to this quote when it was first saved.</td></tr>
+        <tr><td class="btn-name">Client</td><td>The main client name entered in Step 1 of the wizard.</td></tr>
+        <tr><td class="btn-name">Contact</td><td>The client's primary email or phone number.</td></tr>
+        <tr><td class="btn-name">Destination</td><td>The main travel destination from the Trip Info step.</td></tr>
+        <tr><td class="btn-name">Date</td><td>The date the quote was first created in the system.</td></tr>
+        <tr><td class="btn-name">Status</td><td><span class="badge badge-green">Finished</span> or <span class="badge badge-yellow">Draft</span>.</td></tr>
+        <tr><td class="btn-name">Actions</td><td>Four icon buttons for working with that quote row (see below).</td></tr>
+      </tbody>
+    </table>
+    <h3>Row Action Icons</h3>
+    <table class="btn-table">
+      <thead><tr><th>Icon</th><th>Name</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td>👁</td><td class="btn-name">View Details</td><td>Opens the full Quote Detail page for that quote in the current tab.</td><td>Review all details, service tabs, totals, and sharing options without entering edit mode.</td></tr>
+        <tr><td>✏️</td><td class="btn-name">Edit</td><td>Re-opens the Quote Wizard pre-filled with all existing data so you can make changes.</td><td>Update prices, add or remove services, correct client information, or add missing fields.</td></tr>
+        <tr><td>📋</td><td class="btn-name">Duplicate</td><td>Creates an exact copy of the quote as a new draft, with a new unique ID.</td><td>Create a variation of an existing quote for another client, or offer the same trip at a different price point, without starting from scratch.</td></tr>
+        <tr><td>🗑</td><td class="btn-name">Delete</td><td>Shows a confirmation prompt, then permanently removes the quote and all its data.</td><td>Remove test quotes, cancelled trips, or accidental duplicates. <strong>This action cannot be undone.</strong></td></tr>
+      </tbody>
+    </table>
+    <h3>Pagination</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">« / » (first/last)</td><td>Jump to the very first or very last page of results.</td></tr>
+        <tr><td class="btn-name">‹ / › (previous/next)</td><td>Move one page backward or forward through the results.</td></tr>
+        <tr><td class="btn-name">Page number buttons</td><td>Click any page number to jump directly to that page.</td></tr>
+        <tr><td class="btn-name">Showing X–Y of Z results</td><td>Tells you which records are currently visible and the total count matching your filters.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="detail">
+    <h2>6. Quote Detail View</h2>
+    <img src="doc-screenshots/cotizacion-detail.jpg" alt="Quote detail" class="ss"/>
+    <p>The Quote Detail page gives you the complete view of a single quote — client info, all services, pricing breakdown, and all sharing options in one place. This is where you review a quote before sending it to the client.</p>
+    <h3>Header Action Buttons</h3>
+    <table class="btn-table">
+      <thead><tr><th>Button</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">← Back to list</td><td>Returns to the Quotes List page, preserving your previous filter and sort settings.</td><td>Go back without losing your place in the list.</td></tr>
+        <tr><td class="btn-name">Edit (pencil icon)</td><td>Re-opens the Quote Wizard with all data pre-loaded so you can make changes.</td><td>Correct a price, add a service, update client details, or add missing required fields.</td></tr>
+        <tr><td class="btn-name">Duplicate (copy icon)</td><td>Creates a new draft quote identical to this one with a new ID.</td><td>Reuse an existing quote structure for another client, or create a group variation without starting over.</td></tr>
+        <tr><td class="btn-name">Delete (trash icon)</td><td>Shows a confirmation dialog, then permanently deletes this quote.</td><td>Remove a quote that is no longer needed. Cannot be undone.</td></tr>
+        <tr><td class="btn-name">PDF (red button)</td><td>Opens the generated PDF in a new browser tab instantly.</td><td>Preview exactly what the client will see before sharing the link. Also use this to print or save to your computer.</td></tr>
+        <tr><td class="btn-name">WhatsApp share (green button)</td><td>Generates a pre-written WhatsApp message containing the quote summary and a direct link to the PDF, ready to send from your phone or WhatsApp Web.</td><td>The fastest way to deliver a finished quote to a client — one click opens a ready-to-send message.</td></tr>
+        <tr><td class="btn-name">Status badge</td><td>Displays <span class="badge badge-green">Finished</span> or <span class="badge badge-yellow">Draft</span> so you know at a glance whether this quote is ready to share.</td><td>Quick visual check before you send anything to the client.</td></tr>
+        <tr><td class="btn-name">Created on date</td><td>Shows when this quote was originally created.</td><td>Useful for tracking how long a quote has been active and whether it needs to be refreshed with updated prices.</td></tr>
+      </tbody>
+    </table>
+    <h3>Trip Info Section</h3>
+    <p>This section always appears prominently at the top of the detail view, independent of which services are included:</p>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Main Destination</td><td>The primary travel destination (e.g., Cancún, Paris, Mallorca).</td></tr>
+        <tr><td class="btn-name">Trip Start Date</td><td>The date the client departs.</td></tr>
+        <tr><td class="btn-name">Return Date</td><td>The date the client returns. Together with start date defines the total trip duration.</td></tr>
+      </tbody>
+    </table>
+    <h3>Services Tabs</h3>
+    <p>Below the trip info is a tabbed area showing each service that was added to the quote. Click any tab to view its details and pricing. Only tabs for services actually included in the quote are shown.</p>
+    <table class="btn-table">
+      <thead><tr><th>Tab</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Package</td><td>Package name, price, description, and number of travelers included.</td></tr>
+        <tr><td class="btn-name">Flight</td><td>Airline, base fare, taxes, airport fees, luggage charges, and per-person total.</td></tr>
+        <tr><td class="btn-name">Hotel</td><td>Hotel name, room type, number of nights, and rate per night.</td></tr>
+        <tr><td class="btn-name">Transfer</td><td>Transfer type, provider company, and total amount.</td></tr>
+        <tr><td class="btn-name">Cruise</td><td>Cruise line, cabin type, itinerary, and total price.</td></tr>
+        <tr><td class="btn-name">Tickets</td><td>Attraction names and ticket prices per person.</td></tr>
+        <tr><td class="btn-name">Ferry</td><td>Route, operator, and fare.</td></tr>
+        <tr><td class="btn-name">Insurance</td><td>Provider, coverage type, and premium amount.</td></tr>
+        <tr><td class="btn-name">Data Plan</td><td>Mobile data plan details and cost for the destination country.</td></tr>
+        <tr><td class="btn-name">Visa</td><td>Visa type, destination country, and processing fee.</td></tr>
+      </tbody>
+    </table>
+    <h3>Summary Sidebar</h3>
+    <table class="btn-table">
+      <thead><tr><th>Element</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Sub-quote button</td><td>Opens the Sub-quote modal where you can create a separate quote for a subset of travelers and/or services. Only visible when the quote has more than one traveler.</td><td>Ideal for groups where some members want different services. Create a separate, clean quote for each subgroup without duplicating the whole quote.</td></tr>
+        <tr><td class="btn-name">Per-service cost lines</td><td>Shows the subtotal for each service (Transfer, Package, Flight, etc.) individually.</td><td>See exactly how the total is built up — useful when discussing the price breakdown with a client.</td></tr>
+        <tr><td class="btn-name">Commission line</td><td>Shows the commission percentage set in the wizard and the calculated dollar/peso amount.</td><td>Instantly see your earnings on the quote without any mental math.</td></tr>
+        <tr><td class="btn-name">Grand Total</td><td>The final price the client pays, including all services and commission.</td><td>The headline number you present to the client.</td></tr>
+        <tr><td class="btn-name">Travelers list</td><td>Each traveler listed with their age range and their individual share of the total cost.</td><td>Useful for group quotes to show each person their own price — especially when ages affect pricing.</td></tr>
+      </tbody>
+    </table>
+    <h3>Sub-quote Modal</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Service checkboxes</td><td>Toggle each service on/off to include it in the sub-quote.</td><td>Include only the services relevant to this subset of travelers.</td></tr>
+        <tr><td class="btn-name">People count (per service)</td><td>Set the number of people for each service in the sub-quote.</td><td>Price the sub-quote for the exact number of travelers in the subgroup.</td></tr>
+        <tr><td class="btn-name">Commission % field</td><td>Override the commission percentage for this sub-quote.</td><td>Different subgroups may have different commission arrangements.</td></tr>
+        <tr><td class="btn-name">Running total</td><td>Updates in real time as you change services and person counts.</td><td>See the sub-quote total instantly before committing to creating it.</td></tr>
+        <tr><td class="btn-name">Create Sub-quote button</td><td>Saves the sub-quote as a new independent draft quote linked to the original.</td><td>Produces a separate PDF-ready quote for that subgroup of travelers.</td></tr>
+        <tr><td class="btn-name">✕ Close</td><td>Dismisses the modal without saving anything.</td><td>Cancel if you changed your mind or opened the modal by mistake.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="wizard">
+    <h2>7. Quote Creation Wizard</h2>
+    <p>The wizard guides you through building a complete, professional travel quote step by step. You can move freely between steps at any time using the navigation dots, and your progress is auto-saved continuously.</p>
+    <h3>Wizard Navigation (visible on every step)</h3>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Progress bar</td><td>A horizontal bar that fills as you advance through the wizard, showing your percentage completion.</td><td>At-a-glance indication of how many steps remain.</td></tr>
+        <tr><td class="btn-name">Step indicator text</td><td>Shows "Step X of Y: Step Name" so you always know exactly where you are.</td><td>Prevents confusion about which step you are on, especially in long quotes with many services.</td></tr>
+        <tr><td class="btn-name">Navigation dots (● ● ●)</td><td>One dot per step. Blue dot = current step. Green dot = already completed. Gray dot = not yet visited. Click any dot to jump directly to that step.</td><td>Skip ahead to fill things in any order, or jump back to a specific step to correct something — no need to click Previous/Next many times.</td></tr>
+        <tr><td class="btn-name">Previous button</td><td>Saves your current step and moves back one step.</td><td>Review or correct information you entered in a previous step.</td></tr>
+        <tr><td class="btn-name">Next button</td><td>Saves your current step and moves forward to the next step.</td><td>Advance through the wizard after filling in the current step's fields.</td></tr>
+        <tr><td class="btn-name">Auto-save spinner</td><td>A small spinning indicator that appears in the top-right corner when data is being saved to the server.</td><td>Confirms your work is being saved automatically — you can safely close the browser at any time and return to find your progress intact.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="step-client">
+    <h2>Step 1 – Client Information</h2>
+    <img src="doc-screenshots/wizard-step1-cliente.jpg" alt="Step 1 - Client" class="ss"/>
+    <p>The first step of every quote. You establish who the quote is for and list everyone who will be travelling.</p>
+    <h3>Client Contact Fields</h3>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Client Name *</td><td>The full name of the main client or group leader.</td><td>Required to finalize. Appears on the PDF header and identifies the quote in the Quotes List. Use the full name as the client will want to see it on the document.</td></tr>
+        <tr><td class="btn-name">Contact (email / phone) *</td><td>The primary way to reach the client — email address or phone number.</td><td>Required to finalize. Used to generate the WhatsApp share message. Without this the system cannot confirm how to reach the client.</td></tr>
+        <tr><td class="btn-name">Secondary Contact</td><td>A backup email or phone number for a second point of contact.</td><td>Optional but useful for group bookings where a second person is also involved in the decision.</td></tr>
+      </tbody>
+    </table>
+    <h3>Travelers</h3>
+    <p>Every person traveling must be added with their age range. Age ranges determine pricing since most airlines, hotels, and attractions price differently for infants, children, teens, and adults.</p>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">+ Add Person button</td><td>Adds one new traveler row to the list below.</td><td>Add travelers one at a time when building the group manually.</td></tr>
+        <tr><td class="btn-name">+5 group button</td><td>Adds five traveler rows at once.</td><td>Save time with medium-sized groups — add five slots then fill in each age range.</td></tr>
+        <tr><td class="btn-name">+10 group button</td><td>Adds ten traveler rows at once.</td><td>Save time with large tour groups — add a full group at once then fill in ages.</td></tr>
+        <tr><td class="btn-name">Age Range dropdown (per traveler)</td><td>Select the traveler's age bracket from four options: 0–2 (Infant), 3–11 (Child), 12–17 (Teen / Junior), 18+ (Adult).</td><td>Required for every traveler to finalize. Many airline, hotel, and activity prices change significantly by age — this ensures correct pricing on the PDF.</td></tr>
+        <tr><td class="btn-name">Remove button (per traveler)</td><td>Removes that traveler from the list permanently.</td><td>Delete someone added by mistake or a traveler who dropped out of the group.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Note:</strong> The first traveler is always labelled <em>Client</em> — this is the main booking person. They cannot be removed. At least one traveler is always required.</div>
+    <div class="tip"><strong>Required to finalize:</strong> Client name, primary contact, and the age range of at least the first traveler (the Client) must be filled before the quote can be marked as Finished.</div>
+  </div>
+
+  <div class="page-section" id="step-trip">
+    <h2>Step 2 – Trip Info</h2>
+    <img src="doc-screenshots/wizard-step2-viaje.jpg" alt="Step 2 - Trip Info" class="ss"/>
+    <p>This step captures the core trip details that appear on the PDF regardless of which services are included. Fill this in early — these three fields are required to finalize any quote.</p>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Main Destination *</td><td>The primary destination of the trip (e.g., "Cancún", "Rome + Florence", "Miami &amp; Orlando").</td><td>Required to finalize. Appears prominently on the PDF header and in the Quotes List table. Helps both you and the client identify the quote at a glance.</td></tr>
+        <tr><td class="btn-name">Trip Start Date *</td><td>The departure date — the first day of the trip.</td><td>Required to finalize. Appears on the PDF so the client knows exactly when the trip begins.</td></tr>
+        <tr><td class="btn-name">Return Date *</td><td>The return date — the last day of the trip.</td><td>Required to finalize. Together with the start date this defines the total trip duration shown prominently on the PDF.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Tip:</strong> Fill these three fields early in the process — they are needed before you can generate a PDF and are easy to forget if left to the end.</div>
+  </div>
+
+  <div class="page-section" id="step-currency">
+    <h2>Step 3 – Currency</h2>
+    <img src="doc-screenshots/wizard-step3-moneda.jpg" alt="Step 3 - Currency" class="ss"/>
+    <p>Choose the currency for this quote and, when pricing in USD, set the exchange rate for converting to MXN.</p>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Currency selector</td><td>Toggle between MXN (Mexican Peso) and USD (US Dollar).</td><td>Match the currency your client expects the quote to be in. Some international suppliers price in USD while clients budget in MXN — select whichever is correct for this trip.</td></tr>
+        <tr><td class="btn-name">Exchange Rate</td><td>Enter today's MXN-to-USD conversion rate (e.g., 17.5). Only required when USD is selected.</td><td>The system uses this rate to show accurate MXN equivalents on the PDF total. Set it to today's rate every time you create a USD quote so the client gets a realistic estimate.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Note:</strong> The exchange rate field only appears when USD is selected. If you are quoting in MXN it will not appear.</div>
+  </div>
+
+  <div class="page-section" id="step-services">
+    <h2>Step 4 – Service Selection</h2>
+    <img src="doc-screenshots/wizard-step4-servicios.jpg" alt="Step 4 - Services" class="ss"/>
+    <img src="doc-screenshots/wizard-step4-servicios-selected.jpg" alt="Step 4 - Services with selections" class="ss"/>
+    <p>Select every service you want to include in this quote. Each service you activate adds a dedicated step after this one where you fill in its specific details and pricing. You can add or remove services at any time by returning to this step.</p>
+    <table class="btn-table">
+      <thead><tr><th>Service</th><th>What it adds to the quote</th><th>When to use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Package</td><td>A complete tour package — name, all-in price, and full description.</td><td>When selling a pre-packaged or all-inclusive trip from a tour operator.</td></tr>
+        <tr><td class="btn-name">Flight</td><td>Airline, base fare, taxes, airport fees, and luggage charges.</td><td>Any time airfare is part of the trip being quoted.</td></tr>
+        <tr><td class="btn-name">Hotel</td><td>Hotel name, room type, number of nights, and nightly rate.</td><td>When accommodation is included in the trip.</td></tr>
+        <tr><td class="btn-name">Transfer</td><td>Ground transportation — airport shuttle, private van, or car service.</td><td>When the client needs transport between the airport, hotel, or attractions.</td></tr>
+        <tr><td class="btn-name">Cruise</td><td>Cruise line, cabin category, itinerary ports, and pricing.</td><td>For cruise-based itineraries where the ship is the destination.</td></tr>
+        <tr><td class="btn-name">Tickets</td><td>Admission tickets for parks, shows, or attractions with per-person pricing.</td><td>Disney World, Universal Studios, concerts, museums, sports events, etc.</td></tr>
+        <tr><td class="btn-name">Ferry</td><td>Ferry route, operator name, and fare.</td><td>Island destinations or coastal routes requiring a ferry crossing (e.g., Playa del Carmen to Cozumel).</td></tr>
+        <tr><td class="btn-name">Insurance</td><td>Travel insurance provider and coverage amount.</td><td>Always recommended. Include when the client wants peace of mind for medical emergencies, trip cancellation, or lost luggage.</td></tr>
+        <tr><td class="btn-name">Data Plan</td><td>Mobile data plan details and cost for use in the destination country.</td><td>When the client will travel internationally and needs phone data without roaming charges.</td></tr>
+        <tr><td class="btn-name">Visa</td><td>Visa type, destination country, and processing fee.</td><td>For any destination requiring a visa — US ESTA, Schengen visa, Canadian eTA, etc.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Required to finalize:</strong> At least one service must be selected. The Finished toggle in the Summary step will not activate until at least one service card is selected here.</div>
+  </div>
+
+  <div class="page-section" id="step-service-details">
+    <h2>Steps 5+ – Service Detail Steps</h2>
+    <p>For each service selected in Step 4, a dedicated step appears in the wizard. Below are the key fields for the most commonly used services.</p>
+    <h3>Package Step</h3>
+    <img src="doc-screenshots/wizard-step5-paquete.jpg" alt="Package step" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Package Name</td><td>The name of the package (e.g., "Cancún All-Inclusive 7 Nights").</td><td>Appears as the package title on the PDF. Use a descriptive name the client will remember.</td></tr>
+        <tr><td class="btn-name">Package Price</td><td>The total package price including everything the package covers.</td><td>This feeds directly into the quote total and the PDF. Enter the net cost — commission will be added separately.</td></tr>
+        <tr><td class="btn-name">Package Description</td><td>Free-text area describing everything included: itinerary, meals, activities, inclusions, and exclusions.</td><td>This is the main body text on the PDF. Be thorough — the more detail you give, the less back-and-forth with the client.</td></tr>
+        <tr><td class="btn-name">Number of People</td><td>How many travelers the package price covers.</td><td>Used to calculate the per-person price shown on the PDF.</td></tr>
+      </tbody>
+    </table>
+    <h3>Flight Step</h3>
+    <img src="doc-screenshots/wizard-step6-vuelo.jpg" alt="Flight step" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Airline</td><td>Select from the airline dropdown or type a custom name if your airline is not listed.</td><td>Appears on the PDF so the client knows which carrier to expect.</td></tr>
+        <tr><td class="btn-name">Base Fare</td><td>The published ticket price before any taxes or fees.</td><td>The starting point for the total flight cost calculation.</td></tr>
+        <tr><td class="btn-name">IVA / Taxes</td><td>Government taxes applied to the airfare.</td><td>Must be included so the total accurately reflects what the client will pay.</td></tr>
+        <tr><td class="btn-name">Airport Right of Use (TUA)</td><td>The airport departure/arrival fee charged per passenger.</td><td>This is mandatory in Mexico (TUA) and many other countries — must be included in the quote.</td></tr>
+        <tr><td class="btn-name">Luggage Fee</td><td>Checked bag charges per passenger.</td><td>Many budget airlines charge separately for bags — include this to avoid unpleasant surprises for the client.</td></tr>
+        <tr><td class="btn-name">Number of People</td><td>How many passengers this flight pricing covers.</td><td>The system multiplies all per-person fees by this count to produce the correct total.</td></tr>
+      </tbody>
+    </table>
+    <h3>Hotel Step</h3>
+    <img src="doc-screenshots/wizard-step7-hotel.jpg" alt="Hotel step" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Hotel Name</td><td>The name of the property as it will appear on the PDF.</td><td>Clients compare hotels by name — use the exact official name.</td></tr>
+        <tr><td class="btn-name">Room Type</td><td>Standard, Deluxe, Junior Suite, Ocean View, etc.</td><td>Sets the client's expectations about what they are getting.</td></tr>
+        <tr><td class="btn-name">Number of Nights</td><td>Total nights staying at the property.</td><td>Multiplied by the nightly rate to produce the hotel subtotal automatically.</td></tr>
+        <tr><td class="btn-name">Rate per Night</td><td>The nightly room rate in the selected currency.</td><td>The system multiplies this by nights to give the hotel total — no manual math needed.</td></tr>
+      </tbody>
+    </table>
+    <h3>Transfer Step</h3>
+    <img src="doc-screenshots/wizard-step8-traslado.jpg" alt="Transfer step" class="ss"/>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Transfer Type</td><td>Shared shuttle, private van, private SUV, luxury car, etc.</td><td>Tells the client exactly what transport they are getting and sets quality expectations.</td></tr>
+        <tr><td class="btn-name">Provider</td><td>Name of the transport company or service.</td><td>Useful for the client to know who to look for at the airport, and for the agent to track supplier relationships.</td></tr>
+        <tr><td class="btn-name">Amount</td><td>Total cost for the transfer service (all passengers, round trip or one-way as applicable).</td><td>Added to the quote total and displayed on the PDF.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="step-messages">
+    <h2>Messages &amp; Commission Step</h2>
+    <img src="doc-screenshots/wizard-step9-mensajes.jpg" alt="Messages and commission" class="ss"/>
+    <p>The second-to-last step. Add personal notes and set your commission before the final summary.</p>
+    <table class="btn-table">
+      <thead><tr><th>Field</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Message to Client</td><td>A personal note that appears directly on the PDF — greetings, important conditions, payment instructions, or anything else you want the client to read.</td><td>Personalize the quote and communicate terms, deadlines, or special conditions directly in the document so the client has everything in one place.</td></tr>
+        <tr><td class="btn-name">Internal Notes</td><td>Notes for your own reference that do NOT appear on the client PDF — supplier booking references, contact names, reminders to follow up.</td><td>Keep all relevant context attached to the quote without exposing it to the client.</td></tr>
+        <tr><td class="btn-name">Commission %</td><td>Your agency's commission percentage for this quote. The system calculates the exact amount automatically.</td><td>Sets how much profit is added on top of the service costs. The commission amount appears on the PDF summary so everything is transparent.</td></tr>
+        <tr><td class="btn-name">Commission Date</td><td>The date used for commission tracking and reporting purposes.</td><td>Helps managers and admins track commissions by time period and reconcile earnings reports.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="step-summary">
+    <h2>Summary Step</h2>
+    <img src="doc-screenshots/wizard-step10-resumen.jpg" alt="Summary step" class="ss"/>
+    <p>The final step of the wizard. Here you decide whether the quote is complete and ready to share with the client.</p>
+    <table class="btn-table">
+      <thead><tr><th>Control</th><th>What it does</th><th>Why you use it</th></tr></thead>
+      <tbody>
+        <tr><td class="btn-name">Quote Status label</td><td>Shows the current state: <span class="badge badge-yellow">Draft</span> or <span class="badge badge-green">Finished</span>.</td><td>Quick reference — know at a glance whether this quote is ready to share.</td></tr>
+        <tr><td class="btn-name">Finished toggle switch</td><td>The green/gray toggle switch that marks the quote as finished. <strong>When you try to turn it ON, the system validates all required fields.</strong> If any required field is missing, the toggle shakes back to the OFF position and a toast notification appears listing exactly which fields need to be completed. When all required fields are filled, the toggle turns green and stays ON.</td><td>This is the quality gate that prevents incomplete quotes from being finalized. Use it only when you are confident the quote is complete and ready for the client.</td></tr>
+        <tr><td class="btn-name">Save Draft button</td><td>Saves all current data as a draft without marking the quote as finished. The quote remains editable.</td><td>Save your work and come back later to complete it. Use this constantly while building the quote so you never lose progress.</td></tr>
+        <tr><td class="btn-name">Finalize Quote button</td><td>Saves the quote with Finished status. Shown in green when the Finished toggle is ON.</td><td>Lock the quote as complete and ready to present to the client.</td></tr>
+        <tr><td class="btn-name">Export PDF button</td><td>Opens the fully branded PDF in a new browser tab. Only appears after the quote is marked Finished and has been saved with an ID.</td><td>The client-facing document. Review it, print it, save it, or copy the URL to share with the client directly.</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>All 7 things required before the Finished toggle will activate:</strong>
+      <ol>
+        <li>Client name</li>
+        <li>Client contact (email or phone)</li>
+        <li>Age range for the first traveler</li>
+        <li>Main destination</li>
+        <li>Trip start date</li>
+        <li>Return date</li>
+        <li>At least one service selected</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="page-section" id="statuses">
+    <h2>8. Quote Statuses</h2>
+    <table class="btn-table">
+      <thead><tr><th>Status</th><th>Meaning</th><th>What you can do</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-yellow">Draft</span></td><td>The quote is incomplete or has not yet been marked as finished. It may have missing required fields or no services selected yet.</td><td>Edit freely at any time. Cannot generate a shareable PDF until finalized.</td></tr>
+        <tr><td><span class="badge badge-green">Finished</span></td><td>All required fields are complete. The quote is finalized and ready to share with the client.</td><td>Generate and share the PDF, send via WhatsApp, create sub-quotes. Still fully editable — editing will reset status to Draft until re-finalized.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-section" id="pdf">
+    <h2>9. Exporting PDFs</h2>
+    <p>A PDF can be generated from two places:</p>
+    <ol>
+      <li>From the <strong>Summary step</strong> in the wizard — click the red <em>Export PDF</em> button (only visible once the quote is Finished and has a saved ID).</li>
+      <li>From the <strong>Quote Detail page</strong> — click the red <em>PDF</em> button in the top action bar.</li>
+    </ol>
+    <p>The PDF opens in a new browser tab. From there you can:</p>
+    <ul>
+      <li>Print using your browser's print function (Ctrl+P or Cmd+P on Mac).</li>
+      <li>Save to your computer by selecting "Save as PDF" in the print dialog.</li>
+      <li>Copy the URL from the address bar and share it directly with the client — the link is permanent as long as the quote exists in the system.</li>
+    </ul>
+    <div class="note"><strong>What's included in every PDF:</strong> Lobato Tours branding, client name, destination, travel dates, full breakdown of every service with itemized pricing, your personal message to the client, commission amount, and the grand total.</div>
+  </div>
+
+  <div class="page-section" id="tips">
+    <h2>10. Tips &amp; Best Practices</h2>
+    <ul>
+      <li><strong>Fill Trip Info in Step 2 early</strong> — Destination, start date, and return date are required for the PDF. Enter them right after the client step so you never get to the end and realize they are missing.</li>
+      <li><strong>Auto-save is always running</strong> — The system saves every time you click Next, Previous, or a navigation dot. Close the browser at any time and your progress will be waiting when you return.</li>
+      <li><strong>Use Duplicate for variations</strong> — If a client wants to compare two options (7 nights vs. 10 nights, economy vs. business class), duplicate the quote and adjust one copy — far faster than starting over.</li>
+      <li><strong>Sub-quotes for mixed groups</strong> — When a group has travelers with different requirements, use sub-quotes rather than building one giant confusing quote. Each person gets a clean, relevant document.</li>
+      <li><strong>Always preview the PDF before sending</strong> — Open the PDF and check the client name, destination, dates, and totals before sharing the link. A few seconds of review prevents embarrassing mistakes.</li>
+      <li><strong>Use the search bar in the Quotes List</strong> — Search by client name, phone number, or destination to find any quote instantly instead of scrolling.</li>
+      <li><strong>Set the exchange rate every time for USD quotes</strong> — Exchange rates change daily. Always enter today's rate in Step 3 to give the client an accurate MXN total on the PDF.</li>
+      <li><strong>Use Internal Notes for supplier details</strong> — Supplier booking codes, contact names, and deadlines belong in the Internal Notes field — they are invisible to the client but attached to the quote for your own reference.</li>
+    </ul>
+  </div>
+
+  <hr/>
+  <p style="text-align:center;color:#9ca3af;font-size:.82rem;padding:1rem 0">Lobato Tours Quoting System &nbsp;·&nbsp; User Manual &nbsp;·&nbsp; Version 2.0</p>
+</main>
+</div>
+</body>
+</html>

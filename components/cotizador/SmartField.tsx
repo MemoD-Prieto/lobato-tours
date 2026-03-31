@@ -8,7 +8,7 @@ import { useFormData, getIn } from "./FormContext";
 type Option = { label: string; value: string | number };
 
 type SmartFieldProps = {
-  label: string;
+  label?: string;
   name: string; // dot/bracket path — e.g. "cliente.nombre" or "hotel.habitaciones[0].precio"
   type?: "text" | "number" | "date" | "textarea" | "select" | "currency";
   options?: Option[]; // only for select
@@ -28,7 +28,7 @@ type SmartFieldProps = {
 };
 
 export function SmartField({
-  label,
+  label = '',
   name,
   type = "text",
   options,
@@ -72,7 +72,7 @@ export function SmartField({
       value: val ?? "",
       onChange,
       placeholder,
-      className: `mt-1 w-full border rounded p-2 ${type === "currency" || type === "number" ? "text-right" : ""} ${inputClassName ?? ""} ${err ? "border-red-500" : ""}`.trim(),
+      className: `mt-1 w-full border rounded p-2 dark:bg-[#1b2e4b] dark:border-[#253a5e] dark:text-white ${type === "currency" || type === "number" ? "text-right" : ""} ${inputClassName ?? ""} ${err ? "border-red-500" : ""}`.trim(),
       autoComplete,
       disabled,
     } as const;
@@ -96,9 +96,11 @@ export function SmartField({
 
   return (
     <div className={className}>
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-[#e0e6ed]">
+          {label}
+        </label>
+      )}
       <div className="relative">
         {prefix && <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">{prefix}</div>}
         {field}

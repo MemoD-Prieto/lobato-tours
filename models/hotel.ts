@@ -7,6 +7,7 @@ interface HotelAttributes {
   price_quote_id: number;
   name: string;
   nights: number;
+  num_personas?: number | null;
 }
 
 type HotelCreationAttributes = Optional<HotelAttributes, 'id'>;
@@ -16,6 +17,7 @@ export class Hotel extends Model<HotelAttributes, HotelCreationAttributes> imple
   public price_quote_id!: number;
   public name!: string;
   public nights!: number;
+  public num_personas?: number | null;
 
   static initModel(sequelize: Sequelize) {
     Hotel.init({
@@ -26,7 +28,12 @@ export class Hotel extends Model<HotelAttributes, HotelCreationAttributes> imple
       },
       price_quote_id: DataTypes.INTEGER,
       name: DataTypes.STRING(200),
-      nights: DataTypes.INTEGER
+      nights: DataTypes.INTEGER,
+      num_personas: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null
+      }
     }, {
       sequelize,
       tableName: 'hotel',
@@ -37,6 +44,5 @@ export class Hotel extends Model<HotelAttributes, HotelCreationAttributes> imple
   static associate(models: any) {
     Hotel.belongsTo(models.Cotizacion, { foreignKey: 'price_quote_id' });
     Hotel.hasMany(models.Distribucion, { foreignKey: 'hotel_id' });
-    Hotel.hasMany(models.Comida, { foreignKey: 'id_hotel' });
   }
 }

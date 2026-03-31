@@ -2,6 +2,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toggleSidebar } from '../../store/themeConfigSlice';
 import AnimateHeight from 'react-animate-height';
 import { IRootState } from '../../store';
@@ -14,6 +15,9 @@ const Sidebar = () => {
     const [errorSubMenu, setErrorSubMenu] = useState(false);
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
+    const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
+    const [helpOpen, setHelpOpen] = useState(false);
     const toggleMenu = (value: string) => {
         setCurrentMenu((oldValue) => {
             return oldValue === value ? '' : value;
@@ -42,7 +46,7 @@ const Sidebar = () => {
         if (window.innerWidth < 1024 && themeConfig.sidebar) {
             dispatch(toggleSidebar());
         }
-    }, [router.pathname]);
+    }, [router.pathname, dispatch, themeConfig.sidebar]);
 
     const setActiveRoute = () => {
         let allLinks = document.querySelectorAll('.sidebar ul a.active');
@@ -54,18 +58,15 @@ const Sidebar = () => {
         selector?.classList.add('active');
     };
 
-    const dispatch = useDispatch();
-    const { t } = useTranslation();
-
     return (
         <div className={semidark ? 'dark' : ''}>
             <nav
                 className={`sidebar fixed top-0 bottom-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${semidark ? 'text-white-dark' : ''}`}
             >
-                <div className="h-full bg-white dark:bg-black">
+                <div className="h-full bg-white dark:bg-black flex flex-col">
                     <div className="flex items-center justify-between px-4 py-3">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
-                            <img className="ml-[5px] h-8 w-auto flex-none" src="/assets/images/logos/logo-lobato-2.jpg" alt="Lobato Tours" />
+                            <Image className="ml-[5px] h-8 w-auto flex-none" src="/assets/images/logos/logo-lobato-2.jpg" alt="Lobato Tours" width={120} height={32} />
                             <span className="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline"></span>
                         </Link>
 
@@ -80,7 +81,7 @@ const Sidebar = () => {
                             </svg>
                         </button>
                     </div>
-                    <PerfectScrollbar className="relative h-[calc(100vh-80px)]">
+                    <PerfectScrollbar className="relative flex-1 min-h-0">
                         <ul className="relative space-y-0.5 p-4 py-0 font-semibold">
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
@@ -137,7 +138,7 @@ const Sidebar = () => {
                                                 fill="currentColor"
                                             />
                                         </svg>
-                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Cotizaciones</span>
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('quotes_nav')}</span>
                                     </div>
                                 </Link>
                             </li>
@@ -159,7 +160,7 @@ const Sidebar = () => {
                                                 strokeLinejoin="round"
                                             />
                                         </svg>
-                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">Nueva Cotización</span>
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('new_quote')}</span>
                                     </div>
                                 </Link>
                             </li>
@@ -171,7 +172,64 @@ const Sidebar = () => {
 
 
                         </ul>
+
                     </PerfectScrollbar>
+
+                    {/* ── Help button ── pinned at the very bottom of the sidebar ── */}
+                    <div className="shrink-0 px-4 pb-3 pt-2 border-t border-gray-100 dark:border-gray-800">
+                        <div className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setHelpOpen(!helpOpen)}
+                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 dark:text-gray-600 dark:hover:text-gray-400 dark:hover:bg-dark-light/10 transition-all duration-200 group"
+                                title={t('help_documentation')}
+                            >
+                                <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 text-xs font-bold group-hover:border-primary group-hover:text-primary transition-colors">?</span>
+                                <span className="opacity-50 group-hover:opacity-100 transition-opacity">
+                                    {t('help')}
+                                </span>
+                            </button>
+
+                            {helpOpen && (
+                                <div className="absolute bottom-full left-0 mb-1 w-52 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-xl z-[100] overflow-hidden">
+                                    <div className="px-3 py-2 bg-gray-50 dark:bg-dark-light/10 border-b border-gray-100 dark:border-gray-800">
+                                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            {t('documentation')}
+                                        </span>
+                                    </div>
+                                    <a
+                                        href={i18n.language.startsWith('es') ? '/user-manual-es.html' : '/user-manual-en.html'}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={() => setHelpOpen(false)}
+                                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-primary/5 hover:text-primary transition-colors"
+                                    >
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 6H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                            <path d="M6 10H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                            <path opacity="0.5" d="M6 14H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                            <path opacity="0.5" d="M3 20.2895V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V15C21 16.1046 20.1046 17 19 17H7.37885C6.8167 17 6.2769 17.2277 5.88131 17.6321L3.7712 19.7789C3.62581 19.927 3.37419 19.927 3.2288 19.7789C3.08319 19.6306 3 19.4296 3 19.2203V20.2895Z" stroke="currentColor" strokeWidth="1.5"/>
+                                        </svg>
+                                        {t('user_manual')}
+                                    </a>
+                                    <a
+                                        href={i18n.language.startsWith('es') ? '/admin-guide-es.html' : '/admin-guide-en.html'}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={() => setHelpOpen(false)}
+                                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-primary/5 hover:text-primary transition-colors border-t border-gray-100 dark:border-gray-800"
+                                    >
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 11V10C19 6.13401 15.866 3 12 3C8.13401 3 5 6.13401 5 10V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                            <path opacity="0.5" d="M3 17C3 15.8954 3.89543 15 5 15H6C7.10457 15 8 15.8954 8 17V19C8 20.1046 7.10457 21 6 21H5C3.89543 21 3 20.1046 3 19V17Z" stroke="currentColor" strokeWidth="1.5"/>
+                                            <path opacity="0.5" d="M16 17C16 15.8954 16.8954 15 18 15H19C20.1046 15 21 15.8954 21 17V19C21 20.1046 20.1046 21 19 21H18C16.8954 21 16 20.1046 16 19V17Z" stroke="currentColor" strokeWidth="1.5"/>
+                                        </svg>
+                                        {t('admin_guide')}
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>

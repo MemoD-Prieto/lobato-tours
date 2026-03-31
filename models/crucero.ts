@@ -8,6 +8,7 @@ export class Crucero extends Model {
   public nombre!: string;
   public precio!: number;
   public duracion!: number;
+  public num_personas?: number;
 
   static initModel(sequelize: Sequelize) {
     Crucero.init({
@@ -39,6 +40,11 @@ export class Crucero extends Model {
       duracion: {
         type: DataTypes.INTEGER,
         defaultValue: 0
+      },
+      num_personas: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null
       }
     }, {
       sequelize,

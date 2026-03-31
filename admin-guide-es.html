@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobato Tours – Guía del Administrador</title>
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #6d28d9;
+      --primary-light: #f5f3ff;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --info: #2563eb;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --sidebar-w: 290px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--gray-800); background: #fff; line-height: 1.6; }
+
+    @media print {
+      .no-print, .sidebar { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      body { font-size: 11pt; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      .cover { page-break-after: always; }
+    }
+
+    .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: #1e1b4b; color: #fff; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+    .sidebar-logo { padding: 28px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .sidebar-logo .brand { font-size: 19px; font-weight: 800; color: #fff; }
+    .sidebar-logo .subtitle { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+    .sidebar-nav { padding: 16px 0; flex: 1; }
+    .nav-section { padding: 10px 20px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,.3); font-weight: 700; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px; transition: all .15s; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+
+    .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+    .cover { background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 70%, #a855f7 100%); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 40px; position: relative; overflow: hidden; }
+    .cover::before { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: rgba(255,255,255,.04); top: -150px; right: -150px; }
+    .cover::after  { content: ''; position: absolute; width: 350px; height: 350px; border-radius: 50%; background: rgba(255,255,255,.04); bottom: -100px; left: -100px; }
+    .cover h1 { font-size: 50px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 12px; }
+    .cover .tagline { font-size: 19px; opacity: .8; margin-bottom: 40px; font-weight: 300; }
+    .cover .doc-type { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); padding: 8px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+    .cover-badge { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-block; margin-bottom: 28px; }
+    .cover-meta { margin-top: 60px; font-size: 13px; opacity: .55; }
+
+    .section { padding: 64px 56px; max-width: 920px; }
+    .section + .section { border-top: 1px solid var(--gray-200); }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
+    h1.section-title { font-size: 36px; font-weight: 800; color: var(--gray-900); letter-spacing: -.5px; margin-bottom: 16px; }
+    h2.section-title { font-size: 25px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+    h3.sub-title { font-size: 17px; font-weight: 700; color: var(--gray-800); margin-bottom: 8px; }
+    .lead { font-size: 17px; color: var(--gray-500); margin-bottom: 32px; max-width: 700px; }
+    p { margin-bottom: 14px; font-size: 15px; color: var(--gray-700); }
+
+    .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; display: flex; gap: 14px; align-items: flex-start; }
+    .callout.info   { background: #eff6ff; border-left: 4px solid var(--info); }
+    .callout.tip    { background: #f0fdf4; border-left: 4px solid var(--success); }
+    .callout.warn   { background: #fffbeb; border-left: 4px solid var(--warning); }
+    .callout.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+    .callout.admin  { background: var(--primary-light); border-left: 4px solid var(--primary); }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text p { margin: 0; font-size: 14px; }
+    .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+
+    table.docs-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+    .docs-table th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--gray-500); border-bottom: 2px solid var(--gray-200); }
+    .docs-table td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table tr:hover td { background: var(--gray-50); }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+    .badge.green  { background: #d1fae5; color: #065f46; }
+    .badge.yellow { background: #fef3c7; color: #92400e; }
+    .badge.blue   { background: #dbeafe; color: #1e40af; }
+    .badge.purple { background: #ede9fe; color: #5b21b6; }
+    .badge.red    { background: #fee2e2; color: #991b1b; }
+    .badge.gray   { background: var(--gray-100); color: var(--gray-600); }
+
+    .role-card { border-radius: 12px; padding: 20px 24px; margin: 12px 0; display: flex; gap: 20px; align-items: flex-start; border: 1px solid; }
+    .role-card.admin   { background: #f5f3ff; border-color: #c4b5fd; }
+    .role-card.manager { background: #eff6ff; border-color: #93c5fd; }
+    .role-card.user    { background: #f0fdf4; border-color: #86efac; }
+    .role-icon { font-size: 28px; }
+    .role-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+    .role-perms { list-style: none; margin-top: 8px; }
+    .role-perms li { font-size: 13px; color: var(--gray-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .role-perms li::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .role-perms li.denied::before { content: '✕'; color: var(--danger); }
+
+    .mockup { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; margin: 28px 0; box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+    .mockup-bar { background: var(--gray-200); padding: 10px 16px; display: flex; align-items: center; gap: 6px; }
+    .mockup-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-bar .dot.red    { background: #ff5f57; }
+    .mockup-bar .dot.yellow { background: #ffbd2e; }
+    .mockup-bar .dot.green  { background: #28c840; }
+    .mockup-bar .url { margin-left: 10px; background: #fff; border-radius: 6px; padding: 3px 14px; font-size: 12px; color: var(--gray-500); font-family: monospace; }
+    .mockup-body { padding: 24px; }
+
+    .steps-list { list-style: none; margin: 20px 0; }
+    .steps-list li { display: flex; gap: 16px; margin-bottom: 24px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .step-content p  { margin: 0; font-size: 14px; color: var(--gray-600); }
+
+    .field-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+    .field-row { display: grid; grid-template-columns: 200px 90px 1fr; gap: 0; padding: 12px 16px; border-bottom: 1px solid var(--gray-100); font-size: 14px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-row:nth-child(even) { background: var(--gray-50); }
+    .field-name { font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 13px; }
+    .field-req  { color: var(--danger); font-size: 12px; font-weight: 600; }
+    .field-desc { color: var(--gray-600); }
+
+    .api-block { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 20px 24px; margin: 16px 0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; }
+    .api-method { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-right: 8px; }
+    .api-method.get  { background: #1d4ed8; color: #fff; }
+    .api-method.post { background: #15803d; color: #fff; }
+    .api-method.put  { background: #b45309; color: #fff; }
+    .api-method.del  { background: #b91c1c; color: #fff; }
+    .api-endpoint { color: #7dd3fc; }
+    .api-desc { color: #94a3b8; margin-left: 8px; font-size: 12px; }
+
+    .db-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 12px 0; }
+    .db-table-header { background: #1e1b4b; color: #fff; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 8px; }
+    .db-col { display: grid; grid-template-columns: 160px 100px 1fr; padding: 9px 16px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+    .db-col:last-child { border-bottom: none; }
+    .db-col-name { font-family: monospace; color: var(--gray-800); font-weight: 600; }
+    .db-col-type { color: #7c3aed; font-family: monospace; font-size: 12px; }
+    .db-col-desc { color: var(--gray-500); font-size: 12px; }
+
+    .env-block { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 20px 24px; margin: 16px 0; font-family: monospace; font-size: 13px; line-height: 2; }
+    .env-key     { color: #7dd3fc; }
+    .env-val     { color: #a7f3d0; }
+    .env-comment { color: #64748b; }
+
+    .print-bar { position: fixed; bottom: 24px; right: 24px; z-index: 200; }
+    .btn-print { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(124,58,237,.4); transition: all .2s; }
+    .btn-print:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .divider { height: 1px; background: var(--gray-200); margin: 32px 0; }
+    .tag { display: inline-block; background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .section { padding: 40px 24px; }
+    }
+
+    .app-screenshot { width: 100%; max-width: 800px; border-radius: 10px; border: 1px solid var(--gray-200); box-shadow: 0 4px 20px rgba(0,0,0,.08); margin: 20px 0 8px; display: block; }
+    .screenshot-caption { font-size: 12px; color: var(--gray-500); text-align: center; margin-bottom: 28px; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar no-print">
+  <div class="sidebar-logo">
+    <div class="brand">⚙️ Lobato Tours</div>
+    <div class="subtitle">Guía del Administrador · ES</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Introducción</div>
+    <a class="nav-item" href="#intro"><span class="dot"></span> Visión General</a>
+    <a class="nav-item" href="#roles"><span class="dot"></span> Roles y Permisos</a>
+
+    <div class="nav-section">Gestión de Usuarios</div>
+    <a class="nav-item" href="#usuarios"><span class="dot"></span> Pantalla de Usuarios</a>
+    <a class="nav-item" href="#crear"><span class="dot"></span> Crear Usuario</a>
+    <a class="nav-item" href="#editar"><span class="dot"></span> Editar Usuario</a>
+    <a class="nav-item" href="#desactivar"><span class="dot"></span> Desactivar / Eliminar</a>
+
+    <div class="nav-section">Gestión de Cotizaciones</div>
+    <a class="nav-item" href="#cotizaciones-admin"><span class="dot"></span> Gestionar Todas las Cotizaciones</a>
+    <a class="nav-item" href="#exportar"><span class="dot"></span> Exportar y Reportes</a>
+
+    <div class="nav-section">Configuración del Sistema</div>
+    <a class="nav-item" href="#variables"><span class="dot"></span> Variables de Entorno</a>
+    <a class="nav-item" href="#base-datos"><span class="dot"></span> Esquema de Base de Datos</a>
+    <a class="nav-item" href="#api"><span class="dot"></span> Referencia de API</a>
+    <a class="nav-item" href="#docker"><span class="dot"></span> Configuración Docker</a>
+
+    <div class="nav-section">Operaciones</div>
+    <a class="nav-item" href="#instalacion"><span class="dot"></span> Instalación Inicial</a>
+    <a class="nav-item" href="#problemas"><span class="dot"></span> Solución de Problemas</a>
+    <a class="nav-item" href="#seguridad"><span class="dot"></span> Notas de Seguridad</a>
+  </div>
+</nav>
+
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">🖨️ Exportar a PDF</button>
+</div>
+
+<div class="main-content">
+
+  <!-- PORTADA -->
+  <div class="cover" id="cover">
+    <div class="cover-badge">🔐 CONFIDENCIAL — SOLO ADMINISTRADORES</div>
+    <div class="doc-type">Guía del Administrador</div>
+    <h1>Lobato Tours<br>Manual del Sistema</h1>
+    <p class="tagline">Gestión de usuarios, configuración del sistema, referencia de API y guía de operaciones</p>
+    <div class="cover-meta">Versión 1.0 &nbsp;·&nbsp; Marzo 2026 &nbsp;·&nbsp; Edición en Español</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="section" id="intro">
+    <div class="section-label">Capítulo 1</div>
+    <h1 class="section-title">Visión General del Administrador</h1>
+    <p class="lead">Esta guía está dirigida a los administradores del Sistema de Cotizaciones de Lobato Tours. Cubre la gestión de usuarios, configuración de roles, instalación del sistema, esquema de base de datos y la API REST.</p>
+    <img src="/doc-screenshots/admin-dashboard.jpg" alt="Panel de administrador" class="app-screenshot">
+    <p class="screenshot-caption">Panel de inicio del Administrador — estadísticas completas y tendencia mensual</p>
+
+    <p>Como administrador, tienes acceso total a todas las funciones de la aplicación, más acceso exclusivo a:</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Función Exclusiva de Admin</th><th>Descripción</th><th>URL</th></tr></thead>
+      <tbody>
+        <tr><td>👥 <strong>Gestión de Usuarios</strong></td><td>Crear, editar, desactivar y eliminar cuentas de usuario</td><td><span class="tag">/admin/users</span></td></tr>
+        <tr><td>📊 <strong>Todas las Cotizaciones</strong></td><td>Ver y gestionar todas las cotizaciones del sistema (no solo las propias)</td><td><span class="tag">/cotizaciones</span></td></tr>
+        <tr><td>⚙️ <strong>Inicialización del Sistema</strong></td><td>Inicializar o restablecer la base de datos via API</td><td><span class="tag">/api/init</span></td></tr>
+        <tr><td>📤 <strong>Exportación Completa CSV</strong></td><td>Exportar todas las cotizaciones de todos los usuarios</td><td><span class="tag">/api/cotizaciones/export</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout admin">
+      <div class="callout-icon">🛡️</div>
+      <div class="callout-text">
+        <div class="callout-title">El Acceso de Admin está Protegido</div>
+        <p>Las rutas exclusivas de administrador (como <code>/admin/users</code>) redirigen automáticamente a usuarios sin rol admin al Panel de Control. La API verifica los roles del lado del servidor en cada solicitud.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section" id="roles">
+    <div class="section-label">Capítulo 2</div>
+    <h1 class="section-title">Roles y Permisos</h1>
+    <p class="lead">El sistema utiliza tres niveles de rol. Cada rol controla lo que un usuario puede ver y hacer.</p>
+
+    <div class="role-card admin">
+      <div class="role-icon">👑</div>
+      <div>
+        <div class="role-name" style="color:#5b21b6;">Administrador</div>
+        <div style="font-size:13px;color:#374151;">Código interno: <code>admin</code></div>
+        <ul class="role-perms">
+          <li>Acceso a todas las cotizaciones de todos los usuarios</li>
+          <li>Crear, editar, desactivar y eliminar cuentas de usuario</li>
+          <li>Acceso a la página <code>/admin/users</code></li>
+          <li>Inicializar y administrar la base de datos</li>
+          <li>Exportar todos los datos del sistema</li>
+          <li>Todos los permisos de Gerente y Usuario</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card manager">
+      <div class="role-icon">🎯</div>
+      <div>
+        <div class="role-name" style="color:#1e40af;">Gerente</div>
+        <div style="font-size:13px;color:#374151;">Código interno: <code>manager</code></div>
+        <ul class="role-perms">
+          <li>Ver y gestionar todas las cotizaciones de todos los usuarios</li>
+          <li>Exportar CSV de todas las cotizaciones</li>
+          <li>Crear y gestionar sus propias cotizaciones</li>
+          <li class="denied">No puede acceder a la gestión de usuarios</li>
+          <li class="denied">No puede eliminar cuentas de otros usuarios</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card user">
+      <div class="role-icon">👤</div>
+      <div>
+        <div class="role-name" style="color:#065f46;">Usuario</div>
+        <div style="font-size:13px;color:#374151;">Código interno: <code>user</code></div>
+        <ul class="role-perms">
+          <li>Crear, ver, editar y eliminar sus propias cotizaciones</li>
+          <li>Exportar sus cotizaciones a CSV</li>
+          <li class="denied">No puede ver las cotizaciones de otros usuarios</li>
+          <li class="denied">No puede acceder al panel de administración</li>
+          <li class="denied">No puede gestionar usuarios</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <div class="callout-title">Credenciales predeterminadas</div>
+        <p>La cuenta de administrador creada durante la configuración inicial usa <strong>usuario: admin</strong> y <strong>contraseña: admin123</strong>. Cambia esta contraseña inmediatamente después del primer inicio de sesión en producción.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA DE USUARIOS -->
+  <div class="section" id="usuarios">
+    <div class="section-label">Capítulo 3</div>
+    <h1 class="section-title">Pantalla de Gestión de Usuarios</h1>
+    <p class="lead">Navega a <span class="tag">/admin/users</span> (o haz clic en el ícono de usuario en la barra superior) para gestionar todas las cuentas del sistema.</p>
+    <img src="/doc-screenshots/admin-users.jpg" alt="Página de gestión de usuarios" class="app-screenshot">
+    <p class="screenshot-caption">Página de Gestión de Usuarios — todas las cuentas con sus roles</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/admin/users</span>
+      </div>
+      <div class="mockup-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div>
+            <div style="font-size:18px;font-weight:800;">Gestión de Usuarios</div>
+            <div style="font-size:13px;color:#6b7280;">Administra cuentas y permisos del sistema</div>
+          </div>
+          <div style="background:#7c3aed;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;">+ Nuevo Usuario</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+          <div style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:12px;"><span style="background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Administrador</span><p style="font-size:11px;color:#6b7280;margin-top:6px;margin-bottom:0;">Acceso total: usuarios, todas las cotizaciones</p></div>
+          <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:12px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Gerente</span><p style="font-size:11px;color:#6b7280;margin-top:6px;margin-bottom:0;">Ve todas las cotizaciones, no gestiona usuarios</p></div>
+          <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Usuario</span><p style="font-size:11px;color:#6b7280;margin-top:6px;margin-bottom:0;">Solo ve y gestiona sus propias cotizaciones</p></div>
+        </div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <thead><tr style="background:#f9fafb;">
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Usuario</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Nombre</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Email</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Rol</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Estado</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;">Acciones</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid #f3f4f6;">
+              <td style="padding:9px 8px;font-family:monospace;font-weight:600;">admin</td>
+              <td style="padding:9px 8px;">Admin User</td>
+              <td style="padding:9px 8px;color:#6b7280;">admin@lobatotours.com</td>
+              <td style="padding:9px 8px;"><span style="background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Admin</span></td>
+              <td style="padding:9px 8px;"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">Activo</span></td>
+              <td style="padding:9px 8px;"><span style="background:#eff6ff;color:#1e40af;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;">Editar</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p>La página muestra una leyenda de roles en la parte superior explicando qué puede hacer cada rol, seguida de la tabla de usuarios. Haz clic en el botón <strong>Editar</strong> de cualquier fila para modificar ese usuario.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>Solo los usuarios con rol <span class="badge purple">Admin</span> pueden acceder a esta página. Intentar visitar <code>/admin/users</code> como no-admin redirigirá al Panel de Control.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREAR USUARIO -->
+  <div class="section" id="crear">
+    <div class="section-label">Capítulo 3.1</div>
+    <h1 class="section-title">Crear un Nuevo Usuario</h1>
+    <p class="lead">Haz clic en el botón <strong>+ Nuevo Usuario</strong> en la página de Gestión de Usuarios para abrir el modal de creación.</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Campo</span><span>Requerido</span><span>Notas</span></div>
+      <div class="field-row"><span class="field-name">user_name</span><span class="field-req">Sí</span><span class="field-desc">Identificador de inicio de sesión único (p. ej., <code>jperez</code>). No se puede cambiar después de la creación. Sin espacios.</span></div>
+      <div class="field-row"><span class="field-name">real_name</span><span class="field-req">Sí</span><span class="field-desc">Nombre completo que se muestra en la interfaz y en las cotizaciones</span></div>
+      <div class="field-row"><span class="field-name">email</span><span class="field-req">Sí</span><span class="field-desc">Debe ser un correo único y válido. Se usa también para iniciar sesión.</span></div>
+      <div class="field-row"><span class="field-name">password</span><span class="field-req">Sí</span><span class="field-desc">Mínimo 6 caracteres. Se almacena como hash bcrypt — nunca en texto plano.</span></div>
+      <div class="field-row"><span class="field-name">phone_number</span><span class="field-req">No</span><span class="field-desc">Teléfono de contacto (opcional, visible en la tabla de usuarios)</span></div>
+      <div class="field-row"><span class="field-name">role</span><span class="field-req">Sí</span><span class="field-desc">Selecciona <strong>Administrador</strong>, <strong>Gerente</strong> o <strong>Usuario</strong>. Ver Capítulo 2 para diferencias de permisos.</span></div>
+    </div>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content"><h4>Haz clic en "Nuevo Usuario"</h4><p>El modal de creación se abre con un formulario vacío.</p></div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content"><h4>Llena los campos requeridos</h4><p>Ingresa nombre de usuario, nombre completo, correo electrónico y una contraseña temporal. El teléfono es opcional.</p></div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content"><h4>Selecciona el rol apropiado</h4><p>Haz clic en una de las tres tarjetas de rol (Administrador, Gerente, Usuario). La tarjeta seleccionada se resalta con borde morado.</p></div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content"><h4>Haz clic en "Crear usuario"</h4><p>La cuenta se crea de inmediato. Comparte el nombre de usuario y la contraseña temporal con el usuario de forma segura.</p></div>
+      </li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-icon">🔒</div>
+      <div class="callout-text">
+        <div class="callout-title">Buenas Prácticas de Seguridad</div>
+        <p>Establece una contraseña temporal y pide al usuario que la cambie en su primer inicio de sesión. No reutilices contraseñas entre cuentas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITAR USUARIO -->
+  <div class="section" id="editar">
+    <div class="section-label">Capítulo 3.2</div>
+    <h1 class="section-title">Editar un Usuario</h1>
+    <p class="lead">Haz clic en el botón <strong>Editar</strong> de cualquier fila en la tabla de usuarios para abrir el modal de edición. El formulario viene pre-rellenado con los valores actuales.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Campo</th><th>¿Editable?</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td>Nombre de usuario</td><td><span class="badge red">No</span></td><td>No se puede cambiar después de la creación para preservar la atribución de cotizaciones</td></tr>
+        <tr><td>Nombre completo</td><td><span class="badge green">Sí</span></td><td>Actualiza para corregir ortografía o cambios de nombre</td></tr>
+        <tr><td>Email</td><td><span class="badge green">Sí</span></td><td>Debe seguir siendo único en el sistema</td></tr>
+        <tr><td>Contraseña</td><td><span class="badge green">Sí</span></td><td>Deja en blanco para conservar la contraseña actual; ingresa un nuevo valor para restablecerla</td></tr>
+        <tr><td>Teléfono</td><td><span class="badge green">Sí</span></td><td>Campo opcional</td></tr>
+        <tr><td>Rol</td><td><span class="badge green">Sí</span></td><td>Cambia en cualquier momento. Toma efecto en la próxima carga de página del usuario.</td></tr>
+        <tr><td>Estado Activo</td><td><span class="badge green">Sí</span></td><td>Activa o desactiva la cuenta sin eliminarla (ver Capítulo 3.3)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <p>No puedes editar el estado activo de tu propia cuenta (el toggle está deshabilitado para el admin actualmente conectado). Esto previene bloquearse accidentalmente del sistema.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESACTIVAR / ELIMINAR -->
+  <div class="section" id="desactivar">
+    <div class="section-label">Capítulo 3.3</div>
+    <h1 class="section-title">Desactivar y Eliminar Usuarios</h1>
+    <p class="lead">Hay dos formas de retirar el acceso de un usuario: desactivación (reversible) y eliminación (permanente).</p>
+
+    <h2 class="section-title">Desactivar un Usuario</h2>
+    <p>Haz clic en el badge verde <span class="badge green">Activo</span> en la tabla de usuarios para cambiarlo a <span class="badge gray">Inactivo</span>. El usuario no podrá iniciar sesión, pero su cuenta y todas sus cotizaciones permanecen intactas.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p><strong>Prefiere desactivar en lugar de eliminar</strong> para empleados que dejan la empresa. Sus cotizaciones históricas siguen accesibles para gerentes y administradores, preservando registros importantes del negocio.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Eliminar un Usuario</h2>
+    <p>Haz clic en el botón rojo <strong>Eliminar</strong> en la fila del usuario. Aparecerá un cuadro de confirmación mostrando el nombre y nombre de usuario. Haz clic en <strong>Eliminar</strong> para borrar permanentemente la cuenta.</p>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚨</div>
+      <div class="callout-text">
+        <div class="callout-title">La eliminación es permanente</div>
+        <p>Eliminar una cuenta de usuario no puede deshacerse. Todas sus cotizaciones permanecerán en el sistema atribuidas a su ID de empleado, pero ya no podrán iniciar sesión y su información de perfil será removida. El botón eliminar no está disponible para el administrador actualmente conectado.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- COTIZACIONES ADMIN -->
+  <div class="section" id="cotizaciones-admin">
+    <div class="section-label">Capítulo 4</div>
+    <h1 class="section-title">Gestionar Todas las Cotizaciones (Vista Admin)</h1>
+    <p class="lead">A diferencia de los usuarios regulares que solo ven sus propias cotizaciones, los Administradores y Gerentes ven todas las cotizaciones de todos los agentes en la Lista de Cotizaciones.</p>
+    <img src="/doc-screenshots/admin-cotizaciones.jpg" alt="Lista de cotizaciones — vista de administrador" class="app-screenshot">
+    <p class="screenshot-caption">Vista Admin/Gerente — se muestran todas las cotizaciones de todos los agentes</p>
+
+    <p>Desde <span class="tag">/cotizaciones</span>, los admins pueden:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:16px;">
+      <li style="margin-bottom:6px;">Ver, editar, duplicar y eliminar cualquier cotización independientemente de quién la creó</li>
+      <li style="margin-bottom:6px;">Buscar y filtrar entre todos los nombres de clientes, estados y fechas</li>
+      <li style="margin-bottom:6px;">Exportar el conjunto completo de datos a CSV para reportes</li>
+    </ul>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>La lógica del servidor verifica automáticamente el rol del usuario en cada llamada a la API. Admins y Gerentes reciben datos sin filtrar; Usuarios regulares reciben solo sus propios registros.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORTAR -->
+  <div class="section" id="exportar">
+    <div class="section-label">Capítulo 4.1</div>
+    <h1 class="section-title">Exportar y Reportes</h1>
+    <p class="lead">La exportación CSV permite extraer todos los datos de cotizaciones a una hoja de cálculo para análisis, reportes o archivo.</p>
+
+    <h2 class="section-title">Exportar desde la Interfaz</h2>
+    <p>En la página de Cotizaciones, haz clic en <strong>Exportar CSV</strong>. La descarga respeta los filtros activos — si quieres todas las cotizaciones, limpia todos los filtros primero.</p>
+
+    <h2 class="section-title" style="margin-top:28px;">Exportar via API</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span><span class="api-endpoint">/api/cotizaciones/export</span><br>
+      <br>
+      <span class="env-comment"># Parámetros opcionales:</span><br>
+      <span class="env-key">?status</span>=<span class="api-endpoint">all|finished|draft</span><br>
+      <span class="env-key">?search</span>=<span class="api-endpoint">nombre_cliente_o_telefono</span><br>
+      <span class="env-key">?sortBy</span>=<span class="api-endpoint">id|creation_date|finished</span><br>
+      <span class="env-key">?sortOrder</span>=<span class="api-endpoint">ASC|DESC</span>
+    </div>
+  </div>
+
+  <!-- VARIABLES DE ENTORNO -->
+  <div class="section" id="variables">
+    <div class="section-label">Capítulo 5</div>
+    <h1 class="section-title">Variables de Entorno</h1>
+    <p class="lead">Crea un archivo <code>.env</code> en la raíz del proyecto con estas variables antes de iniciar la aplicación.</p>
+
+    <div class="env-block">
+      <span class="env-comment"># ─── Configuración de Base de Datos ─────────────</span><br>
+      <span class="env-key">DB_USER</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_PASSWORD</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_NAME</span>=<span class="env-val">postgres</span><br>
+      <span class="env-key">DB_HOST</span>=<span class="env-val">localhost</span><br>
+      <span class="env-key">DB_PORT</span>=<span class="env-val">5430</span><br>
+      <br>
+      <span class="env-comment"># ─── Next.js / Autenticación ────────────────────</span><br>
+      <span class="env-key">NEXTAUTH_URL</span>=<span class="env-val">http://localhost:3000</span><br>
+      <span class="env-key">NEXTAUTH_SECRET</span>=<span class="env-val">tu-clave-secreta-robusta-aqui</span>
+    </div>
+
+    <table class="docs-table">
+      <thead><tr><th>Variable</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><code>DB_USER</code></td><td>Usuario de PostgreSQL</td><td>postgres</td></tr>
+        <tr><td><code>DB_PASSWORD</code></td><td>Contraseña de PostgreSQL</td><td>postgres</td></tr>
+        <tr><td><code>DB_NAME</code></td><td>Nombre de la base de datos</td><td>postgres</td></tr>
+        <tr><td><code>DB_HOST</code></td><td>Host de la base de datos</td><td>localhost</td></tr>
+        <tr><td><code>DB_PORT</code></td><td>Puerto de la base de datos (Docker: 5430)</td><td>5430</td></tr>
+        <tr><td><code>NEXTAUTH_URL</code></td><td>URL pública de la aplicación</td><td>https://app.lobatotours.com</td></tr>
+        <tr><td><code>NEXTAUTH_SECRET</code></td><td>Clave para firmar las cookies de sesión. Mínimo 32 caracteres aleatorios.</td><td><code>openssl rand -hex 32</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🔑</div>
+      <div class="callout-text">
+        <div class="callout-title">Nunca subas .env al control de versiones</div>
+        <p>El archivo <code>.env</code> contiene credenciales sensibles. Asegúrate de que <code>.env</code> esté en tu <code>.gitignore</code>. Usa secretos de entorno en despliegues de producción en lugar de archivos .env.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BASE DE DATOS -->
+  <div class="section" id="base-datos">
+    <div class="section-label">Capítulo 6</div>
+    <h1 class="section-title">Esquema de Base de Datos</h1>
+    <p class="lead">El sistema usa una base de datos PostgreSQL. Las siguientes tablas se crean automáticamente por el endpoint de inicialización <span class="tag">POST /api/init</span>.</p>
+
+    <div class="db-table">
+      <div class="db-table-header">📋 cotizacion — Tabla Principal de Cotizaciones</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">ID auto-incremental de la cotización</span></div>
+        <div class="db-col"><span class="db-col-name">employee_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Llave foránea al empleado que la creó</span></div>
+        <div class="db-col"><span class="db-col-name">greeting_message</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Mensaje de bienvenida en la cotización</span></div>
+        <div class="db-col"><span class="db-col-name">goodbye_message</span><span class="db-col-type">TEXT</span><span class="db-col-desc">Mensaje de despedida en la cotización</span></div>
+        <div class="db-col"><span class="db-col-name">commission</span><span class="db-col-type">DECIMAL</span><span class="db-col-desc">Porcentaje de comisión del agente</span></div>
+        <div class="db-col"><span class="db-col-name">finished</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">true = Finalizada, false = Borrador</span></div>
+        <div class="db-col"><span class="db-col-name">valid_until</span><span class="db-col-type">DATE</span><span class="db-col-desc">Fecha de vencimiento opcional de la cotización</span></div>
+        <div class="db-col"><span class="db-col-name">creation_date</span><span class="db-col-type">TIMESTAMP</span><span class="db-col-desc">Se establece automáticamente al crear</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">👤 empleado — Usuarios / Empleados</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">ID auto-incremental del usuario</span></div>
+        <div class="db-col"><span class="db-col-name">user_name</span><span class="db-col-type">VARCHAR UNIQUE</span><span class="db-col-desc">Nombre de usuario para iniciar sesión (inmutable)</span></div>
+        <div class="db-col"><span class="db-col-name">real_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Nombre para mostrar</span></div>
+        <div class="db-col"><span class="db-col-name">email</span><span class="db-col-type">VARCHAR UNIQUE</span><span class="db-col-desc">Correo electrónico (también usado para iniciar sesión)</span></div>
+        <div class="db-col"><span class="db-col-name">password_hash</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Contraseña hasheada con bcrypt</span></div>
+        <div class="db-col"><span class="db-col-name">phone_number</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Teléfono opcional</span></div>
+        <div class="db-col"><span class="db-col-name">role</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">'admin' | 'manager' | 'user'</span></div>
+        <div class="db-col"><span class="db-col-name">active</span><span class="db-col-type">BOOLEAN</span><span class="db-col-desc">false = cuenta deshabilitada, no puede iniciar sesión</span></div>
+        <div class="db-col"><span class="db-col-name">creation_date</span><span class="db-col-type">TIMESTAMP</span><span class="db-col-desc">Fecha de creación de la cuenta</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">👥 cliente — Información del Cliente</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">ID auto-incremental</span></div>
+        <div class="db-col"><span class="db-col-name">cotizacion_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Referencia a la cotización padre</span></div>
+        <div class="db-col"><span class="db-col-name">customer_name</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Nombre del cliente</span></div>
+        <div class="db-col"><span class="db-col-name">customer_contact</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Contacto principal (teléfono o correo)</span></div>
+        <div class="db-col"><span class="db-col-name">customer_contact2</span><span class="db-col-type">VARCHAR</span><span class="db-col-desc">Contacto secundario</span></div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">🧑‍🤝‍🧑 persona — Viajeros por Cotización</div>
+      <div class="db-cols">
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">SERIAL PK</span><span class="db-col-desc">ID auto-incremental</span></div>
+        <div class="db-col"><span class="db-col-name">cliente_id</span><span class="db-col-type">INTEGER FK</span><span class="db-col-desc">Referencia al cliente padre</span></div>
+        <div class="db-col"><span class="db-col-name">age_range</span><span class="db-col-type">INTEGER</span><span class="db-col-desc">Código de categoría de edad (adulto, niño, infante, senior)</span></div>
+      </div>
+    </div>
+
+    <p style="margin-top:16px;">Tablas adicionales: <code>viaje</code>, <code>vuelo</code>, <code>hotel</code>, <code>habitacion</code>, <code>distribucion</code>, <code>comida</code>, <code>moneda</code>, <code>itinerario_viaje</code>, <code>actividad</code>, <code>itinerario_vuelo</code> — cada una almacena los datos específicos del servicio para cada sección de la cotización.</p>
+  </div>
+
+  <!-- API REFERENCE -->
+  <div class="section" id="api">
+    <div class="section-label">Capítulo 7</div>
+    <h1 class="section-title">Referencia de API</h1>
+    <p class="lead">La aplicación expone una API REST bajo <span class="tag">/api</span>. Todos los endpoints requieren una cookie de sesión válida (establecida por el endpoint de inicio de sesión).</p>
+
+    <h2 class="section-title">Autenticación</h2>
+    <div class="api-block">
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/auth/login</span>
+      <span class="api-desc">— Iniciar sesión. Body: { username, password }</span><br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/auth/me</span>
+      <span class="api-desc">— Obtener info de la sesión actual (id, rol)</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/auth/logout</span>
+      <span class="api-desc">— Cerrar sesión y limpiar cookie</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Panel de Control</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/dashboard</span>
+      <span class="api-desc">— Retorna estadísticas: totals, thisMonth, growth, expiringSoon, recentQuotes, monthlyTrend</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Cotizaciones</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizaciones</span>
+      <span class="api-desc">— Listar cotizaciones (paginado). Params: page, search, status, sortBy, sortOrder, limit</span><br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]</span>
+      <span class="api-desc">— Obtener una cotización con todos sus datos anidados</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/cotizacion/[id]</span>
+      <span class="api-desc">— Crear o actualizar una cotización (upsert)</span><br>
+      <span class="api-method del">DEL</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizacion/[id]</span>
+      <span class="api-desc">— Eliminar cotización (Admin/Gerente: cualquiera; Usuario: solo las propias)</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/cotizacion/[id]/duplicate</span>
+      <span class="api-desc">— Crear copia de la cotización como nuevo borrador</span><br>
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/cotizaciones/export</span>
+      <span class="api-desc">— Descargar cotizaciones filtradas como archivo CSV</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Usuarios</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users</span>
+      <span class="api-desc">— Listar todos los usuarios. Solo Admin.</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/users</span>
+      <span class="api-desc">— Crear nuevo usuario. Solo Admin. Body: { user_name, real_name, email, password, role, phone_number? }</span><br>
+      <span class="api-method put">PUT</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users/[id]</span>
+      <span class="api-desc">— Actualizar campos del usuario. Solo Admin.</span><br>
+      <span class="api-method del">DEL</span>&nbsp;&nbsp;<span class="api-endpoint">/api/users/[id]</span>
+      <span class="api-desc">— Eliminar cuenta de usuario. Solo Admin. No puede eliminar la propia cuenta.</span>
+    </div>
+
+    <h2 class="section-title" style="margin-top:28px;">Inicialización de Base de Datos</h2>
+    <div class="api-block">
+      <span class="api-method get">GET</span>&nbsp;&nbsp;<span class="api-endpoint">/api/init</span>
+      <span class="api-desc">— Verificar si las tablas existen y retornar estado de la base de datos</span><br>
+      <span class="api-method post">POST</span><span class="api-endpoint">/api/init</span>
+      <span class="api-desc">— Crear todas las tablas y el usuario administrador por defecto</span>
+    </div>
+  </div>
+
+  <!-- DOCKER -->
+  <div class="section" id="docker">
+    <div class="section-label">Capítulo 8</div>
+    <h1 class="section-title">Configuración Docker</h1>
+    <p class="lead">La aplicación usa Docker para ejecutar una base de datos PostgreSQL en un contenedor. La aplicación en sí corre en Node.js fuera de Docker durante el desarrollo.</p>
+
+    <h2 class="section-title">Comandos Docker</h2>
+    <div class="api-block">
+      <span class="env-comment"># Iniciar el contenedor de PostgreSQL</span><br>
+      npm run docker:up<br>
+      <br>
+      <span class="env-comment"># Detener el contenedor</span><br>
+      npm run docker:down<br>
+      <br>
+      <span class="env-comment"># Ver registros de la base de datos</span><br>
+      npm run docker:logs<br>
+      <br>
+      <span class="env-comment"># Verificar estado del contenedor</span><br>
+      docker ps
+    </div>
+
+    <table class="docs-table">
+      <thead><tr><th>Configuración</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Imagen</td><td>postgres:latest</td></tr>
+        <tr><td>Puerto interno</td><td>5432</td></tr>
+        <tr><td>Puerto del host</td><td>5430</td></tr>
+        <tr><td>Base de datos</td><td>postgres</td></tr>
+        <tr><td>Usuario</td><td>postgres</td></tr>
+        <tr><td>Contraseña</td><td>postgres</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- INSTALACIÓN INICIAL -->
+  <div class="section" id="instalacion">
+    <div class="section-label">Capítulo 9</div>
+    <h1 class="section-title">Instalación Inicial</h1>
+    <p class="lead">Sigue estos pasos para configurar el sistema de Lobato Tours desde cero en una nueva máquina.</p>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Prerrequisitos</h4>
+          <p>Instala Node.js (v18+), npm y Docker Desktop en el servidor o máquina de desarrollo.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Clonar repositorio e instalar dependencias</h4>
+          <p>Ejecuta <code>npm install</code> en el directorio del proyecto para instalar todos los paquetes de Node.js.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Crear el archivo .env</h4>
+          <p>Copia las variables de entorno del Capítulo 5 en un nuevo archivo <code>.env</code> en la raíz del proyecto. Actualiza NEXTAUTH_SECRET con un valor aleatorio robusto.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Iniciar el contenedor de base de datos</h4>
+          <p>Ejecuta <code>npm run docker:up</code>. Espera unos segundos para que PostgreSQL esté listo.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Iniciar el servidor de desarrollo</h4>
+          <p>Ejecuta <code>npm run dev</code>. La aplicación inicia en <code>http://localhost:3000</code>.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Inicializar la base de datos</h4>
+          <p>Visita <code>http://localhost:3000</code>. Si las tablas no existen, envía una solicitud <code>POST</code> a <code>/api/init</code> (o ejecuta <code>npm run init-db</code>). Esto crea todas las tablas y la cuenta de administrador por defecto.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>Iniciar sesión y cambiar la contraseña del admin</h4>
+          <p>Inicia sesión con <strong>admin</strong> / <strong>admin123</strong>. Ve a Gestión de Usuarios y edita la cuenta de administrador para establecer una contraseña segura de inmediato.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-text">
+        <div class="callout-title">Configuración Automatizada</div>
+        <p>Ejecuta <code>npm run setup</code> para ejecutar los pasos 4–6 automáticamente con un solo comando.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUCIÓN DE PROBLEMAS -->
+  <div class="section" id="problemas">
+    <div class="section-label">Capítulo 10</div>
+    <h1 class="section-title">Solución de Problemas</h1>
+    <p class="lead">Problemas comunes y sus soluciones.</p>
+
+    <div style="margin-top:12px;">
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#991b1b;margin-bottom:8px;">🔴 No se puede conectar a la base de datos</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Ejecuta <code>docker ps</code> para confirmar que el contenedor está corriendo</li>
+          <li style="margin-bottom:4px;">Verifica que DB_PORT en .env coincida con el puerto del host en docker-compose (5430)</li>
+          <li style="margin-bottom:4px;">Verifica conflictos de puerto: <code>lsof -i :5430</code></li>
+          <li>Ejecuta <code>npm run docker:logs</code> para ver errores de inicio de PostgreSQL</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Tablas no creadas / "relation does not exist"</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Envía <code>POST /api/init</code> para crear todas las tablas</li>
+          <li>O ejecuta: <code>npm run init-db</code></li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Inicio de sesión falla con credenciales correctas</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Verifica que NEXTAUTH_SECRET esté configurado en .env</li>
+          <li style="margin-bottom:4px;">Limpia las cookies del navegador y vuelve a intentar</li>
+          <li>Confirma que NEXTAUTH_URL coincida con la URL que estás usando en el navegador</li>
+        </ul>
+      </div>
+
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#92400e;margin-bottom:8px;">🟡 /admin/users redirige al Panel de Control</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li style="margin-bottom:4px;">Tu cuenta no tiene el rol de Administrador</li>
+          <li>Inicia sesión con una cuenta Admin, o pide a otro admin que actualice tu rol</li>
+        </ul>
+      </div>
+
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:20px;">
+        <h3 style="font-size:15px;font-weight:700;color:#065f46;margin-bottom:8px;">🟢 Errores de permisos en script de inicio</h3>
+        <ul style="margin-left:16px;font-size:14px;color:#374151;">
+          <li>Ejecuta: <code>chmod +x scripts/start-dev.sh</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEGURIDAD -->
+  <div class="section" id="seguridad">
+    <div class="section-label">Capítulo 11</div>
+    <h1 class="section-title">Notas de Seguridad</h1>
+    <p class="lead">Prácticas clave de seguridad para operar el sistema de Lobato Tours.</p>
+
+    <h2 class="section-title">Autenticación y Sesiones</h2>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;margin-bottom:20px;">
+      <li style="margin-bottom:8px;">Las sesiones se almacenan del lado del servidor, firmadas con NEXTAUTH_SECRET. Usa una clave aleatoria de mínimo 32 caracteres en producción.</li>
+      <li style="margin-bottom:8px;">Las contraseñas se hashean con bcrypt antes de almacenarse. Las contraseñas en texto plano nunca se registran ni almacenan.</li>
+      <li style="margin-bottom:8px;">Las verificaciones de rol se aplican en cada llamada de API del lado del servidor — no pueden eludirse modificando cookies o URLs.</li>
+    </ul>
+
+    <h2 class="section-title">Lista de Verificación para Producción</h2>
+    <table class="docs-table">
+      <thead><tr><th>Elemento</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td>Contraseña admin predeterminada</td><td>Cambiar inmediatamente después de la configuración inicial</td></tr>
+        <tr><td>NEXTAUTH_SECRET</td><td>Usar <code>openssl rand -hex 32</code> para generar</td></tr>
+        <tr><td>Contraseña de base de datos</td><td>Cambiar de "postgres" por defecto a una contraseña robusta</td></tr>
+        <tr><td>NEXTAUTH_URL</td><td>Configurar al dominio de producción real, no localhost</td></tr>
+        <tr><td>HTTPS</td><td>Siempre servir la aplicación sobre HTTPS en producción</td></tr>
+        <tr><td><code>POST /api/init</code></td><td>Restringir el acceso después de la configuración inicial</td></tr>
+        <tr><td>Puerto de base de datos</td><td>No exponer el puerto 5430 a internet público</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🛡️</div>
+      <div class="callout-text">
+        <div class="callout-title">Datos Sensibles</div>
+        <p>Los datos de cotizaciones pueden contener información personal de clientes (nombres, teléfonos, correos). Asegúrate de que el servidor de producción cumpla con las regulaciones de protección de datos aplicables (p. ej., LFPDPPP en México).</p>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding-top:32px;border-top:1px solid var(--gray-200);text-align:center;color:var(--gray-500);font-size:13px;">
+      <p>Lobato Tours · Sistema de Cotizaciones · Guía del Administrador (Español) · v1.0 · Marzo 2026</p>
+      <p style="margin-top:4px;">Confidencial — Solo para administradores del sistema</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const a = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

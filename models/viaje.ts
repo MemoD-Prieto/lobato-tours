@@ -8,6 +8,7 @@ export class Viaje extends Model {
   public package_price?: number;
   public travel_begin!: Date;
   public travel_end!: Date;
+  public num_personas?: number;
 
   static initModel(sequelize: Sequelize) {
     Viaje.init({
@@ -20,7 +21,12 @@ export class Viaje extends Model {
       package_description: DataTypes.TEXT,
       package_price: DataTypes.DECIMAL,
       travel_begin: DataTypes.DATEONLY,
-      travel_end: DataTypes.DATEONLY
+      travel_end: DataTypes.DATEONLY,
+      num_personas: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null
+      }
     }, {
       sequelize,
       tableName: 'viaje',

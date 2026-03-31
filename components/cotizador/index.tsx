@@ -1,6 +1,9 @@
 // Form Context and Helpers
 export { FormProvider, useFormData, getIn, setIn } from './FormContext';
 
+// Shared Widgets
+export { PersonasWidget } from './PersonasWidget';
+
 // Hooks
 export { useAutoSave } from './useAutoSave';
 
@@ -11,6 +14,7 @@ export { WizardContent } from './WizardContent';
 
 // Step Components
 export { StepCliente } from './StepCliente';
+export { StepViaje } from './StepViaje';
 export { StepMoneda } from './StepMoneda';
 export { StepServicios } from './StepServicios';
 export { StepPaquete } from './StepPaquete';

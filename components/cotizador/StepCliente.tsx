@@ -3,6 +3,7 @@ import { FaUser } from "react-icons/fa";
 import { Card } from "./Card";
 import { SmartField } from "./SmartField";
 import { useFormData } from "./FormContext";
+import { useTranslation } from "react-i18next";
 
 interface PersonaItem {
   id: number;
@@ -12,6 +13,7 @@ interface PersonaItem {
 
 export function StepCliente() {
   const { data, setValue } = useFormData();
+  const { t } = useTranslation();
   const [personas, setPersonas] = useState<PersonaItem[]>(() => {
     const existingPersonas = data?.clientes?.[0]?.personas || [];
     if (existingPersonas.length === 0) {
@@ -28,7 +30,6 @@ export function StepCliente() {
     const newId = Math.max(...personas.map((p: PersonaItem) => p.id), -1) + 1;
     const newPersona: PersonaItem = { id: newId, age_range: '', isClient: false };
     setPersonas((prev: PersonaItem[]) => [...prev, newPersona]);
-
     const currentPersonas = data?.clientes?.[0]?.personas || [];
     setValue(`clientes[0].personas[${currentPersonas.length}]`, { age_range: '' });
   }, [personas, data, setValue]);
@@ -49,7 +50,6 @@ export function StepCliente() {
 
   const removePersona = useCallback((id: number) => {
     if (personas.length <= 1) return;
-
     setPersonas((prev: PersonaItem[]) => {
       const newPersonas = prev.filter((p: PersonaItem) => p.id !== id);
       const currentPersonas = data?.clientes?.[0]?.personas || [];
@@ -68,34 +68,34 @@ export function StepCliente() {
   }, [personas, setValue]);
 
   return (
-    <Card title={<h4 className="text-base font-semibold">Cliente</h4>}>
+    <Card title={<h4 className="text-base font-semibold">{t('client_label')}</h4>}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SmartField 
-          label="Nombre *" 
-          name="clientes[0].customer_name" 
-          placeholder="Nombre Apellido(s)" 
-          autoComplete="name" 
-          validate={(val) => !val || val.trim() === '' ? 'Nombre es requerido' : ''} 
+        <SmartField
+          label={t('client_label') + ' *'}
+          name="clientes[0].customer_name"
+          placeholder={t('client_label')}
+          autoComplete="name"
+          validate={(val) => !val || val.trim() === '' ? t('name_required') : ''}
         />
-        <SmartField 
-          label="Contacto *" 
-          name="clientes[0].customer_contact" 
-          placeholder="Correo, tel, whatsapp, etc." 
-          autoComplete="email" 
-          validate={(val) => !val || val.trim() === '' ? 'Contacto es requerido' : ''} 
+        <SmartField
+          label={t('contact_label')}
+          name="clientes[0].customer_contact"
+          placeholder={t('contact_placeholder')}
+          autoComplete="email"
+          validate={(val) => !val || val.trim() === '' ? t('contact_required') : ''}
         />
-        <SmartField label="Contacto 2" name="clientes[0].customer_contact2" placeholder="Correo, tel, whatsapp, etc." />
+        <SmartField label={t('contact2_label')} name="clientes[0].customer_contact2" placeholder={t('contact_placeholder')} />
       </div>
 
       <div className="mt-6">
         <div className="flex items-center justify-between mb-4">
-          <h5 className="text-sm font-semibold">Personas en el viaje</h5>
+          <h5 className="text-sm font-semibold">{t('travelers_title')}</h5>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => addPersonas(5)}
               className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-              title="Agregar 5 personas"
+              title={t('add_5_people')}
             >
               <FaUser className="w-4 h-4" />
               <span>5</span>
@@ -104,44 +104,42 @@ export function StepCliente() {
               type="button"
               onClick={() => addPersonas(10)}
               className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-              title="Agregar 10 personas"
+              title={t('add_10_people')}
             >
               <FaUser className="w-4 h-4" />
               <span>10</span>
             </button>
-            <button 
-              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" 
+            <button
+              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               type="button"
               onClick={addPersona}
             >
-              + Agregar persona
+              {t('add_person')}
             </button>
           </div>
         </div>
 
         <div className="space-y-3">
           {personas.map((persona: PersonaItem, index: number) => (
-            <div 
+            <div
               key={persona.id}
               className={`p-4 border rounded-lg transition-all ${
-                persona.isClient 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                persona.isClient
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400'
+                  : 'border-gray-200 dark:border-[#1b2e4b] bg-white dark:bg-[#1b2e4b] hover:border-gray-300 dark:hover:border-[#253a5e]'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-1 text-xs rounded-full ${
-                    persona.isClient 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-gray-100 text-gray-600'
+                    persona.isClient
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400'
+                      : 'bg-gray-100 dark:bg-[#253a5e] text-gray-600 dark:text-[#888ea8]'
                   }`}>
-                    {persona.isClient ? 'Cliente' : `Persona ${index + 1}`}
+                    {persona.isClient ? t('client_label') : t('person_label', { num: index + 1 })}
                   </span>
                   {persona.isClient && (
-                    <span className="text-xs text-blue-600 font-medium">
-                      (Primera persona)
-                    </span>
+                    <span className="text-xs text-blue-600 font-medium">{t('first_person_note')}</span>
                   )}
                 </div>
                 {!persona.isClient && personas.length > 1 && (
@@ -150,33 +148,33 @@ export function StepCliente() {
                     onClick={() => removePersona(persona.id)}
                     className="text-red-600 hover:text-red-800 text-sm font-medium"
                   >
-                    Eliminar
+                    {t('remove')}
                   </button>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Rango de edad
+                  <label className="block text-sm font-medium text-gray-700 dark:text-[#e0e6ed] mb-1">
+                    {t('age_range')}
                   </label>
                   <select
                     value={persona.age_range}
                     onChange={(e) => updatePersonaAgeRange(persona.id, e.target.value)}
-                    className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full border rounded-md p-2 dark:bg-[#1b2e4b] dark:border-[#253a5e] dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="">Seleccione edad</option>
-                    <option value="0">0-2 años</option>
-                    <option value="1">3-11 años</option>
-                    <option value="2">12-17 años</option>
-                    <option value="3">18+ años</option>
+                    <option value="">{t('select_age')}</option>
+                    <option value="0">{t('age_0_2')}</option>
+                    <option value="1">{t('age_3_11')}</option>
+                    <option value="2">{t('age_12_17')}</option>
+                    <option value="3">{t('age_18_plus')}</option>
                   </select>
                 </div>
                 <div className="flex items-center">
-                  <span className="text-sm text-gray-500">
-                    {persona.age_range ? 
-                      ['0-2 años', '3-11 años', '12-17 años', '18+ años'][parseInt(persona.age_range)] 
-                      : 'Seleccione una edad'
+                  <span className="text-sm text-gray-500 dark:text-[#888ea8]">
+                    {persona.age_range
+                      ? [t('age_0_2'), t('age_3_11'), t('age_12_17'), t('age_18_plus')][parseInt(persona.age_range)]
+                      : t('select_age')
                     }
                   </span>
                 </div>
@@ -186,13 +184,13 @@ export function StepCliente() {
         </div>
 
         {personas.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <p>No hay personas agregadas</p>
-            <button 
+          <div className="text-center py-8 text-gray-500 dark:text-[#888ea8]">
+            <p>{t('no_people_added')}</p>
+            <button
               className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               onClick={addPersona}
             >
-              Agregar primera persona
+              {t('add_first_person')}
             </button>
           </div>
         )}

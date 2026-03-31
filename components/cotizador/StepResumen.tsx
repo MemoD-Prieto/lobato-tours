@@ -1,180 +1,162 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { Card } from "./Card";
 import { useFormData } from "./FormContext";
 
 export function StepResumen() {
-  const { data, setValue, cotizacionId, loadQuote } = useFormData();
+  const { t } = useTranslation();
+  const { data, setValue, cotizacionId, selectedServices } = useFormData();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitResult, setSubmitResult] = useState<any>(null);
-  const [loadQuoteId, setLoadQuoteId] = useState('');
+  const [submitResult, setSubmitResult] = useState<{ success: true; data: any } | null>(null);
+  const toggleRef = useRef<HTMLDivElement>(null);
+
+  const getMissingFields = (): string[] => {
+    const missing: string[] = [];
+    if (!data.clientes?.[0]?.customer_name?.trim())             missing.push(t('client_label'));
+    if (!data.clientes?.[0]?.customer_contact?.trim())          missing.push(t('contact_label'));
+    // At least the first traveler (the client) must have an age range selected
+    if (!data.clientes?.[0]?.personas?.[0]?.age_range)          missing.push(t('age_range'));
+    if (!data.viaje?.travel_destiny?.trim())                     missing.push(t('package_destination'));
+    if (!data.viaje?.travel_begin)                               missing.push(t('travel_start_date'));
+    if (!data.viaje?.travel_end)                                 missing.push(t('travel_return_date'));
+    if (selectedServices.size === 0)                             missing.push(t('services_step'));
+    return missing;
+  };
+
+  const shakeToggle = () => {
+    const el = toggleRef.current;
+    if (!el) return;
+    el.classList.remove('btn-shake');
+    void el.offsetWidth;
+    el.classList.add('btn-shake');
+    setTimeout(() => el.classList.remove('btn-shake'), 550);
+  };
+
+  const handleToggle = (checked: boolean) => {
+    // Turning off is always allowed
+    if (!checked) {
+      setValue('cotizacion.finished', false);
+      return;
+    }
+    // Turning on: validate first
+    const missing = getMissingFields();
+    if (missing.length > 0) {
+      shakeToggle();
+      toast.error(
+        <div>
+          <p className="font-semibold mb-1">{t('complete_required_fields')}</p>
+          <ul className="list-disc list-inside text-sm space-y-0.5">
+            {missing.map((f) => <li key={f}>{f}</li>)}
+          </ul>
+        </div>,
+        { autoClose: 5000 }
+      );
+      return; // stays off
+    }
+    setValue('cotizacion.finished', true);
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    setSubmitResult(null);
-    
-    // Only validate required fields if marking as finished
-    if (data.cotizacion?.finished) {
-      const requiredFields = {
-        customer_name: data.clientes?.[0]?.customer_name,
-        customer_contact: data.clientes?.[0]?.customer_contact
-      };
-      
-      const missingFields = Object.entries(requiredFields)
-        .filter(([key, value]) => !value || value.trim() === '')
-        .map(([key]) => key);
-      
-      if (missingFields.length > 0) {
-        setSubmitResult({ 
-          success: false, 
-          error: `Campos requeridos para finalizar: ${missingFields.join(', ')}` 
-        });
-        setIsSubmitting(false);
-        return;
-      }
-    }
-    
     try {
-      // Ensure the cotizacion object has the employee_id (placeholder for now)
-      // IMPORTANT: Include cotizacion_id if it exists to update instead of creating new
       const submitData = {
         ...data,
         ...(cotizacionId && { cotizacion_id: cotizacionId }),
-        cotizacion: {
-          ...data.cotizacion,
-          employee_id: '1' // Placeholder employee ID
-        }
       };
-      
+
       const response = await fetch('/api/quotes', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData),
       });
 
       const result = await response.json();
-      
+
       if (result.ok) {
         setSubmitResult({ success: true, data: result });
+        toast.success(t('quote_created_success'));
       } else {
-        setSubmitResult({ success: false, error: result.error });
+        toast.error(result.error || t('error_creating_quote'));
       }
-    } catch (error) {
-      setSubmitResult({ success: false, error: 'Error de conexión' });
+    } catch {
+      toast.error(t('connection_error'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleLoadQuote = async () => {
-    const id = parseInt(loadQuoteId);
-    if (isNaN(id)) {
-      setSubmitResult({ success: false, error: 'ID de cotización inválido' });
-      return;
-    }
-    await loadQuote(id);
-  };
+  const savedId = submitResult?.data?.data?.id ?? cotizacionId;
 
   return (
-    <Card title={<h4 className="text-base font-semibold">Resumen</h4>}>
-      {/* Load Existing Quote */}
-      <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-        <h5 className="text-sm font-semibold text-blue-900 mb-2">Cargar Cotización Existente</h5>
-        <div className="flex gap-2">
-          <input
-            type="number"
-            placeholder="ID de cotización"
-            value={loadQuoteId}
-            onChange={(e) => setLoadQuoteId(e.target.value)}
-            className="flex-1 px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-          <button
-            onClick={handleLoadQuote}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Cargar
-          </button>
-        </div>
-        {cotizacionId && (
-          <p className="text-xs text-blue-700 mt-2">
-            Cotización actual: ID {cotizacionId}
-          </p>
-        )}
-      </div>
+    <Card title={<h4 className="text-base font-semibold">{t('summary_step')}</h4>}>
 
-      {/* Finished Toggle */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+      {/* Status toggle */}
+      <div className="mb-6 p-4 bg-gray-50 dark:bg-[#060818] rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h5 className="text-sm font-semibold text-gray-900">Estado de la Cotización</h5>
-            <p className="text-xs text-gray-600">
-              {data.cotizacion?.finished 
-                ? 'Marcada como finalizada - Se requieren nombre y contacto del cliente'
-                : 'Borrador - Se puede guardar con datos mínimos'
-              }
+            <h5 className="text-sm font-semibold text-gray-900 dark:text-white">{t('quote_status')}</h5>
+            <p className="text-xs text-gray-500 dark:text-[#888ea8] mt-0.5">
+              {data.cotizacion?.finished ? t('marked_finished_required') : t('draft_minimal_data')}
             </p>
           </div>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={data.cotizacion?.finished || false}
-              onChange={(e) => setValue('cotizacion.finished', e.target.checked)}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <span className="ml-2 text-sm font-medium text-gray-700">
-              Finalizada
-            </span>
+          <label className="flex items-center cursor-pointer select-none">
+            <div ref={toggleRef} className="relative">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={data.cotizacion?.finished || false}
+                onChange={(e) => handleToggle(e.target.checked)}
+              />
+              <div className={`block w-12 h-6 rounded-full transition-colors ${data.cotizacion?.finished ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+              <div className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${data.cotizacion?.finished ? 'translate-x-6' : 'translate-x-0'}`} />
+            </div>
+            <span className="ml-3 text-sm font-medium text-gray-700 dark:text-[#e0e6ed]">{t('finished')}</span>
           </label>
         </div>
       </div>
 
-      <p className="text-sm text-gray-600">Previsualización del objeto guardado:</p>
-      <pre className="mt-3 text-xs bg-gray-50 p-3 rounded border overflow-auto max-h-64">{JSON.stringify(data, null, 2)}</pre>
-      
-      {submitResult && (
-        <div className={`mt-4 p-3 rounded ${submitResult.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {submitResult.success ? (
-            <div>
-              <p className="font-semibold">✅ Cotización creada exitosamente!</p>
-              <p className="text-sm">ID: {submitResult.data.cotizacionId}</p>
-            </div>
-          ) : (
-            <div>
-              <p className="font-semibold">❌ Error al crear cotización</p>
-              <p className="text-sm">{submitResult.error}</p>
-            </div>
-          )}
+      {submitResult?.success && (
+        <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded">
+          <p className="font-semibold">✅ {t('quote_created_success')} — ID: {submitResult.data.data?.id ?? cotizacionId}</p>
         </div>
       )}
-      
-      <div className="mt-4 flex gap-2">
+
+      <div className="flex flex-wrap gap-2">
         <button
-          className="px-3 py-2 border rounded"
-          onClick={() => {
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "cotizacion.json";
-            a.click();
-            URL.revokeObjectURL(url);
-          }}
-        >
-          Descargar JSON
-        </button>
-        <button 
-          className={`px-3 py-2 rounded text-white ${isSubmitting ? 'bg-gray-400' : data.cotizacion?.finished ? 'bg-green-600' : 'bg-blue-600'}`}
+          className={`px-3 py-2 rounded text-white text-sm transition-colors ${
+            isSubmitting
+              ? 'bg-gray-400 cursor-not-allowed'
+              : data.cotizacion?.finished
+                ? 'bg-green-600 hover:bg-green-700'
+                : 'bg-blue-600 hover:bg-blue-700'
+          }`}
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          {isSubmitting 
-            ? 'Enviando...' 
-            : data.cotizacion?.finished 
-              ? 'Finalizar cotización' 
-              : 'Guardar borrador'
+          {isSubmitting
+            ? t('sending')
+            : data.cotizacion?.finished
+              ? t('finalize_quote')
+              : t('save_draft')
           }
         </button>
+
+        {data.cotizacion?.finished && savedId && (
+          <a
+            href={`/api/cotizacion/${savedId}/pdf`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-red-600 hover:bg-red-700 text-white text-sm transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M4 4C4 2.89543 4.89543 2 6 2H14L20 8V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z" stroke="currentColor" strokeWidth="1.5"/>
+              <path opacity="0.5" d="M14 2L20 8H14V2Z" fill="currentColor"/>
+              <path d="M8 13H16M8 17H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            {t('view_pdf')}
+          </a>
+        )}
       </div>
     </Card>
   );

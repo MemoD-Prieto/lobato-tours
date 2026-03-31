@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobato Tours – User Manual</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #0ea5e9;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --sidebar-w: 280px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--gray-800);
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    /* ── PRINT / PDF ───────────────────────────────── */
+    @media print {
+      .no-print { display: none !important; }
+      .sidebar  { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      body { font-size: 11pt; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      .cover { page-break-after: always; }
+      .section-block { page-break-inside: avoid; }
+    }
+
+    /* ── SIDEBAR ────────────────────────────────────── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--gray-900);
+      color: #fff;
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .sidebar-logo .brand {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      color: #fff;
+    }
+
+    .sidebar-logo .subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-nav { padding: 16px 0; flex: 1; }
+
+    .nav-section {
+      padding: 10px 20px 4px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: rgba(255,255,255,.35);
+      font-weight: 700;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: 13.5px;
+      transition: all .15s;
+      cursor: pointer;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .nav-item .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* ── MAIN ────────────────────────────────────────── */
+    .main-content {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    /* ── COVER PAGE ──────────────────────────────────── */
+    .cover {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #0ea5e9 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.04);
+      top: -200px; right: -200px;
+    }
+
+    .cover::after {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.04);
+      bottom: -150px; left: -150px;
+    }
+
+    .cover-logo {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px 24px;
+      margin-bottom: 32px;
+      display: inline-block;
+      box-shadow: 0 20px 40px rgba(0,0,0,.3);
+    }
+
+    .cover h1 {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
+    }
+
+    .cover .tagline {
+      font-size: 20px;
+      opacity: .8;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .cover .doc-type {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      padding: 8px 24px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .cover-meta {
+      margin-top: 60px;
+      font-size: 13px;
+      opacity: .6;
+    }
+
+    /* ── SECTION HEADINGS ────────────────────────────── */
+    .section {
+      padding: 64px 56px;
+      max-width: 900px;
+    }
+
+    .section + .section {
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h1.section-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -.5px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    h2.section-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+    }
+
+    h3.step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 8px;
+    }
+
+    .lead {
+      font-size: 17px;
+      color: var(--gray-500);
+      margin-bottom: 32px;
+      max-width: 680px;
+    }
+
+    p { margin-bottom: 14px; font-size: 15px; color: var(--gray-700); }
+
+    /* ── REAL SCREENSHOTS ────────────────────────────── */
+    .app-screenshot {
+      display: block;
+      width: 100%;
+      max-width: 680px;
+      margin: 24px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.12);
+      border: 1px solid var(--gray-200);
+    }
+    .screenshot-caption {
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: -16px;
+      margin-bottom: 24px;
+    }
+
+    /* ── UI MOCKUPS ──────────────────────────────────── */
+    .mockup {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 28px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    }
+
+    .mockup-bar {
+      background: var(--gray-200);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mockup-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-bar .dot.red   { background: #ff5f57; }
+    .mockup-bar .dot.yellow{ background: #ffbd2e; }
+    .mockup-bar .dot.green { background: #28c840; }
+    .mockup-bar .url {
+      margin-left: 10px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 3px 14px;
+      font-size: 12px;
+      color: var(--gray-500);
+      font-family: monospace;
+    }
+
+    .mockup-body { padding: 24px; }
+
+    /* ── STAT CARDS ────────────────────────────────── */
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .stat-card .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .stat-card.blue .value   { color: var(--primary); }
+    .stat-card.green .value  { color: var(--success); }
+    .stat-card.yellow .value { color: var(--warning); }
+    .stat-card.purple .value { color: #7c3aed; }
+
+    /* ── CALLOUTS ────────────────────────────────────── */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .callout.info   { background: #eff6ff; border-left: 4px solid var(--primary); }
+    .callout.tip    { background: #f0fdf4; border-left: 4px solid var(--success); }
+    .callout.warn   { background: #fffbeb; border-left: 4px solid var(--warning); }
+    .callout.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text p { margin: 0; font-size: 14px; }
+    .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+
+    /* ── STEPS ───────────────────────────────────────── */
+    .steps-list { list-style: none; margin: 20px 0; }
+
+    .steps-list li {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content { flex: 1; }
+    .step-content h4 { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .step-content p  { margin: 0; font-size: 14px; color: var(--gray-600); }
+
+    /* ── TABLE ───────────────────────────────────────── */
+    table.docs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+
+    .docs-table th {
+      background: var(--gray-50);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--gray-500);
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .docs-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table tr:hover td { background: var(--gray-50); }
+
+    /* ── BADGES ──────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge.green  { background: #d1fae5; color: #065f46; }
+    .badge.yellow { background: #fef3c7; color: #92400e; }
+    .badge.blue   { background: #dbeafe; color: #1e40af; }
+    .badge.purple { background: #ede9fe; color: #5b21b6; }
+    .badge.gray   { background: var(--gray-100); color: var(--gray-600); }
+
+    /* ── WIZARD STEPS VISUALIZER ─────────────────────── */
+    .wizard-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0;
+    }
+
+    .wiz-step {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+
+    .wiz-step.required { border-color: var(--primary); color: var(--primary); }
+    .wiz-step.optional { border-style: dashed; color: var(--gray-500); }
+    .wiz-step .wiz-icon { font-size: 16px; }
+
+    /* ── SERVICE GRID ─────────────────────────────────── */
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .service-card {
+      background: #fff;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .service-card .svc-icon { font-size: 26px; margin-bottom: 8px; }
+    .service-card .svc-name { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+    .service-card .svc-desc { font-size: 11px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ── PRINT BUTTON ────────────────────────────────── */
+    .print-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+    }
+
+    .btn-print {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(37,99,235,.4);
+      transition: all .2s;
+    }
+
+    .btn-print:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37,99,235,.5);
+    }
+
+    /* ── FIELD DESCRIPTION TABLE ─────────────────────── */
+    .field-table {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 180px 80px 1fr;
+      gap: 0;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+    }
+
+    .field-row:last-child { border-bottom: none; }
+    .field-row:nth-child(even) { background: var(--gray-50); }
+
+    .field-name { font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 13px; }
+    .field-req  { color: var(--danger); font-size: 12px; font-weight: 600; }
+    .field-desc { color: var(--gray-600); }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .section { padding: 40px 24px; }
+      .stat-cards { grid-template-columns: repeat(2, 1fr); }
+      .service-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── DIVIDER ─────────────────────────────────────── */
+    .divider { height: 1px; background: var(--gray-200); margin: 32px 0; }
+
+    .tag { display: inline-block; background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════════ -->
+<nav class="sidebar no-print">
+  <div class="sidebar-logo">
+    <div class="brand">🧭 Lobato Tours</div>
+    <div class="subtitle">User Manual · EN</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Getting Started</div>
+    <a class="nav-item" href="#intro"><span class="dot"></span> Introduction</a>
+    <a class="nav-item" href="#login"><span class="dot"></span> Login</a>
+
+    <div class="nav-section">Main Modules</div>
+    <a class="nav-item" href="#dashboard"><span class="dot"></span> Dashboard</a>
+    <a class="nav-item" href="#cotizaciones"><span class="dot"></span> Quotes List</a>
+    <a class="nav-item" href="#nueva"><span class="dot"></span> New Quote (Wizard)</a>
+
+    <div class="nav-section">Quote Wizard Steps</div>
+    <a class="nav-item" href="#step-cliente"><span class="dot"></span> Step 1 – Customer</a>
+    <a class="nav-item" href="#step-moneda"><span class="dot"></span> Step 2 – Currency</a>
+    <a class="nav-item" href="#step-servicios"><span class="dot"></span> Step 3 – Services</a>
+    <a class="nav-item" href="#step-paquete"><span class="dot"></span> Package</a>
+    <a class="nav-item" href="#step-vuelo"><span class="dot"></span> Flight</a>
+    <a class="nav-item" href="#step-hotel"><span class="dot"></span> Hotel</a>
+    <a class="nav-item" href="#step-traslado"><span class="dot"></span> Transfer</a>
+    <a class="nav-item" href="#step-crucero"><span class="dot"></span> Cruise</a>
+    <a class="nav-item" href="#step-extras"><span class="dot"></span> Extras</a>
+    <a class="nav-item" href="#step-mensajes"><span class="dot"></span> Messages & Commission</a>
+    <a class="nav-item" href="#step-resumen"><span class="dot"></span> Summary</a>
+
+    <div class="nav-section">Reference</div>
+    <a class="nav-item" href="#navigation"><span class="dot"></span> Navigation</a>
+    <a class="nav-item" href="#faq"><span class="dot"></span> FAQ</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     PRINT BUTTON
+══════════════════════════════════════════════════ -->
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">
+    🖨️ Export to PDF
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════════ -->
+<div class="main-content">
+
+  <!-- ── COVER ── -->
+  <div class="cover" id="cover">
+    <div class="cover-logo">
+      <strong style="font-size:22px;color:#2563eb;font-family:sans-serif;">🧭 LOBATO TOURS</strong>
+    </div>
+    <div class="doc-type">User Manual</div>
+    <h1>Travel Quotation<br>System</h1>
+    <p class="tagline">A complete guide to creating, managing, and tracking travel quotes</p>
+    <div class="cover-meta">
+      Version 1.0 &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; English Edition
+    </div>
+  </div>
+
+  <!-- ── INTRO ── -->
+  <div class="section" id="intro">
+    <div class="section-label">Chapter 1</div>
+    <h1 class="section-title">Introduction</h1>
+    <p class="lead">Welcome to the Lobato Tours Quotation System — a web-based platform designed to help travel agents create detailed, professional travel quotes in minutes.</p>
+
+    <p>The Lobato Tours system lets you build full travel quotes through a guided, step-by-step wizard. Each quote can include flights, hotels, transfers, cruises, insurance, visas, and more — all in a single, organized document that can be shared with your customers.</p>
+
+    <p>This manual covers every screen and feature of the application, guiding you through the complete lifecycle of a quote: from logging in for the first time to delivering a finished quote to a client.</p>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">System Overview</h2>
+    <p>The application is organized around three core modules:</p>
+
+    <table class="docs-table">
+      <thead>
+        <tr><th>Module</th><th>URL</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Dashboard</strong></td><td><span class="tag">/</span></td><td>Overview of all quotes, statistics, and trends</td></tr>
+        <tr><td><strong>Quotes List</strong></td><td><span class="tag">/cotizaciones</span></td><td>Browse, search, filter, and manage all quotes</td></tr>
+        <tr><td><strong>New Quote</strong></td><td><span class="tag">/clientes/cotizador</span></td><td>Multi-step wizard to create or edit a travel quote</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <div class="callout-title">Access Requirements</div>
+        <p>You must be logged in to access any part of the application. If your session expires, you will be automatically redirected to the login page.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGIN ── -->
+  <div class="section" id="login">
+    <div class="section-label">Chapter 2</div>
+    <h1 class="section-title">Logging In</h1>
+    <p class="lead">Access the system with your username or email address and password provided by your administrator.</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/login</span>
+      </div>
+      <div class="mockup-body">
+        <div style="max-width:360px;margin:0 auto;background:linear-gradient(135deg,#eff6ff,#dbeafe);padding:40px 32px;border-radius:12px;text-align:center;">
+          <div style="background:#2563eb;padding:20px 24px;border-radius:10px;margin-bottom:20px;color:#fff;">
+            <div style="font-size:22px;font-weight:900;">🧭 Lobato Tours</div>
+            <div style="font-size:12px;opacity:.8;margin-top:4px;">Sistema de Cotizaciones</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;text-align:left;margin-bottom:10px;">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">Username or Email</div>
+            <div style="font-size:14px;color:#374151;">admin</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;text-align:left;margin-bottom:16px;">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">Password</div>
+            <div style="font-size:14px;color:#374151;">••••••••</div>
+          </div>
+          <div style="background:#2563eb;color:#fff;border-radius:8px;padding:10px;font-size:14px;font-weight:600;">Sign In</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Login Steps</h2>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Open the application</h4>
+          <p>Navigate to your organization's Lobato Tours URL in your web browser (e.g., <code>localhost:3000</code> or your production domain).</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Enter your credentials</h4>
+          <p>Type your username or email address in the first field, and your password in the second field. You can click the eye icon to show or hide your password.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Click "Sign In"</h4>
+          <p>Press Enter or click the blue "Iniciar sesión" button. If your credentials are correct, you will be taken to the Dashboard.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <div class="callout-title">Wrong password</div>
+        <p>If you see an error message in red, check that your username and password are correct. Contact your administrator if you cannot log in.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Logging Out</h2>
+    <p>To log out, click on your username in the top-right corner of any page and select <strong>Sign Out</strong>. Your session will be ended and you will be redirected to the login page.</p>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div class="section" id="dashboard">
+    <div class="section-label">Chapter 3</div>
+    <h1 class="section-title">Dashboard</h1>
+    <p class="lead">The Dashboard is the home page of the application. It gives you a quick snapshot of all your quotes, trends, and any items that need attention.</p>
+    <img src="/doc-screenshots/admin-dashboard.jpg" alt="Dashboard overview" class="app-screenshot">
+    <p class="screenshot-caption">The Dashboard — key metrics and monthly trend at a glance</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/</span>
+      </div>
+      <div class="mockup-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:20px;font-weight:800;color:#111827;">Dashboard</div>
+            <div style="font-size:13px;color:#6b7280;">Overview of your travel quotes</div>
+          </div>
+          <div style="background:#2563eb;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;">+ New Quote</div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card blue"><div class="label">Total Quotes</div><div class="value">6</div></div>
+          <div class="stat-card green"><div class="label">Finished</div><div class="value">1</div></div>
+          <div class="stat-card yellow"><div class="label">Drafts</div><div class="value">5</div></div>
+          <div class="stat-card purple"><div class="label">This Month</div><div class="value">6</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Dashboard Sections</h2>
+
+    <div class="section-block" style="margin-bottom:28px;">
+      <h3 class="step-title">📊 Statistics Cards</h3>
+      <p>Four cards at the top show the most important numbers at a glance:</p>
+      <table class="docs-table">
+        <thead><tr><th>Card</th><th>What it shows</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge blue">Total Quotes</span></td><td>Total number of quotes created (all time)</td></tr>
+          <tr><td><span class="badge green">Finished</span></td><td>Quotes that have been marked as complete</td></tr>
+          <tr><td><span class="badge yellow">Drafts</span></td><td>Quotes still in progress / not yet finalized</td></tr>
+          <tr><td><span class="badge purple">This Month</span></td><td>New quotes created in the current calendar month, plus growth % vs. last month</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-block" style="margin-bottom:28px;">
+      <h3 class="step-title">📈 Monthly Trend Chart</h3>
+      <p>A bar chart showing how many quotes were created each month for the last several months. Taller bars mean more quotes were created that month. Use this to track your productivity over time.</p>
+    </div>
+
+    <div class="section-block" style="margin-bottom:28px;">
+      <h3 class="step-title">⚡ Quick Stats Panel</h3>
+      <p>A compact summary on the right side showing:</p>
+      <ul style="margin-left:20px;margin-top:8px;font-size:14px;color:var(--gray-700);">
+        <li style="margin-bottom:6px;"><strong>Last 7 days</strong> — quotes created in the past week</li>
+        <li style="margin-bottom:6px;"><strong>Last month</strong> — total quotes from the previous month</li>
+        <li style="margin-bottom:6px;"><strong>Finish rate</strong> — percentage of all quotes that are marked Finished</li>
+      </ul>
+    </div>
+
+    <div class="section-block" style="margin-bottom:28px;">
+      <h3 class="step-title">🔔 Expiring Soon Alert</h3>
+      <p>If any quotes are approaching their validity deadline, a yellow warning banner appears below the stat cards. Click <strong>View All</strong> to see all expiring drafts in the Quotes List.</p>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-text">
+          <p>The alert only appears when there are quotes expiring soon. If you don't see it, all your quotes are either finished or have no expiry concern.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <h3 class="step-title">📋 Recent Quotes</h3>
+      <p>The bottom section lists the most recently created quotes with their customer name, date, and status (Finished or Draft). Click the arrow button on any row to open that quote's detail page.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Creating a New Quote from the Dashboard</h2>
+    <p>The blue <strong>+ New Quote</strong> button in the top-right corner of the Dashboard takes you directly to the New Quote Wizard. This is the fastest way to start a quote.</p>
+  </div>
+
+  <!-- ── COTIZACIONES ── -->
+  <div class="section" id="cotizaciones">
+    <div class="section-label">Chapter 4</div>
+    <h1 class="section-title">Quotes List</h1>
+    <p class="lead">The Quotes List (<em>Cotizaciones</em>) page shows all travel quotes in a searchable, filterable table. You can view, edit, duplicate, delete, and export quotes from this page.</p>
+    <img src="/doc-screenshots/admin-cotizaciones.jpg" alt="Quotes list" class="app-screenshot">
+    <p class="screenshot-caption">Quotes List — search, filter, and manage all your travel quotes</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/cotizaciones</span>
+      </div>
+      <div class="mockup-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div><div style="font-size:18px;font-weight:800;">Quotes</div><div style="font-size:13px;color:#6b7280;">Manage your travel quotes</div></div>
+          <div style="background:#16a34a;color:#fff;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;">⬇ Export CSV</div>
+        </div>
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px;margin-bottom:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">🔍 Search...</div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">Status ▾</div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">Sort by ▾</div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">Order ▾</div>
+          </div>
+        </div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <thead><tr style="background:#f9fafb;">
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">ID</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Customer</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Status</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Date</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid #f3f4f6;">
+              <td style="padding:10px 8px;">#8</td>
+              <td style="padding:10px 8px;font-weight:600;">Alejandro &amp; Sofía Mendoza</td>
+              <td style="padding:10px 8px;"><span class="badge green">Finished</span></td>
+              <td style="padding:10px 8px;color:#6b7280;">23 Mar 2026</td>
+              <td style="padding:10px 8px;display:flex;gap:8px;"><span style="color:#2563eb;">👁</span><span style="color:#16a34a;">✏️</span><span style="color:#7c3aed;">⧉</span><span style="color:#dc2626;">🗑</span></td>
+            </tr>
+            <tr style="border-top:1px solid #f3f4f6;">
+              <td style="padding:10px 8px;">#7</td>
+              <td style="padding:10px 8px;font-weight:600;">Familia Rodríguez</td>
+              <td style="padding:10px 8px;"><span class="badge yellow">Draft</span></td>
+              <td style="padding:10px 8px;color:#6b7280;">23 Mar 2026</td>
+              <td style="padding:10px 8px;display:flex;gap:8px;"><span style="color:#2563eb;">👁</span><span style="color:#16a34a;">✏️</span><span style="color:#7c3aed;">⧉</span><span style="color:#dc2626;">🗑</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Using the Filters</h2>
+    <table class="docs-table">
+      <thead><tr><th>Filter</th><th>How to use</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Search</strong></td><td>Type a customer name or phone number. Results update as you type.</td></tr>
+        <tr><td><strong>Status</strong></td><td>Choose <em>All</em>, <em>Finished</em>, or <em>Draft</em> to narrow down the list.</td></tr>
+        <tr><td><strong>Sort by</strong></td><td>Choose to sort by ID number, creation date, or status.</td></tr>
+        <tr><td><strong>Order</strong></td><td>Select <em>Descending</em> (newest first) or <em>Ascending</em> (oldest first).</td></tr>
+        <tr><td><strong>Show</strong></td><td>Choose how many results to display per page: 10, 25, 50, or 100.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Row Actions</h2>
+    <p>Each row in the table has four action icons on the right:</p>
+    <table class="docs-table">
+      <thead><tr><th>Icon</th><th>Action</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>👁 <span style="color:#2563eb;">View</span></td><td>View Quote</td><td>Opens the quote's read-only detail page</td></tr>
+        <tr><td>✏️ <span style="color:#16a34a;">Edit</span></td><td>Edit Quote</td><td>Opens the quote in the wizard to continue editing</td></tr>
+        <tr><td>⧉ <span style="color:#7c3aed;">Copy</span></td><td>Duplicate</td><td>Creates an exact copy of the quote as a new draft</td></tr>
+        <tr><td>🗑 <span style="color:#dc2626;">Delete</span></td><td>Delete</td><td>Permanently deletes the quote (requires confirmation)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚨</div>
+      <div class="callout-text">
+        <div class="callout-title">Deletion is permanent</div>
+        <p>Deleted quotes cannot be recovered. A confirmation dialog will appear before the quote is deleted. Use the <strong>Duplicate</strong> feature if you want to archive a copy before deleting.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Exporting to CSV</h2>
+    <p>Click the green <strong>Export CSV</strong> button in the top-right corner to download the current filtered list as a spreadsheet file. The export includes all fields matching your active filters (search text, status, sort order).</p>
+  </div>
+
+  <!-- ── NUEVA COTIZACIÓN ── -->
+  <div class="section" id="nueva">
+    <div class="section-label">Chapter 5</div>
+    <h1 class="section-title">Creating a New Quote</h1>
+    <p class="lead">The New Quote wizard guides you through every component of a travel package — step by step, with automatic saving so you never lose your work.</p>
+
+    <p>You can start a new quote by clicking <strong>+ New Quote</strong> on the Dashboard or the <strong>Nueva Cotización</strong> link in the sidebar.</p>
+
+    <h2 class="section-title" style="margin-top:32px;">Wizard Structure</h2>
+    <p>The wizard is divided into required steps and optional service steps that you select:</p>
+
+    <div class="wizard-flow">
+      <div class="wiz-step required"><span class="wiz-icon">👤</span> 1. Customer</div>
+      <div class="wiz-step required"><span class="wiz-icon">💵</span> 2. Currency</div>
+      <div class="wiz-step required"><span class="wiz-icon">✅</span> 3. Services (select)</div>
+      <div class="wiz-step optional"><span class="wiz-icon">📦</span> Package</div>
+      <div class="wiz-step optional"><span class="wiz-icon">✈️</span> Flight</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🏨</span> Hotel</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🚌</span> Transfer</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🚢</span> Cruise</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🎫</span> Tickets/Entries</div>
+      <div class="wiz-step optional"><span class="wiz-icon">⛴️</span> Ferry</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🛡️</span> Insurance</div>
+      <div class="wiz-step optional"><span class="wiz-icon">📶</span> Data/Internet</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🪪</span> Visa</div>
+      <div class="wiz-step required"><span class="wiz-icon">💬</span> Messages &amp; Commission</div>
+      <div class="wiz-step required"><span class="wiz-icon">📋</span> Summary &amp; Finish</div>
+    </div>
+
+    <p>Solid-border steps are always present. Dashed-border steps only appear if you select that service in Step 3.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <div class="callout-title">Auto-Save</div>
+        <p>The wizard saves your progress automatically every time you move between steps. You can leave and come back to a draft quote from the <strong>Quotes List</strong> at any time.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Progress Bar</h2>
+    <p>A blue progress bar at the top of the wizard shows how far along you are. The step name and number (e.g., <em>"Step 3 of 8: Services"</em>) are shown below the title.</p>
+
+    <h2 class="section-title" style="margin-top:32px;">Navigation Buttons</h2>
+    <table class="docs-table">
+      <thead><tr><th>Button</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Anterior (Back)</strong></td><td>Goes to the previous step and saves current data. Disabled on the first step.</td></tr>
+        <tr><td><strong>Siguiente (Next)</strong></td><td>Saves current data and moves to the next step.</td></tr>
+        <tr><td><strong>Step dots</strong></td><td>You can click the numbered dots below the navigation buttons to jump to any step directly.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── STEP 1: CLIENTE ── -->
+  <div class="section" id="step-cliente">
+    <div class="section-label">Chapter 5.1</div>
+    <h1 class="section-title">Step 1 – Customer Information</h1>
+    <p class="lead">In this step you record who the travel quote is for — including the lead customer's name, contact details, and all travelers by age group.</p>
+    <img src="/doc-screenshots/wizard-step1-cliente.jpg" alt="Step 1 – Customer Information" class="app-screenshot">
+    <p class="screenshot-caption">Step 1 of the quote wizard — Customer information form</p>
+
+    <h2 class="section-title">Customer Fields</h2>
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Field</span><span>Required</span><span>Description</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Customer Name</span>
+        <span class="field-req">Yes</span>
+        <span class="field-desc">Full name of the lead customer (e.g., "Familia García" or "María González")</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Contact</span>
+        <span class="field-req">Yes</span>
+        <span class="field-desc">Primary phone number or email address</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Contact 2</span>
+        <span class="field-req">No</span>
+        <span class="field-desc">Secondary contact (WhatsApp, alternate phone, etc.)</span>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Travelers (Personas)</h2>
+    <p>Below the customer fields is the <strong>Travelers</strong> widget. Each traveler is categorized by age group. Click the <strong>+ Add traveler</strong> button to add passengers to the quote.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Age Group</th><th>Typical Use</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge blue">Adult</span></td><td>Standard adult passenger (18+)</td></tr>
+        <tr><td><span class="badge green">Child</span></td><td>Child passenger (2–11 years)</td></tr>
+        <tr><td><span class="badge yellow">Infant</span></td><td>Infant (under 2 years)</td></tr>
+        <tr><td><span class="badge purple">Senior</span></td><td>Senior passenger eligible for senior pricing</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>The number and types of travelers directly affect pricing calculations in the Hotel and Package steps. Make sure to add all travelers before filling in accommodation details.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: MONEDA ── -->
+  <div class="section" id="step-moneda">
+    <div class="section-label">Chapter 5.2</div>
+    <h1 class="section-title">Step 2 – Currency Settings</h1>
+    <p class="lead">Choose the currency for this quote and, if applicable, set the USD to MXN exchange rate.</p>
+    <img src="/doc-screenshots/wizard-step2-moneda.jpg" alt="Step 2 – Currency Settings" class="app-screenshot">
+    <p class="screenshot-caption">Step 2 — Currency type and exchange rate</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Field</span><span>Required</span><span>Description</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Currency</span>
+        <span class="field-req">Yes</span>
+        <span class="field-desc">Select USD (US Dollars) or MXN (Mexican Pesos)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Exchange Rate</span>
+        <span class="field-req">Cond.</span>
+        <span class="field-desc">Only required when currency is USD. Enter the current MXN/USD exchange rate (e.g., 17.50)</span>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p>The exchange rate is used throughout the wizard to convert and display costs. Use the current official or your company's internal rate. The rate is stored with the quote so historical quotes remain accurate.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: SERVICIOS ── -->
+  <div class="section" id="step-servicios">
+    <div class="section-label">Chapter 5.3</div>
+    <h1 class="section-title">Step 3 – Select Services</h1>
+    <p class="lead">Choose which travel components are included in this package. Only the services you select here will have dedicated input steps in the wizard.</p>
+    <img src="/doc-screenshots/wizard-step3-servicios-selected.jpg" alt="Step 3 – Services" class="app-screenshot">
+    <p class="screenshot-caption">Step 3 — Select which services to include (Vuelo and Paquete checked)</p>
+
+    <div class="service-grid">
+      <div class="service-card"><div class="svc-icon">📦</div><div class="svc-name">Package</div><div class="svc-desc">Pre-built tour package with itinerary</div></div>
+      <div class="service-card"><div class="svc-icon">✈️</div><div class="svc-name">Flight</div><div class="svc-desc">Airline, fees, departure/arrival</div></div>
+      <div class="service-card"><div class="svc-icon">🏨</div><div class="svc-name">Hotel</div><div class="svc-desc">Accommodation, rooms, meal plan</div></div>
+      <div class="service-card"><div class="svc-icon">🚌</div><div class="svc-name">Transfer</div><div class="svc-desc">Airport-to-hotel shuttles</div></div>
+      <div class="service-card"><div class="svc-icon">🚢</div><div class="svc-name">Cruise</div><div class="svc-desc">Cruise ship details and costs</div></div>
+      <div class="service-card"><div class="svc-icon">🎫</div><div class="svc-name">Tickets</div><div class="svc-desc">Attraction entries and passes</div></div>
+      <div class="service-card"><div class="svc-icon">⛴️</div><div class="svc-name">Ferry</div><div class="svc-desc">Ferry routes and pricing</div></div>
+      <div class="service-card"><div class="svc-icon">🛡️</div><div class="svc-name">Insurance</div><div class="svc-desc">Travel insurance coverage</div></div>
+      <div class="service-card"><div class="svc-icon">📶</div><div class="svc-name">Data / Internet</div><div class="svc-desc">SIM card or pocket WiFi</div></div>
+      <div class="service-card"><div class="svc-icon">🪪</div><div class="svc-name">Visa</div><div class="svc-desc">Visa processing and fees</div></div>
+    </div>
+
+    <p>Toggle each service card on or off. Selected services are highlighted. After clicking <strong>Next</strong>, one dedicated step will appear for each selected service.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>You can always go back to Step 3 to add or remove services. The wizard will update its steps dynamically. Previously entered service data is preserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SERVICE STEPS ── -->
+  <div class="section" id="step-paquete">
+    <div class="section-label">Chapter 5.4</div>
+    <h1 class="section-title">Package Step</h1>
+    <p class="lead">Define the details of a pre-packaged tour offered to the customer.</p>
+    <img src="/doc-screenshots/wizard-step4-paquete.jpg" alt="Package step" class="app-screenshot">
+    <p class="screenshot-caption">Package details step — enter destination, dates, and pricing</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Field</span><span>Required</span><span>Description</span>
+      </div>
+      <div class="field-row"><span class="field-name">Destination</span><span class="field-req">Yes</span><span class="field-desc">Travel destination (e.g., Cancún, Paris, Tokyo)</span></div>
+      <div class="field-row"><span class="field-name">Package Name</span><span class="field-req">Yes</span><span class="field-desc">Name or identifier for the package (e.g., "All-Inclusive Riviera Maya")</span></div>
+      <div class="field-row"><span class="field-name">Package Price</span><span class="field-req">Yes</span><span class="field-desc">Total price of the package per person or as a lump sum</span></div>
+      <div class="field-row"><span class="field-name">Start Date</span><span class="field-req">Yes</span><span class="field-desc">Travel departure date</span></div>
+      <div class="field-row"><span class="field-name">End Date</span><span class="field-req">Yes</span><span class="field-desc">Travel return date</span></div>
+      <div class="field-row"><span class="field-name">Number of People</span><span class="field-req">Yes</span><span class="field-desc">How many travelers are covered by this package price</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="step-vuelo">
+    <div class="section-label">Chapter 5.5</div>
+    <h1 class="section-title">Flight Step</h1>
+    <p class="lead">Capture all flight-related costs to include in the total quote price.</p>
+    <img src="/doc-screenshots/wizard-step5-vuelo.jpg" alt="Flight step" class="app-screenshot">
+    <p class="screenshot-caption">Flight details step — enter airline, origin, destination, and pricing</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Field</span><span>Required</span><span>Description</span>
+      </div>
+      <div class="field-row"><span class="field-name">Airline</span><span class="field-req">Yes</span><span class="field-desc">Name of the airline (e.g., Aeroméxico, United)</span></div>
+      <div class="field-row"><span class="field-name">Base Fee</span><span class="field-req">Yes</span><span class="field-desc">Base airfare cost per person (before taxes)</span></div>
+      <div class="field-row"><span class="field-name">IVA / Taxes</span><span class="field-req">No</span><span class="field-desc">Tax amount included in the flight cost</span></div>
+      <div class="field-row"><span class="field-name">Number of People</span><span class="field-req">Yes</span><span class="field-desc">Number of passengers on this flight</span></div>
+    </div>
+
+    <p>The itinerary section allows you to add one or more flight segments (routes) with departure and arrival information. Click <strong>+ Add segment</strong> to add a connecting flight.</p>
+  </div>
+
+  <div class="section" id="step-hotel">
+    <div class="section-label">Chapter 5.6</div>
+    <h1 class="section-title">Hotel Step</h1>
+    <p class="lead">Define the hotel accommodation including rooms, meal plan, and dates.</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Field</span><span>Required</span><span>Description</span>
+      </div>
+      <div class="field-row"><span class="field-name">Hotel Name</span><span class="field-req">Yes</span><span class="field-desc">Name of the hotel or resort</span></div>
+      <div class="field-row"><span class="field-name">Check-in</span><span class="field-req">Yes</span><span class="field-desc">Date of arrival at the hotel</span></div>
+      <div class="field-row"><span class="field-name">Check-out</span><span class="field-req">Yes</span><span class="field-desc">Date of departure from the hotel</span></div>
+      <div class="field-row"><span class="field-name">Room Type</span><span class="field-req">Yes</span><span class="field-desc">Type of room (Standard, Deluxe, Suite, etc.)</span></div>
+      <div class="field-row"><span class="field-name">Meal Plan</span><span class="field-req">No</span><span class="field-desc">Included meals (All-Inclusive, Breakfast Only, etc.)</span></div>
+      <div class="field-row"><span class="field-name">Room Distribution</span><span class="field-req">Yes</span><span class="field-desc">How travelers are distributed across rooms (number of rooms, occupants per room)</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="step-traslado">
+    <div class="section-label">Chapter 5.7</div>
+    <h1 class="section-title">Transfer Step</h1>
+    <p class="lead">Add airport-to-hotel transfers (and return) to the quote.</p>
+    <p>Fill in the transfer provider, vehicle type, pick-up and drop-off locations, and total cost. Separate entries can be made for arrival and departure transfers.</p>
+  </div>
+
+  <div class="section" id="step-crucero">
+    <div class="section-label">Chapter 5.8</div>
+    <h1 class="section-title">Cruise Step</h1>
+    <p class="lead">Add cruise details including ship, itinerary, cabin type, and pricing.</p>
+    <p>Enter the cruise line name, departure port, itinerary ports, cabin category, and per-person pricing. The system will multiply by the number of travelers to calculate the total cost.</p>
+  </div>
+
+  <div class="section" id="step-extras">
+    <div class="section-label">Chapter 5.9</div>
+    <h1 class="section-title">Extras: Tickets, Ferry, Insurance, Data, Visa</h1>
+    <p class="lead">Each of the remaining service steps follows the same pattern: fill in the provider name, cost per person, and any relevant details specific to that service.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Service</th><th>Key Fields</th></tr></thead>
+      <tbody>
+        <tr><td>🎫 <strong>Tickets / Entries</strong></td><td>Attraction name, ticket price per person, number of tickets, date</td></tr>
+        <tr><td>⛴️ <strong>Ferry</strong></td><td>Ferry operator, route, cost per person, number of passengers</td></tr>
+        <tr><td>🛡️ <strong>Insurance</strong></td><td>Insurer name, coverage type, premium per person, total cost</td></tr>
+        <tr><td>📶 <strong>Data / Internet</strong></td><td>Provider, data plan type, cost per device, number of devices</td></tr>
+        <tr><td>🪪 <strong>Visa</strong></td><td>Country, visa type, processing fee per person, total visa cost</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── MENSAJES ── -->
+  <div class="section" id="step-mensajes">
+    <div class="section-label">Chapter 5.10</div>
+    <h1 class="section-title">Messages &amp; Commission</h1>
+    <p class="lead">Customize the greeting and farewell messages that appear on the final quote document, and set your agent commission.</p>
+    <img src="/doc-screenshots/wizard-step6-mensajes.jpg" alt="Messages step" class="app-screenshot">
+    <p class="screenshot-caption">Messages &amp; commission step — add welcome/farewell messages and set commission</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Field</span><span>Required</span><span>Description</span>
+      </div>
+      <div class="field-row"><span class="field-name">Greeting Message</span><span class="field-req">No</span><span class="field-desc">Personalized opening message to the customer (shown at the top of the quote)</span></div>
+      <div class="field-row"><span class="field-name">Farewell Message</span><span class="field-req">No</span><span class="field-desc">Closing message or call-to-action at the bottom of the quote</span></div>
+      <div class="field-row"><span class="field-name">Commission (%)</span><span class="field-req">No</span><span class="field-desc">Your agent's commission percentage. Added to the total quoted price.</span></div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p>Personalized messages make quotes feel professional and warm. Use the greeting to address the customer by name and mention their destination.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESUMEN ── -->
+  <div class="section" id="step-resumen">
+    <div class="section-label">Chapter 5.11</div>
+    <h1 class="section-title">Summary &amp; Finishing</h1>
+    <p class="lead">The final step shows a complete overview of the entire quote before you mark it as finished.</p>
+    <img src="/doc-screenshots/wizard-step7-resumen.jpg" alt="Summary step" class="app-screenshot">
+    <p class="screenshot-caption">Summary step — review all services, total cost, and finalize or save the quote</p>
+
+    <p>The Summary page shows:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:12px;">
+      <li style="margin-bottom:8px;"><strong>Customer Details</strong> — name, contact, number of travelers</li>
+      <li style="margin-bottom:8px;"><strong>Currency</strong> — selected currency and exchange rate</li>
+      <li style="margin-bottom:8px;"><strong>All Selected Services</strong> — a card for each service with its key details and cost</li>
+      <li style="margin-bottom:8px;"><strong>Total Cost</strong> — sum of all services, plus commission</li>
+      <li style="margin-bottom:8px;"><strong>Messages</strong> — preview of greeting and farewell messages</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <div class="callout-title">Mark as Finished</div>
+        <p>Once you're happy with the quote, click <strong>Mark as Finished</strong>. This changes its status from <span class="badge yellow">Draft</span> to <span class="badge green">Finished</span> in the Quotes List. You can always reopen and edit a finished quote.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Loading an Existing Quote</h2>
+    <p>To edit an existing quote, click the <strong>Edit (✏️)</strong> icon from the Quotes List. This opens the wizard pre-filled with all the saved data. Navigate through the steps to make changes, then return to the Summary to finish.</p>
+  </div>
+
+  <!-- ── NAVIGATION ── -->
+  <div class="section" id="navigation">
+    <div class="section-label">Chapter 6</div>
+    <h1 class="section-title">Navigation &amp; Interface</h1>
+    <p class="lead">The application has a consistent sidebar navigation that is always visible.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Navigation Item</th><th>Where it goes</th></tr></thead>
+      <tbody>
+        <tr><td>🏠 <strong>Dashboard</strong></td><td>Home page with statistics and recent activity</td></tr>
+        <tr><td>📋 <strong>Cotizaciones</strong></td><td>Full list of all quotes</td></tr>
+        <tr><td>➕ <strong>Nueva Cotización</strong></td><td>Start a brand-new quote</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Top Bar</h2>
+    <p>The top bar shows:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;">
+      <li style="margin-bottom:6px;"><strong>Theme toggle</strong> — Switch between light and dark mode</li>
+      <li style="margin-bottom:6px;"><strong>Language selector</strong> — Switch the interface language (EN / ES)</li>
+      <li style="margin-bottom:6px;"><strong>Your name &amp; role badge</strong> — Shows your logged-in account and role</li>
+      <li style="margin-bottom:6px;"><strong>Sign out button</strong> — Log out of the system</li>
+    </ul>
+  </div>
+
+  <!-- ── FAQ ── -->
+  <div class="section" id="faq">
+    <div class="section-label">Chapter 7</div>
+    <h1 class="section-title">Frequently Asked Questions</h1>
+
+    <div style="margin-top:24px;">
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ Can I create a quote for multiple customers in one go?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Each quote is associated with one lead customer. However, you can add multiple <em>Travelers</em> in Step 1 to represent all passengers in a group or family.</p>
+      </div>
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ What happens if I close the browser in the middle of a quote?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">The wizard auto-saves every time you move between steps. Your progress is saved as a <span class="badge yellow">Draft</span>. Find it in the Quotes List and click Edit to continue where you left off.</p>
+      </div>
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ Can I add the same service twice (e.g., two hotels)?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Currently each service type appears once in the wizard. To include multiple hotels or flights, add the combined or highest-cost option and note the details in the greeting/farewell messages or in the package description.</p>
+      </div>
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ How do I send the quote to the customer?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Open the quote's detail page (<strong>View</strong> icon), then use your browser's print function (<strong>Ctrl+P</strong> or <strong>Cmd+P</strong>) to save the page as a PDF and send it via email or WhatsApp.</p>
+      </div>
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ What does "Duplicate" do?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">The Duplicate action creates an exact copy of a finished or draft quote as a new Draft. This is useful when you have a similar trip to quote for another customer — start from the copy and modify the details.</p>
+      </div>
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ Why can't I see quotes created by other agents?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Regular users can only see their own quotes. If you need access to all quotes, ask your administrator to upgrade your role to <strong>Manager</strong> or <strong>Admin</strong>.</p>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="callout info">
+      <div class="callout-icon">📞</div>
+      <div class="callout-text">
+        <div class="callout-title">Need More Help?</div>
+        <p>Contact your system administrator or the Lobato Tours support team if you encounter any issues not covered in this manual.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding-top:32px;border-top:1px solid var(--gray-200);text-align:center;color:var(--gray-500);font-size:13px;">
+      <p>Lobato Tours · Travel Quotation System · User Manual (English) · v1.0 · March 2026</p>
+      <p style="margin-top:4px;">© 2026 Lobato Tours. All rights reserved.</p>
+    </div>
+  </div>
+
+</div><!-- /main-content -->
+
+<script>
+  // Highlight active nav item based on scroll position
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobato Tours – Manual de Usuario</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #0ea5e9;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --sidebar-w: 280px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--gray-800); background: #fff; line-height: 1.6; }
+
+    @media print {
+      .no-print { display: none !important; }
+      .sidebar  { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      body { font-size: 11pt; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      .cover { page-break-after: always; }
+      .section-block { page-break-inside: avoid; }
+    }
+
+    .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: #0f172a; color: #fff; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+    .sidebar-logo { padding: 28px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .sidebar-logo .brand { font-size: 20px; font-weight: 800; letter-spacing: -.5px; color: #fff; }
+    .sidebar-logo .subtitle { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+    .sidebar-nav { padding: 16px 0; flex: 1; }
+    .nav-section { padding: 10px 20px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,.35); font-weight: 700; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: rgba(255,255,255,.75); text-decoration: none; font-size: 13.5px; transition: all .15s; cursor: pointer; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+
+    .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+    .cover { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #dc2626 100%); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 40px; position: relative; overflow: hidden; }
+    .cover::before { content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: rgba(255,255,255,.04); top: -200px; right: -200px; }
+    .cover::after  { content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%; background: rgba(255,255,255,.04); bottom: -150px; left: -150px; }
+    .cover-logo { background: #fff; border-radius: 16px; padding: 16px 24px; margin-bottom: 32px; display: inline-block; box-shadow: 0 20px 40px rgba(0,0,0,.3); }
+    .cover h1 { font-size: 52px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 12px; }
+    .cover .tagline { font-size: 20px; opacity: .8; margin-bottom: 40px; font-weight: 300; }
+    .cover .doc-type { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); padding: 8px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; backdrop-filter: blur(10px); }
+    .cover-meta { margin-top: 60px; font-size: 13px; opacity: .6; }
+
+    .section { padding: 64px 56px; max-width: 900px; }
+    .section + .section { border-top: 1px solid var(--gray-200); }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
+    h1.section-title { font-size: 36px; font-weight: 800; color: var(--gray-900); letter-spacing: -.5px; margin-bottom: 16px; line-height: 1.2; }
+    h2.section-title { font-size: 26px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+    h3.step-title { font-size: 18px; font-weight: 700; color: var(--gray-800); margin-bottom: 8px; }
+    .lead { font-size: 17px; color: var(--gray-500); margin-bottom: 32px; max-width: 680px; }
+    p { margin-bottom: 14px; font-size: 15px; color: var(--gray-700); }
+
+    .mockup { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; margin: 28px 0; box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+    .mockup-bar { background: var(--gray-200); padding: 10px 16px; display: flex; align-items: center; gap: 6px; }
+    .mockup-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-bar .dot.red    { background: #ff5f57; }
+    .mockup-bar .dot.yellow { background: #ffbd2e; }
+    .mockup-bar .dot.green  { background: #28c840; }
+    .mockup-bar .url { margin-left: 10px; background: #fff; border-radius: 6px; padding: 3px 14px; font-size: 12px; color: var(--gray-500); font-family: monospace; }
+    .mockup-body { padding: 24px; }
+
+    .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0; }
+    .stat-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; padding: 18px; }
+    .stat-card .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); font-weight: 600; }
+    .stat-card .value { font-size: 28px; font-weight: 800; margin-top: 6px; }
+    .stat-card.blue .value { color: var(--primary); }
+    .stat-card.green .value { color: var(--success); }
+    .stat-card.yellow .value { color: var(--warning); }
+    .stat-card.purple .value { color: #7c3aed; }
+
+    .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; display: flex; gap: 14px; align-items: flex-start; }
+    .callout.info   { background: #eff6ff; border-left: 4px solid var(--primary); }
+    .callout.tip    { background: #f0fdf4; border-left: 4px solid var(--success); }
+    .callout.warn   { background: #fffbeb; border-left: 4px solid var(--warning); }
+    .callout.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text p { margin: 0; font-size: 14px; }
+    .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+
+    .steps-list { list-style: none; margin: 20px 0; }
+    .steps-list li { display: flex; gap: 16px; margin-bottom: 24px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-content { flex: 1; }
+    .step-content h4 { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .step-content p  { margin: 0; font-size: 14px; color: var(--gray-600); }
+
+    table.docs-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+    .docs-table th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--gray-500); border-bottom: 2px solid var(--gray-200); }
+    .docs-table td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table tr:hover td { background: var(--gray-50); }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+    .badge.green  { background: #d1fae5; color: #065f46; }
+    .badge.yellow { background: #fef3c7; color: #92400e; }
+    .badge.blue   { background: #dbeafe; color: #1e40af; }
+    .badge.purple { background: #ede9fe; color: #5b21b6; }
+    .badge.gray   { background: var(--gray-100); color: var(--gray-600); }
+
+    .wizard-flow { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
+    .wiz-step { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--gray-700); box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .wiz-step.required { border-color: var(--primary); color: var(--primary); }
+    .wiz-step.optional { border-style: dashed; color: var(--gray-500); }
+    .wiz-step .wiz-icon { font-size: 16px; }
+
+    .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+    .service-card { background: #fff; border: 2px solid var(--gray-200); border-radius: 10px; padding: 16px; text-align: center; }
+    .service-card .svc-icon { font-size: 26px; margin-bottom: 8px; }
+    .service-card .svc-name { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+    .service-card .svc-desc { font-size: 11px; color: var(--gray-500); margin-top: 4px; }
+
+    .print-bar { position: fixed; bottom: 24px; right: 24px; z-index: 200; }
+    .btn-print { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(37,99,235,.4); transition: all .2s; }
+    .btn-print:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .field-table { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+    .field-row { display: grid; grid-template-columns: 200px 90px 1fr; gap: 0; padding: 12px 16px; border-bottom: 1px solid var(--gray-100); font-size: 14px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-row:nth-child(even) { background: var(--gray-50); }
+    .field-name { font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 13px; }
+    .field-req  { color: var(--danger); font-size: 12px; font-weight: 600; }
+    .field-desc { color: var(--gray-600); }
+
+    .divider { height: 1px; background: var(--gray-200); margin: 32px 0; }
+    .tag { display: inline-block; background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .section { padding: 40px 24px; }
+      .stat-cards { grid-template-columns: repeat(2, 1fr); }
+      .service-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar no-print">
+  <div class="sidebar-logo">
+    <div class="brand">🧭 Lobato Tours</div>
+    <div class="subtitle">Manual de Usuario · ES</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Introducción</div>
+    <a class="nav-item" href="#intro"><span class="dot"></span> Introducción</a>
+    <a class="nav-item" href="#login"><span class="dot"></span> Inicio de Sesión</a>
+
+    <div class="nav-section">Módulos Principales</div>
+    <a class="nav-item" href="#dashboard"><span class="dot"></span> Panel de Control</a>
+    <a class="nav-item" href="#cotizaciones"><span class="dot"></span> Lista de Cotizaciones</a>
+    <a class="nav-item" href="#nueva"><span class="dot"></span> Nueva Cotización</a>
+
+    <div class="nav-section">Pasos del Cotizador</div>
+    <a class="nav-item" href="#paso-cliente"><span class="dot"></span> Paso 1 – Cliente</a>
+    <a class="nav-item" href="#paso-moneda"><span class="dot"></span> Paso 2 – Moneda</a>
+    <a class="nav-item" href="#paso-servicios"><span class="dot"></span> Paso 3 – Servicios</a>
+    <a class="nav-item" href="#paso-paquete"><span class="dot"></span> Paquete</a>
+    <a class="nav-item" href="#paso-vuelo"><span class="dot"></span> Vuelo</a>
+    <a class="nav-item" href="#paso-hotel"><span class="dot"></span> Hotel</a>
+    <a class="nav-item" href="#paso-traslado"><span class="dot"></span> Traslado</a>
+    <a class="nav-item" href="#paso-crucero"><span class="dot"></span> Crucero</a>
+    <a class="nav-item" href="#paso-extras"><span class="dot"></span> Extras</a>
+    <a class="nav-item" href="#paso-mensajes"><span class="dot"></span> Mensajes y Comisión</a>
+    <a class="nav-item" href="#paso-resumen"><span class="dot"></span> Resumen</a>
+
+    <div class="nav-section">Referencia</div>
+    <a class="nav-item" href="#navegacion"><span class="dot"></span> Navegación</a>
+    <a class="nav-item" href="#preguntas"><span class="dot"></span> Preguntas Frecuentes</a>
+  </div>
+</nav>
+
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">🖨️ Exportar a PDF</button>
+</div>
+
+<div class="main-content">
+
+  <!-- PORTADA -->
+  <div class="cover" id="cover">
+    <div class="cover-logo">
+      <strong style="font-size:22px;color:#dc2626;font-family:sans-serif;">🧭 LOBATO TOURS</strong>
+    </div>
+    <div class="doc-type">Manual de Usuario</div>
+    <h1>Sistema de<br>Cotizaciones</h1>
+    <p class="tagline">Guía completa para crear, gestionar y hacer seguimiento de cotizaciones de viaje</p>
+    <div class="cover-meta">
+      Versión 1.0 &nbsp;·&nbsp; Marzo 2026 &nbsp;·&nbsp; Edición en Español
+    </div>
+  </div>
+
+  <!-- INTRODUCCIÓN -->
+  <div class="section" id="intro">
+    <div class="section-label">Capítulo 1</div>
+    <h1 class="section-title">Introducción</h1>
+    <p class="lead">Bienvenido al Sistema de Cotizaciones de Lobato Tours — una plataforma web diseñada para que los agentes de viaje generen cotizaciones detalladas y profesionales en minutos.</p>
+
+    <p>El sistema permite construir cotizaciones de viaje completas a través de un asistente paso a paso. Cada cotización puede incluir vuelos, hoteles, traslados, cruceros, seguros, visas y más — todo en un documento organizado y profesional que puede compartirse con el cliente.</p>
+
+    <p>Este manual cubre todas las pantallas y funcionalidades de la aplicación, guiándote desde el primer inicio de sesión hasta la entrega de una cotización terminada.</p>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Resumen del Sistema</h2>
+    <p>La aplicación está organizada en tres módulos principales:</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Módulo</th><th>URL</th><th>Descripción</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Panel de Control</strong></td><td><span class="tag">/</span></td><td>Vista general de cotizaciones, estadísticas y tendencias</td></tr>
+        <tr><td><strong>Cotizaciones</strong></td><td><span class="tag">/cotizaciones</span></td><td>Explorar, buscar, filtrar y gestionar todas las cotizaciones</td></tr>
+        <tr><td><strong>Nueva Cotización</strong></td><td><span class="tag">/clientes/cotizador</span></td><td>Asistente multi-paso para crear o editar una cotización</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <div class="callout-title">Requisito de Acceso</div>
+        <p>Debes estar autenticado para acceder a cualquier parte de la aplicación. Si tu sesión expira, serás redirigido automáticamente a la pantalla de inicio de sesión.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INICIO DE SESIÓN -->
+  <div class="section" id="login">
+    <div class="section-label">Capítulo 2</div>
+    <h1 class="section-title">Inicio de Sesión</h1>
+    <p class="lead">Accede al sistema con tu nombre de usuario o correo electrónico y la contraseña proporcionada por tu administrador.</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/login</span>
+      </div>
+      <div class="mockup-body">
+        <div style="max-width:360px;margin:0 auto;background:linear-gradient(135deg,#eff6ff,#dbeafe);padding:40px 32px;border-radius:12px;text-align:center;">
+          <div style="background:#2563eb;padding:20px 24px;border-radius:10px;margin-bottom:20px;color:#fff;">
+            <div style="font-size:22px;font-weight:900;">🧭 Lobato Tours</div>
+            <div style="font-size:12px;opacity:.8;margin-top:4px;">Sistema de Cotizaciones</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;text-align:left;margin-bottom:10px;">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">Usuario o Email</div>
+            <div style="font-size:14px;color:#374151;">admin</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;text-align:left;margin-bottom:16px;">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">Contraseña</div>
+            <div style="font-size:14px;color:#374151;">••••••••</div>
+          </div>
+          <div style="background:#2563eb;color:#fff;border-radius:8px;padding:10px;font-size:14px;font-weight:600;">Iniciar sesión</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Pasos para Ingresar</h2>
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Abre la aplicación</h4>
+          <p>Navega a la URL de Lobato Tours de tu organización en tu navegador web (p. ej., <code>localhost:3000</code> o tu dominio de producción).</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Ingresa tus credenciales</h4>
+          <p>Escribe tu nombre de usuario o correo electrónico en el primer campo, y tu contraseña en el segundo. Puedes hacer clic en el ícono de ojo para mostrar u ocultar la contraseña.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Haz clic en "Iniciar sesión"</h4>
+          <p>Presiona Enter o haz clic en el botón azul. Si tus credenciales son correctas, serás redirigido al Panel de Control.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text">
+        <div class="callout-title">Contraseña incorrecta</div>
+        <p>Si aparece un mensaje de error en rojo, verifica que tu nombre de usuario y contraseña sean correctos. Contacta a tu administrador si no puedes iniciar sesión.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Cerrar Sesión</h2>
+    <p>Para cerrar sesión, haz clic en tu nombre en la esquina superior derecha de cualquier página y selecciona <strong>Cerrar sesión</strong>. Tu sesión finalizará y serás redirigido a la pantalla de inicio de sesión.</p>
+  </div>
+
+  <!-- PANEL DE CONTROL -->
+  <div class="section" id="dashboard">
+    <div class="section-label">Capítulo 3</div>
+    <h1 class="section-title">Panel de Control (Dashboard)</h1>
+    <p class="lead">El Panel de Control es la página de inicio de la aplicación. Ofrece una vista rápida de todas tus cotizaciones, tendencias y elementos que requieren atención.</p>
+    <img src="/doc-screenshots/admin-dashboard.jpg" alt="Panel de inicio" class="app-screenshot">
+    <p class="screenshot-caption">El Panel de inicio — métricas clave y tendencia mensual de un vistazo</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/</span>
+      </div>
+      <div class="mockup-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:20px;font-weight:800;color:#111827;">Dashboard</div>
+            <div style="font-size:13px;color:#6b7280;">Resumen de tus cotizaciones de viaje</div>
+          </div>
+          <div style="background:#2563eb;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;">+ Nueva Cotización</div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card blue"><div class="label">Total Cotizaciones</div><div class="value">6</div></div>
+          <div class="stat-card green"><div class="label">Finalizadas</div><div class="value">1</div></div>
+          <div class="stat-card yellow"><div class="label">Borradores</div><div class="value">5</div></div>
+          <div class="stat-card purple"><div class="label">Este Mes</div><div class="value">6</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Secciones del Panel</h2>
+
+    <div style="margin-bottom:28px;">
+      <h3 class="step-title">📊 Tarjetas de Estadísticas</h3>
+      <p>Cuatro tarjetas en la parte superior muestran los números más importantes de un vistazo:</p>
+      <table class="docs-table">
+        <thead><tr><th>Tarjeta</th><th>Qué muestra</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge blue">Total Cotizaciones</span></td><td>Número total de cotizaciones creadas (historial completo)</td></tr>
+          <tr><td><span class="badge green">Finalizadas</span></td><td>Cotizaciones marcadas como completas</td></tr>
+          <tr><td><span class="badge yellow">Borradores</span></td><td>Cotizaciones en proceso / aún no finalizadas</td></tr>
+          <tr><td><span class="badge purple">Este Mes</span></td><td>Cotizaciones nuevas en el mes actual, más el % de crecimiento vs. el mes anterior</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <h3 class="step-title">📈 Gráfico de Tendencia Mensual</h3>
+      <p>Un gráfico de barras muestra cuántas cotizaciones se crearon cada mes durante los últimos meses. Barras más altas = más cotizaciones ese mes. Úsalo para monitorear tu productividad.</p>
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <h3 class="step-title">⚡ Panel de Estadísticas Rápidas</h3>
+      <p>Resumen compacto al lado derecho que muestra:</p>
+      <ul style="margin-left:20px;margin-top:8px;font-size:14px;color:var(--gray-700);">
+        <li style="margin-bottom:6px;"><strong>Últimos 7 días</strong> — cotizaciones creadas en la última semana</li>
+        <li style="margin-bottom:6px;"><strong>Mes anterior</strong> — total del mes pasado</li>
+        <li style="margin-bottom:6px;"><strong>Tasa de finalización</strong> — porcentaje de cotizaciones marcadas como Finalizadas</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <h3 class="step-title">🔔 Alerta de Vencimiento Próximo</h3>
+      <p>Si alguna cotización se acerca a su fecha de vencimiento, aparece un banner amarillo de advertencia. Haz clic en <strong>Ver todas</strong> para revisar las cotizaciones próximas a vencer.</p>
+      <div class="callout warn">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-text">
+          <p>La alerta solo aparece cuando hay cotizaciones por vencer. Si no la ves, todas tus cotizaciones están finalizadas o sin preocupación de vencimiento.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="step-title">📋 Cotizaciones Recientes</h3>
+      <p>La sección inferior lista las cotizaciones creadas más recientemente con nombre del cliente, fecha y estado (<span class="badge green">Finalizada</span> o <span class="badge yellow">Borrador</span>). Haz clic en la flecha de cualquier fila para abrir el detalle de esa cotización.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Crear una Nueva Cotización desde el Panel</h2>
+    <p>El botón azul <strong>+ Nueva Cotización</strong> en la esquina superior derecha del Panel te lleva directamente al Cotizador. Es la forma más rápida de iniciar una cotización.</p>
+  </div>
+
+  <!-- COTIZACIONES -->
+  <div class="section" id="cotizaciones">
+    <div class="section-label">Capítulo 4</div>
+    <h1 class="section-title">Lista de Cotizaciones</h1>
+    <p class="lead">La página de Cotizaciones muestra todas las cotizaciones en una tabla con búsqueda y filtros. Desde aquí puedes ver, editar, duplicar, eliminar y exportar cotizaciones.</p>
+    <img src="/doc-screenshots/admin-cotizaciones.jpg" alt="Lista de cotizaciones" class="app-screenshot">
+    <p class="screenshot-caption">Lista de Cotizaciones — busca, filtra y gestiona todas tus cotizaciones</p>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="url">localhost:3000/cotizaciones</span>
+      </div>
+      <div class="mockup-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div><div style="font-size:18px;font-weight:800;">Cotizaciones</div><div style="font-size:13px;color:#6b7280;">Gestiona tus cotizaciones de viaje</div></div>
+          <div style="background:#16a34a;color:#fff;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;">⬇ Exportar CSV</div>
+        </div>
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px;margin-bottom:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">🔍 Buscar...</div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">Estado ▾</div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">Ordenar por ▾</div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px;font-size:12px;color:#6b7280;">Orden ▾</div>
+          </div>
+        </div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <thead><tr style="background:#f9fafb;">
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">ID</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Cliente</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Estado</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Fecha</th>
+            <th style="padding:8px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Acciones</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid #f3f4f6;">
+              <td style="padding:10px 8px;">#8</td>
+              <td style="padding:10px 8px;font-weight:600;">Alejandro &amp; Sofía Mendoza</td>
+              <td style="padding:10px 8px;"><span class="badge green">Finalizada</span></td>
+              <td style="padding:10px 8px;color:#6b7280;">23 mar 2026</td>
+              <td style="padding:10px 8px;display:flex;gap:8px;"><span style="color:#2563eb;">👁</span><span style="color:#16a34a;">✏️</span><span style="color:#7c3aed;">⧉</span><span style="color:#dc2626;">🗑</span></td>
+            </tr>
+            <tr style="border-top:1px solid #f3f4f6;">
+              <td style="padding:10px 8px;">#7</td>
+              <td style="padding:10px 8px;font-weight:600;">Familia Rodríguez</td>
+              <td style="padding:10px 8px;"><span class="badge yellow">Borrador</span></td>
+              <td style="padding:10px 8px;color:#6b7280;">23 mar 2026</td>
+              <td style="padding:10px 8px;display:flex;gap:8px;"><span style="color:#2563eb;">👁</span><span style="color:#16a34a;">✏️</span><span style="color:#7c3aed;">⧉</span><span style="color:#dc2626;">🗑</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Uso de los Filtros</h2>
+    <table class="docs-table">
+      <thead><tr><th>Filtro</th><th>Cómo usarlo</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Buscar</strong></td><td>Escribe el nombre del cliente o número de teléfono. Los resultados se actualizan conforme escribes.</td></tr>
+        <tr><td><strong>Estado</strong></td><td>Elige <em>Todas</em>, <em>Finalizadas</em> o <em>Borradores</em> para filtrar la lista.</td></tr>
+        <tr><td><strong>Ordenar por</strong></td><td>Ordena por número de ID, fecha de creación o estado.</td></tr>
+        <tr><td><strong>Orden</strong></td><td>Selecciona <em>Descendente</em> (más recientes primero) o <em>Ascendente</em> (más antiguas primero).</td></tr>
+        <tr><td><strong>Mostrar</strong></td><td>Elige cuántos resultados ver por página: 10, 25, 50 o 100.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Acciones por Fila</h2>
+    <table class="docs-table">
+      <thead><tr><th>Ícono</th><th>Acción</th><th>Descripción</th></tr></thead>
+      <tbody>
+        <tr><td>👁 <span style="color:#2563eb;">Ver</span></td><td>Ver Cotización</td><td>Abre la página de detalle de la cotización (solo lectura)</td></tr>
+        <tr><td>✏️ <span style="color:#16a34a;">Editar</span></td><td>Editar Cotización</td><td>Abre la cotización en el asistente para continuar editándola</td></tr>
+        <tr><td>⧉ <span style="color:#7c3aed;">Copiar</span></td><td>Duplicar</td><td>Crea una copia exacta de la cotización como nuevo borrador</td></tr>
+        <tr><td>🗑 <span style="color:#dc2626;">Eliminar</span></td><td>Eliminar</td><td>Elimina permanentemente la cotización (requiere confirmación)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger">
+      <div class="callout-icon">🚨</div>
+      <div class="callout-text">
+        <div class="callout-title">La eliminación es permanente</div>
+        <p>Las cotizaciones eliminadas no pueden recuperarse. Aparecerá un cuadro de confirmación antes de eliminar. Usa la función <strong>Duplicar</strong> si deseas guardar una copia antes de eliminar.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Exportar a CSV</h2>
+    <p>Haz clic en el botón verde <strong>Exportar CSV</strong> para descargar la lista filtrada como archivo de hoja de cálculo. La exportación incluye todos los campos que coinciden con tus filtros activos.</p>
+  </div>
+
+  <!-- NUEVA COTIZACIÓN -->
+  <div class="section" id="nueva">
+    <div class="section-label">Capítulo 5</div>
+    <h1 class="section-title">Crear una Nueva Cotización</h1>
+    <p class="lead">El Cotizador te guía paso a paso por cada componente del paquete de viaje, con guardado automático para que nunca pierdas tu trabajo.</p>
+
+    <p>Puedes iniciar una nueva cotización haciendo clic en <strong>+ Nueva Cotización</strong> en el Panel o en el enlace <strong>Nueva Cotización</strong> del menú lateral.</p>
+
+    <h2 class="section-title" style="margin-top:32px;">Estructura del Asistente</h2>
+    <p>El asistente se divide en pasos obligatorios y pasos de servicios opcionales que tú seleccionas:</p>
+
+    <div class="wizard-flow">
+      <div class="wiz-step required"><span class="wiz-icon">👤</span> 1. Cliente</div>
+      <div class="wiz-step required"><span class="wiz-icon">💵</span> 2. Moneda</div>
+      <div class="wiz-step required"><span class="wiz-icon">✅</span> 3. Servicios</div>
+      <div class="wiz-step optional"><span class="wiz-icon">📦</span> Paquete</div>
+      <div class="wiz-step optional"><span class="wiz-icon">✈️</span> Vuelo</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🏨</span> Hotel</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🚌</span> Traslado</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🚢</span> Crucero</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🎫</span> Entradas</div>
+      <div class="wiz-step optional"><span class="wiz-icon">⛴️</span> Ferry</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🛡️</span> Seguro</div>
+      <div class="wiz-step optional"><span class="wiz-icon">📶</span> Datos</div>
+      <div class="wiz-step optional"><span class="wiz-icon">🪪</span> Visa</div>
+      <div class="wiz-step required"><span class="wiz-icon">💬</span> Mensajes y Comisión</div>
+      <div class="wiz-step required"><span class="wiz-icon">📋</span> Resumen y Finalizar</div>
+    </div>
+
+    <p>Los pasos con borde sólido son siempre obligatorios. Los pasos con borde punteado solo aparecen si seleccionas ese servicio en el Paso 3.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <div class="callout-title">Guardado Automático</div>
+        <p>El asistente guarda tu progreso automáticamente cada vez que avanzas entre pasos. Puedes salir y regresar a un borrador desde la <strong>Lista de Cotizaciones</strong> en cualquier momento.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-title">Barra de Progreso</h2>
+    <p>Una barra azul en la parte superior del asistente muestra qué tan avanzado estás. El nombre y número del paso actual (p. ej., <em>"Paso 3 de 8: Servicios"</em>) se muestran debajo del título.</p>
+
+    <h2 class="section-title" style="margin-top:32px;">Botones de Navegación</h2>
+    <table class="docs-table">
+      <thead><tr><th>Botón</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Anterior</strong></td><td>Regresa al paso previo y guarda los datos actuales. Deshabilitado en el primer paso.</td></tr>
+        <tr><td><strong>Siguiente</strong></td><td>Guarda los datos actuales y avanza al siguiente paso.</td></tr>
+        <tr><td><strong>Puntos de navegación</strong></td><td>Puedes hacer clic en los puntos numerados debajo de los botones para saltar directamente a cualquier paso.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PASO 1: CLIENTE -->
+  <div class="section" id="paso-cliente">
+    <div class="section-label">Capítulo 5.1</div>
+    <h1 class="section-title">Paso 1 – Datos del Cliente</h1>
+    <p class="lead">En este paso registras para quién es la cotización: nombre, datos de contacto del cliente principal y todos los viajeros por grupo de edad.</p>
+    <img src="/doc-screenshots/wizard-step1-cliente.jpg" alt="Paso 1 – Datos del Cliente" class="app-screenshot">
+    <p class="screenshot-caption">Paso 1 del cotizador — formulario de información del cliente</p>
+
+    <h2 class="section-title">Campos del Cliente</h2>
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Campo</span><span>Requerido</span><span>Descripción</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Nombre del Cliente</span>
+        <span class="field-req">Sí</span>
+        <span class="field-desc">Nombre completo del cliente principal (p. ej., "Familia García" o "María González")</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Contacto</span>
+        <span class="field-req">Sí</span>
+        <span class="field-desc">Número de teléfono o correo electrónico principal</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Contacto 2</span>
+        <span class="field-req">No</span>
+        <span class="field-desc">Contacto secundario (WhatsApp, teléfono alterno, etc.)</span>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:32px;">Viajeros (Personas)</h2>
+    <p>Debajo de los campos del cliente está el widget de <strong>Personas</strong>. Cada viajero se categoriza por grupo de edad. Haz clic en <strong>+ Agregar viajero</strong> para añadir pasajeros a la cotización.</p>
+
+    <table class="docs-table">
+      <thead><tr><th>Grupo de Edad</th><th>Uso Típico</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge blue">Adulto</span></td><td>Pasajero adulto estándar (18+ años)</td></tr>
+        <tr><td><span class="badge green">Niño</span></td><td>Pasajero infantil (2-11 años)</td></tr>
+        <tr><td><span class="badge yellow">Infante</span></td><td>Bebé (menor de 2 años)</td></tr>
+        <tr><td><span class="badge purple">Senior</span></td><td>Pasajero mayor con tarifas especiales</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>El número y tipo de viajeros afecta directamente los cálculos de precios en los pasos de Hotel y Paquete. Asegúrate de agregar todos los viajeros antes de llenar los detalles de alojamiento.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2: MONEDA -->
+  <div class="section" id="paso-moneda">
+    <div class="section-label">Capítulo 5.2</div>
+    <h1 class="section-title">Paso 2 – Configuración de Moneda</h1>
+    <p class="lead">Elige la moneda para esta cotización y, si aplica, establece el tipo de cambio USD a MXN.</p>
+    <img src="/doc-screenshots/wizard-step2-moneda.jpg" alt="Paso 2 – Moneda" class="app-screenshot">
+    <p class="screenshot-caption">Paso 2 — tipo de moneda y tipo de cambio</p>
+
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;">
+        <span>Campo</span><span>Requerido</span><span>Descripción</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Moneda</span>
+        <span class="field-req">Sí</span>
+        <span class="field-desc">Selecciona USD (Dólares) o MXN (Pesos Mexicanos)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-name">Tipo de Cambio</span>
+        <span class="field-req">Cond.</span>
+        <span class="field-desc">Solo requerido cuando la moneda es USD. Ingresa el tipo de cambio MXN/USD actual (p. ej., 17.50)</span>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p>El tipo de cambio se usa en todo el asistente para convertir y mostrar costos. Usa la tasa oficial actual o la tasa interna de tu empresa. La tasa se guarda con la cotización para que los registros históricos sean precisos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3: SERVICIOS -->
+  <div class="section" id="paso-servicios">
+    <div class="section-label">Capítulo 5.3</div>
+    <h1 class="section-title">Paso 3 – Selección de Servicios</h1>
+    <p class="lead">Elige qué componentes de viaje incluye este paquete. Solo los servicios que selecciones aquí tendrán un paso de captura dedicado en el asistente.</p>
+    <img src="/doc-screenshots/wizard-step3-servicios-selected.jpg" alt="Paso 3 – Servicios" class="app-screenshot">
+    <p class="screenshot-caption">Paso 3 — selección de servicios a incluir en la cotización</p>
+
+    <div class="service-grid">
+      <div class="service-card"><div class="svc-icon">📦</div><div class="svc-name">Paquete</div><div class="svc-desc">Tour prearmado con itinerario</div></div>
+      <div class="service-card"><div class="svc-icon">✈️</div><div class="svc-name">Vuelo</div><div class="svc-desc">Aerolínea, tarifas, salida/llegada</div></div>
+      <div class="service-card"><div class="svc-icon">🏨</div><div class="svc-name">Hotel</div><div class="svc-desc">Alojamiento, habitaciones, plan de comidas</div></div>
+      <div class="service-card"><div class="svc-icon">🚌</div><div class="svc-name">Traslado</div><div class="svc-desc">Transfers aeropuerto-hotel</div></div>
+      <div class="service-card"><div class="svc-icon">🚢</div><div class="svc-name">Crucero</div><div class="svc-desc">Detalles y costos del crucero</div></div>
+      <div class="service-card"><div class="svc-icon">🎫</div><div class="svc-name">Entradas</div><div class="svc-desc">Boletos a atracciones</div></div>
+      <div class="service-card"><div class="svc-icon">⛴️</div><div class="svc-name">Ferry</div><div class="svc-desc">Rutas y tarifas de ferry</div></div>
+      <div class="service-card"><div class="svc-icon">🛡️</div><div class="svc-name">Seguro</div><div class="svc-desc">Seguro de viaje</div></div>
+      <div class="service-card"><div class="svc-icon">📶</div><div class="svc-name">Datos / Internet</div><div class="svc-desc">SIM o pocket WiFi</div></div>
+      <div class="service-card"><div class="svc-icon">🪪</div><div class="svc-name">Visa</div><div class="svc-desc">Trámite y costos de visa</div></div>
+    </div>
+
+    <p>Activa o desactiva cada tarjeta de servicio. Los servicios seleccionados quedan resaltados. Al hacer clic en <strong>Siguiente</strong>, aparecerá un paso dedicado para cada servicio seleccionado.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-text">
+        <p>Puedes regresar al Paso 3 en cualquier momento para agregar o quitar servicios. El asistente actualizará sus pasos dinámicamente y los datos previamente capturados se conservarán.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASOS DE SERVICIOS -->
+  <div class="section" id="paso-paquete">
+    <div class="section-label">Capítulo 5.4</div>
+    <h1 class="section-title">Paso de Paquete</h1>
+    <p class="lead">Define los detalles de un tour prearmado ofrecido al cliente.</p>
+    <img src="/doc-screenshots/wizard-step4-paquete.jpg" alt="Paso Paquete" class="app-screenshot">
+    <p class="screenshot-caption">Paso Paquete — destino, fechas y precio del paquete turístico</p>
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Campo</span><span>Requerido</span><span>Descripción</span></div>
+      <div class="field-row"><span class="field-name">Destino</span><span class="field-req">Sí</span><span class="field-desc">Destino del viaje (p. ej., Cancún, París, Tokio)</span></div>
+      <div class="field-row"><span class="field-name">Nombre del Paquete</span><span class="field-req">Sí</span><span class="field-desc">Nombre o identificador (p. ej., "Todo Incluido Riviera Maya")</span></div>
+      <div class="field-row"><span class="field-name">Precio del Paquete</span><span class="field-req">Sí</span><span class="field-desc">Precio total por persona o suma global</span></div>
+      <div class="field-row"><span class="field-name">Fecha de Inicio</span><span class="field-req">Sí</span><span class="field-desc">Fecha de salida del viaje</span></div>
+      <div class="field-row"><span class="field-name">Fecha de Regreso</span><span class="field-req">Sí</span><span class="field-desc">Fecha de regreso del viaje</span></div>
+      <div class="field-row"><span class="field-name">Número de Personas</span><span class="field-req">Sí</span><span class="field-desc">Cuántos viajeros cubre el precio de este paquete</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="paso-vuelo">
+    <div class="section-label">Capítulo 5.5</div>
+    <h1 class="section-title">Paso de Vuelo</h1>
+    <p class="lead">Captura todos los costos relacionados con el vuelo para incluirlos en el total de la cotización.</p>
+    <img src="/doc-screenshots/wizard-step5-vuelo.jpg" alt="Paso Vuelo" class="app-screenshot">
+    <p class="screenshot-caption">Paso Vuelo — aerolínea, origen, destino y tarifas del vuelo</p>
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Campo</span><span>Requerido</span><span>Descripción</span></div>
+      <div class="field-row"><span class="field-name">Aerolínea</span><span class="field-req">Sí</span><span class="field-desc">Nombre de la aerolínea (p. ej., Aeroméxico, United)</span></div>
+      <div class="field-row"><span class="field-name">Tarifa Base</span><span class="field-req">Sí</span><span class="field-desc">Costo base de pasaje por persona (antes de impuestos)</span></div>
+      <div class="field-row"><span class="field-name">IVA / Impuestos</span><span class="field-req">No</span><span class="field-desc">Monto de impuestos incluido en el costo del vuelo</span></div>
+      <div class="field-row"><span class="field-name">Número de Personas</span><span class="field-req">Sí</span><span class="field-desc">Número de pasajeros en este vuelo</span></div>
+    </div>
+    <p>La sección de itinerario permite agregar uno o más segmentos de vuelo con información de salida y llegada. Haz clic en <strong>+ Agregar segmento</strong> para incluir un vuelo de conexión.</p>
+  </div>
+
+  <div class="section" id="paso-hotel">
+    <div class="section-label">Capítulo 5.6</div>
+    <h1 class="section-title">Paso de Hotel</h1>
+    <p class="lead">Define el alojamiento incluyendo habitaciones, plan de comidas y fechas.</p>
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Campo</span><span>Requerido</span><span>Descripción</span></div>
+      <div class="field-row"><span class="field-name">Nombre del Hotel</span><span class="field-req">Sí</span><span class="field-desc">Nombre del hotel o resort</span></div>
+      <div class="field-row"><span class="field-name">Check-in</span><span class="field-req">Sí</span><span class="field-desc">Fecha de llegada al hotel</span></div>
+      <div class="field-row"><span class="field-name">Check-out</span><span class="field-req">Sí</span><span class="field-desc">Fecha de salida del hotel</span></div>
+      <div class="field-row"><span class="field-name">Tipo de Habitación</span><span class="field-req">Sí</span><span class="field-desc">Tipo de cuarto (Estándar, Deluxe, Suite, etc.)</span></div>
+      <div class="field-row"><span class="field-name">Plan de Comidas</span><span class="field-req">No</span><span class="field-desc">Comidas incluidas (Todo Incluido, Solo Desayuno, etc.)</span></div>
+      <div class="field-row"><span class="field-name">Distribución de Cuartos</span><span class="field-req">Sí</span><span class="field-desc">Cómo se distribuyen los viajeros en las habitaciones (núm. de cuartos, ocupantes por cuarto)</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="paso-traslado">
+    <div class="section-label">Capítulo 5.7</div>
+    <h1 class="section-title">Paso de Traslado</h1>
+    <p class="lead">Agrega los traslados aeropuerto-hotel (y regreso) a la cotización.</p>
+    <p>Llena el proveedor de traslado, tipo de vehículo, puntos de recogida y entrega, y costo total. Se pueden hacer entradas separadas para traslados de llegada y de salida.</p>
+  </div>
+
+  <div class="section" id="paso-crucero">
+    <div class="section-label">Capítulo 5.8</div>
+    <h1 class="section-title">Paso de Crucero</h1>
+    <p class="lead">Agrega detalles del crucero: barco, itinerario, tipo de cabina y precios.</p>
+    <p>Ingresa el nombre de la naviera, puerto de salida, puertos del itinerario, categoría de cabina y precio por persona. El sistema multiplicará por el número de viajeros para calcular el costo total.</p>
+  </div>
+
+  <div class="section" id="paso-extras">
+    <div class="section-label">Capítulo 5.9</div>
+    <h1 class="section-title">Extras: Entradas, Ferry, Seguro, Datos, Visa</h1>
+    <p class="lead">Cada uno de los pasos de servicio restantes sigue el mismo patrón: ingresa el nombre del proveedor, costo por persona y cualquier detalle específico de ese servicio.</p>
+    <table class="docs-table">
+      <thead><tr><th>Servicio</th><th>Campos Principales</th></tr></thead>
+      <tbody>
+        <tr><td>🎫 <strong>Entradas / Boletos</strong></td><td>Nombre de la atracción, precio por persona, número de boletos, fecha</td></tr>
+        <tr><td>⛴️ <strong>Ferry</strong></td><td>Operador, ruta, costo por persona, número de pasajeros</td></tr>
+        <tr><td>🛡️ <strong>Seguro</strong></td><td>Aseguradora, tipo de cobertura, prima por persona, costo total</td></tr>
+        <tr><td>📶 <strong>Datos / Internet</strong></td><td>Proveedor, tipo de plan, costo por dispositivo, número de dispositivos</td></tr>
+        <tr><td>🪪 <strong>Visa</strong></td><td>País, tipo de visa, tarifa de trámite por persona, costo total</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="section" id="paso-mensajes">
+    <div class="section-label">Capítulo 5.10</div>
+    <h1 class="section-title">Mensajes y Comisión</h1>
+    <p class="lead">Personaliza el mensaje de bienvenida y despedida que aparecen en el documento final de la cotización, y establece tu comisión de agente.</p>
+    <img src="/doc-screenshots/wizard-step6-mensajes.jpg" alt="Mensajes y Comisión" class="app-screenshot">
+    <p class="screenshot-caption">Paso Mensajes — mensajes de bienvenida/despedida y comisión del agente</p>
+    <div class="field-table">
+      <div class="field-row" style="background:#f9fafb;font-weight:700;font-size:12px;text-transform:uppercase;color:#6b7280;"><span>Campo</span><span>Requerido</span><span>Descripción</span></div>
+      <div class="field-row"><span class="field-name">Mensaje de Bienvenida</span><span class="field-req">No</span><span class="field-desc">Mensaje personalizado de apertura para el cliente (se muestra al inicio de la cotización)</span></div>
+      <div class="field-row"><span class="field-name">Mensaje de Despedida</span><span class="field-req">No</span><span class="field-desc">Mensaje de cierre o llamada a la acción al final de la cotización</span></div>
+      <div class="field-row"><span class="field-name">Comisión (%)</span><span class="field-req">No</span><span class="field-desc">Porcentaje de comisión del agente. Se suma al precio total cotizado.</span></div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <p>Los mensajes personalizados hacen que las cotizaciones se sientan más profesionales y cercanas. Usa el mensaje de bienvenida para dirigirte al cliente por su nombre y mencionar su destino.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="section" id="paso-resumen">
+    <div class="section-label">Capítulo 5.11</div>
+    <h1 class="section-title">Resumen y Finalización</h1>
+    <p class="lead">El paso final muestra una vista completa de toda la cotización antes de marcarla como terminada.</p>
+    <img src="/doc-screenshots/wizard-step7-resumen.jpg" alt="Resumen" class="app-screenshot">
+    <p class="screenshot-caption">Paso Final — resumen de todos los servicios, costo total y opciones de guardado</p>
+    <p>La página de Resumen muestra:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:12px;">
+      <li style="margin-bottom:8px;"><strong>Datos del Cliente</strong> — nombre, contacto, número de viajeros</li>
+      <li style="margin-bottom:8px;"><strong>Moneda</strong> — moneda seleccionada y tipo de cambio</li>
+      <li style="margin-bottom:8px;"><strong>Todos los Servicios</strong> — una tarjeta por servicio con sus detalles y costo</li>
+      <li style="margin-bottom:8px;"><strong>Costo Total</strong> — suma de todos los servicios más comisión</li>
+      <li style="margin-bottom:8px;"><strong>Mensajes</strong> — vista previa de los mensajes de bienvenida y despedida</li>
+    </ul>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <div class="callout-title">Marcar como Finalizada</div>
+        <p>Cuando estés conforme con la cotización, haz clic en <strong>Marcar como Finalizada</strong>. Esto cambia su estado de <span class="badge yellow">Borrador</span> a <span class="badge green">Finalizada</span> en la Lista. Siempre puedes reabrirla y editarla.</p>
+      </div>
+    </div>
+    <h2 class="section-title" style="margin-top:32px;">Cargar una Cotización Existente</h2>
+    <p>Para editar una cotización existente, haz clic en el ícono <strong>Editar (✏️)</strong> desde la Lista de Cotizaciones. Esto abre el asistente con todos los datos guardados. Navega por los pasos para hacer cambios, luego regresa al Resumen para finalizar.</p>
+  </div>
+
+  <!-- NAVEGACIÓN -->
+  <div class="section" id="navegacion">
+    <div class="section-label">Capítulo 6</div>
+    <h1 class="section-title">Navegación e Interfaz</h1>
+    <p class="lead">La aplicación cuenta con un menú lateral siempre visible que permite navegar entre los módulos.</p>
+    <table class="docs-table">
+      <thead><tr><th>Elemento de Navegación</th><th>A dónde va</th></tr></thead>
+      <tbody>
+        <tr><td>🏠 <strong>Dashboard</strong></td><td>Página de inicio con estadísticas y actividad reciente</td></tr>
+        <tr><td>📋 <strong>Cotizaciones</strong></td><td>Lista completa de todas las cotizaciones</td></tr>
+        <tr><td>➕ <strong>Nueva Cotización</strong></td><td>Inicia una cotización nueva desde cero</td></tr>
+      </tbody>
+    </table>
+    <div class="divider"></div>
+    <h2 class="section-title">Barra Superior</h2>
+    <p>La barra superior muestra:</p>
+    <ul style="margin-left:20px;font-size:15px;color:var(--gray-700);margin-top:8px;">
+      <li style="margin-bottom:6px;"><strong>Cambio de tema</strong> — Alternancia entre modo claro y oscuro</li>
+      <li style="margin-bottom:6px;"><strong>Selector de idioma</strong> — Cambiar el idioma de la interfaz (EN / ES)</li>
+      <li style="margin-bottom:6px;"><strong>Tu nombre e insignia de rol</strong> — Muestra tu cuenta y rol activos</li>
+      <li style="margin-bottom:6px;"><strong>Botón de cerrar sesión</strong> — Cierra la sesión del sistema</li>
+    </ul>
+  </div>
+
+  <!-- PREGUNTAS FRECUENTES -->
+  <div class="section" id="preguntas">
+    <div class="section-label">Capítulo 7</div>
+    <h1 class="section-title">Preguntas Frecuentes</h1>
+
+    <div style="margin-top:24px;">
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ ¿Puedo crear una cotización para varios clientes a la vez?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Cada cotización está asociada a un cliente principal. Sin embargo, puedes agregar múltiples <em>Viajeros</em> en el Paso 1 para representar a todos los pasajeros de un grupo o familia.</p>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ ¿Qué pasa si cierro el navegador en medio de una cotización?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">El asistente guarda automáticamente al avanzar entre pasos. Tu progreso se guarda como <span class="badge yellow">Borrador</span>. Encuéntralo en la Lista de Cotizaciones y haz clic en Editar para continuar.</p>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ ¿Cómo envío la cotización al cliente?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Abre la página de detalle de la cotización (ícono <strong>Ver</strong>), luego usa la función de impresión del navegador (<strong>Ctrl+P</strong> o <strong>Cmd+P</strong>) para guardar la página como PDF y enviarlo por correo o WhatsApp.</p>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ ¿Qué hace "Duplicar"?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">La acción Duplicar crea una copia exacta de una cotización (finalizada o borrador) como nuevo Borrador. Es útil cuando tienes un viaje similar para cotizar a otro cliente — parte de la copia y modifica los detalles.</p>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ ¿Por qué no veo las cotizaciones de otros agentes?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Los usuarios regulares solo ven sus propias cotizaciones. Si necesitas acceso a todas, pide a tu administrador que actualice tu rol a <strong>Gerente</strong> o <strong>Administrador</strong>.</p>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px;">❓ ¿Puedo cambiar la moneda después de crear la cotización?</h3>
+        <p style="margin:0;font-size:14px;color:#374151;">Sí. Regresa al Paso 2 – Moneda usando los botones de navegación o los puntos de progreso, cambia la configuración y continúa. Los precios capturados se mantienen; asegúrate de actualizarlos si son sensibles al tipo de cambio.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="callout info">
+      <div class="callout-icon">📞</div>
+      <div class="callout-text">
+        <div class="callout-title">¿Necesitas más ayuda?</div>
+        <p>Contacta a tu administrador del sistema o al equipo de soporte de Lobato Tours si encuentras algún problema no cubierto en este manual.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:60px;padding-top:32px;border-top:1px solid var(--gray-200);text-align:center;color:var(--gray-500);font-size:13px;">
+      <p>Lobato Tours · Sistema de Cotizaciones · Manual de Usuario (Español) · v1.0 · Marzo 2026</p>
+      <p style="margin-top:4px;">© 2026 Lobato Tours. Todos los derechos reservados.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

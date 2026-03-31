@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { IRootState } from '../../store';
 import { toggleLocale, toggleTheme,toggleSidebar, toggleRTL  } from '../../store/themeConfigSlice';
@@ -41,6 +42,10 @@ const Header = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
+    const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
+
+    const [flag, setFlag] = useState('');
     const setLocale = (flag: string) => {
         setFlag(flag);
         if (flag.toLowerCase() === 'ae') {
@@ -49,13 +54,52 @@ const Header = () => {
             dispatch(toggleRTL('ltr'));
         }
     };
-    const [flag, setFlag] = useState('');
-    useEffect(() => {
-        setLocale(localStorage.getItem('i18nextLng') || themeConfig.locale);
-    });
-    const dispatch = useDispatch();
 
-    const { t, i18n } = useTranslation();
+    // Initialise i18n language from localStorage on first mount only
+    useEffect(() => {
+        const saved = localStorage.getItem('i18nextLng') || themeConfig.locale || 'es';
+        setLocale(saved);
+        if (i18n.language !== saved) {
+            i18n.changeLanguage(saved);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── Language switcher ──────────────────────────────────────────────────
+    const currentLang = i18n.language?.startsWith('es') ? 'es' : 'en';
+    const switchLanguage = () => {
+        const next = currentLang === 'es' ? 'en' : 'es';
+        dispatch(toggleLocale(next));
+        setLocale(next);
+        i18n.changeLanguage(next);
+    };
+
+    // ── Auth user ──────────────────────────────────────────────────────────
+    const [authUser, setAuthUser] = useState<{ real_name: string; role: string } | null>(null);
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then((r) => (r.ok ? r.json() : null))
+            .then((u) => u && setAuthUser(u))
+            .catch(() => {});
+    }, []);
+
+    const handleLogout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/login';
+    };
+
+    const roleBadgeClass: Record<string, string> = {
+        admin:   'bg-red-100 text-red-700',
+        manager: 'bg-blue-100 text-blue-700',
+        user:    'bg-green-100 text-green-700',
+        employee:'bg-green-100 text-green-700',
+    };
+    const roleLabel: Record<string, string> = {
+        admin:   'Admin',
+        manager: 'Gerente',
+        user:    'Usuario',
+        employee:'Usuario',
+    };
 
     return (
         <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -63,8 +107,7 @@ const Header = () => {
                 <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
                     <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
-                            <img className="inline h-8 w-auto ltr:-ml-1 rtl:-mr-1" src="/assets/images/logos/logo-lobato-2.jpg" alt="Lobato Tours" />
-                            <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline"></span>
+                            <Image className="inline h-8 w-8 object-contain ltr:-ml-1 rtl:-mr-1" src="/favicon.png" alt="Lobato Tours" width={32} height={32} />
                         </Link>
                         <button
                             type="button"
@@ -140,6 +183,54 @@ const Header = () => {
                                 </button>
                             )}
                         </div>
+
+                        {/* ── Language switcher ── */}
+                        <button
+                            type="button"
+                            onClick={switchLanguage}
+                            title={t('language')}
+                            className="flex items-center gap-1 rounded-full bg-white-light/40 px-2.5 py-1.5 text-xs font-bold hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60 transition select-none"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                            </svg>
+                            {currentLang === 'es' ? 'ES' : 'EN'}
+                        </button>
+
+                        {/* ── User badge + logout ── */}
+                        {authUser && (
+                            <div className="flex items-center gap-2 ltr:ml-2 rtl:mr-2">
+                                <div className="hidden sm:flex flex-col items-end leading-tight">
+                                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">{authUser.real_name}</span>
+                                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${roleBadgeClass[authUser.role] ?? 'bg-gray-100 text-gray-600'}`}>
+                                        {roleLabel[authUser.role] ?? authUser.role}
+                                    </span>
+                                </div>
+                                {authUser.role === 'admin' && (
+                                    <a
+                                        href="/admin/users"
+                                        title={t('user_management')}
+                                        className="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+                                    >
+                                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </a>
+                                )}
+                                <button
+                                    onClick={handleLogout}
+                                    title={t('login')}
+                                    className="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-red-50 hover:text-red-600 dark:bg-dark/40 dark:hover:bg-dark/60 transition"
+                                >
+                                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
